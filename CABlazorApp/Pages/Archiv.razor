@@ -1,0 +1,20 @@
+﻿@page "/archiv"
+
+<PageTitle>CA | Archiv</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        
+    </Authorized>
+    <NotAuthorized>
+        <div class="bg-[#F3F3F5]">
+            <div class="container lg:px-36 px-6 mx-auto">
+                <div class="text-center md:py-72 py-24">
+                    <h1 class="text-gray-800 text-4xl font-semibold py-1">Nejste přihlášen!</h1>
+                    <p class="md:w-[32rem] mx-auto font-medium text-gray-600 mb-4 py-1 text-xl">Proto abyste si mohli zobrazit Váš archív, tak se musíte přihlásit.</p>
+                    <a href="/Identity/Account/Login" class="text-white font-semibold text-md text-center py-3 px-6 rounded-lg bg-[#2E76B4] hover:bg-[#255e90] duration-150 box-shadow">Přihlásit se</a>
+                </div>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

@@ -1,0 +1,51 @@
+﻿@page
+@{
+    Layout = "/Pages/Shared/_IdentityEmptyLayout.cshtml";
+}
+@model RegisterModel
+@{
+    ViewData["Title"] = "Registrace";
+}
+
+<div class="container lg:px-36 px-6 mx-auto">
+    <div class="xl:w-[25%] lg:w-[50%] md:w-[75%] sm:w-auto mx-auto md:mt-52 mt-32 bg-white rounded-xl p-8 box-shadow">
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h2 class="text-center text-3xl font-semibold uppercase pb-2">Registrovat se</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="flex flex-col justify-center mx-auto mt-4">
+                <div class="flex flex-col justify-center">
+                    <input asp-for="Input.Email" placeholder="Email" class="w-[90%] text-center mx-auto p-2 text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="Input.Email" class="text-danger text-center text-red-700"></span>
+                </div>
+                <div class="flex flex-col justify-center mt-4">
+                    <input asp-for="Input.Password" placeholder="Heslo" class="w-[90%] text-center mx-auto p-2 text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="new-password" aria-required="true" />
+                    <span asp-validation-for="Input.Password" class="text-danger text-center text-red-700"></span>
+                </div>
+                <div class="flex flex-col justify-center mt-4">
+                    <input asp-for="Input.ConfirmPassword" placeholder="Potvrzení hesla" class="w-[90%] text-center mx-auto p-2 text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="new-password" aria-required="true" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger text-center text-red-700"></span>
+                </div>
+            </div>
+            <div class="flex mt-4">
+                <div class="mx-auto">
+                    <button id="registerSubmit" type="submit" class="text-gray-800 font-semibold text-md border-2 border-gray-800 text-center py-2 px-6 uppercase rounded-xl hover:bg-gray-800 hover:text-white duration-150 box-shadow">Registrovat se</button>
+                </div>
+            </div>
+            <div class="underline text-sm flex justify-between text-sky-600 mt-4 items-center">
+                <div>
+                    <p>
+                        <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Přihlásit se</a>
+                    </p>
+                </div>
+                <div>
+                    <p><a href="~/">Zpět</a></p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
