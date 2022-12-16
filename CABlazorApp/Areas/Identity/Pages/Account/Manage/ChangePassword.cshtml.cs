@@ -13,10 +13,6 @@ using Microsoft.Extensions.Logging;
 
 namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
 {
-    public class Edit
-    {
-        public bool test { get; set; }
-    }
     public class ChangePasswordModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -61,7 +57,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             /// </summary>
             [Required]
             [DataType(DataType.Password)]
-            [Display(Name = "Current password")]
+            [Display(Name = "Momentální heslo")]
             public string OldPassword { get; set; }
 
             /// <summary>
@@ -71,7 +67,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "New password")]
+            [Display(Name = "Nové heslo")]
             public string NewPassword { get; set; }
 
             /// <summary>
@@ -79,8 +75,8 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm new password")]
-            [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+            [Display(Name = "Heslo znovu")]
+            [Compare("NewPassword", ErrorMessage = "Zadaná hesla se neshodují.")]
             public string ConfirmPassword { get; set; }
         }
 

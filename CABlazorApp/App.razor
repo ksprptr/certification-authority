@@ -5,9 +5,16 @@
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
-            <PageTitle>Not found</PageTitle>
+            <PageTitle>CA | Nenalezeno</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
+                <div class="bg-[#F3F3F5]">
+                    <div class="container lg:px-36 px-6 mx-auto">
+                        <div class="md:text-left text-center md:py-80 py-24">
+                            <h1 class="text-gray-800 text-4xl font-semibold py-1">Chyba 404</h1>
+                            <p class="md:w-[32rem] md:mx-0 mx-auto font-medium text-gray-600 mb-4 py-1 text-xl">Tato stránka nebyla nalezena!</p>
+                        </div>
+                    </div>
+                </div>
             </LayoutView>
         </NotFound>
     </Router>

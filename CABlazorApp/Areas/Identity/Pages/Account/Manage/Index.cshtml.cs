@@ -111,7 +111,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Váš profil byl upraven.";
             return RedirectToPage();
         }
     }

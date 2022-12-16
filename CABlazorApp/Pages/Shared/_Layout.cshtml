@@ -4,6 +4,15 @@
 @inject ICompositeViewEngine Engine
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+
+@{
+    bool Case = false;
+    void Set()
+    {
+        Case = true;
+    }
+}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CA | @ViewData["Title"]</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/718d16f496.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
@@ -27,18 +37,21 @@
       <div class="container lg:px-36 px-6 mx-auto">
           <div class="flex sm:justify-between justify-center py-2 text-center items-center">
               <div><h3 class="text-lg text-gray-800 font-semibold uppercase"><a href="~/">Certifikační Autorita</a></h3></div>
-              <h3 class="text-lg text-gray-800 font-semibold">(@UserManager.GetUserName(User))</h3>
-              <div>
-                  <ul class="flex items-center">
-                      <li><a href="~/Identity/Account/Manage" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 px-4 m-auto mx-1 rounded-lg hover:text-[#2E76B4] duration-150">Profil</a></li>
-                      <li><a href="~/Identity/Account/Manage/Email" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Email</a></li>
-                      <li><a href="~/Identity/Account/Manage/ChangePassword" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Heslo</a></li>
-                      <li><a href="~/Identity/Account/Manage/PersonalData" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Data</a></li>
-                      <form method="post" action="~/Identity/Account/LogOut">
-                          <button type="submit" class="sm:block hidden border-2 border-gray-800 text-gray-800 font-semibold text-md text-center hover:bg-gray-800 m-auto py-2 px-4 mx-1 text-center rounded-lg hover:text-white duration-150">Odhlásit se</button>
-                      </form>
-                  </ul>
-              </div>
+              <a onclick="@Set" class="text-gray-800 font-semibold text-lg text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">@UserManager.GetUserName(User)</a>
+              @if (Case)
+              {
+                  <div>
+                      <ul class="flex items-center">
+                          <li><a href="~/Identity/Account/Manage" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 px-4 m-auto mx-1 rounded-lg hover:text-[#2E76B4] duration-150">Profil</a></li>
+                          <li><a href="~/Identity/Account/Manage/Email" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Email</a></li>
+                          <li><a href="~/Identity/Account/Manage/ChangePassword" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Heslo</a></li>
+                          <li><a href="~/Identity/Account/Manage/PersonalData" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Data</a></li>
+                          <form method="post" action="~/Identity/Account/LogOut">
+                              <button type="submit" class="sm:block hidden border-2 border-gray-800 text-gray-800 font-semibold text-md text-center hover:bg-gray-800 m-auto py-2 px-4 mx-1 text-center rounded-lg hover:text-white duration-150">Odhlásit se</button>
+                          </form>
+                      </ul>
+                  </div> 
+              }
           </div>
       </div> 
     </nav>
