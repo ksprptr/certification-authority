@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Mvc.ViewEngines
+@inject IWebHostEnvironment Environment
+@inject ICompositeViewEngine Engine
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>CA | @ViewData["Title"]</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/Identity/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/Identity/css/site.css" asp-append-version="true" />
+    </environment>
+</head>
+<body>
+<div>
+    <nav class="bg-[#FFFFFF]">
+      <div class="container lg:px-36 px-6 mx-auto">
+          <div class="flex sm:justify-between justify-center py-2 text-center items-center">
+              <div><h3 class="text-lg text-gray-800 font-semibold uppercase">Certifikační Autorita</h3></div>
+              <div>
+                  <ul class="flex items-center">
+                      <li><a href="/" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 px-4 m-auto mx-1 rounded-lg hover:text-[#2E76B4] duration-150">Domů</a></li>
+                      <li><a href="/archiv" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Archív</a></li>
+                      <li><a href="/generate" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Generovat</a></li>
+                      <LoginDisplay />
+                  </ul>
+              </div>
+          </div>
+      </div> 
+    </nav>
+</div>
+
+@RenderBody()
+
+<div class="bg-[#FFFFFF]">
+    <div class="container lg:px-36 px-6 mx-auto">
+       <div class="text-center py-4">
+           <h3 class="text-gray-800 font-semibold text-lg">Vytvořeno s ☕ v Hradci Králové</h3>
+       </div>
+    </div>
+</div>
+<environment include="Development">
+    <script src="~/Identity/lib/jquery/dist/jquery.js"></script>
+    <script src="~/Identity/js/site.js" asp-append-version="true"></script>
+</environment>
+<environment exclude="Development">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+            asp-fallback-src="~/Identity/lib/jquery/dist/jquery.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2">
+        </script>
+    <script src="~/Identity/js/site.js" asp-append-version="true"></script>
+</environment>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
