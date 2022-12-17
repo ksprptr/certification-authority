@@ -74,7 +74,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Toto pole je povinné.")]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -83,8 +83,8 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Toto pole je povinné.")]
+            [StringLength(100, ErrorMessage = "{0} musí být dlouhé {2}-{1} znaků.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Heslo")]
             public string Password { get; set; }
@@ -132,7 +132,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
                         protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        $"Prosím potvrďte Váš účet <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>zde</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
