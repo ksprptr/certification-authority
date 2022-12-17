@@ -29,7 +29,8 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
-        public static bool statement;
+        public static bool ChangeStatement;
+        public static bool PassStatement;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -55,7 +56,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Toto pole je povinné.")]
             [DataType(DataType.Password)]
             [Display(Name = "Momentální heslo")]
             public string OldPassword { get; set; }
@@ -64,8 +65,8 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Toto pole je povinné.")]
+            [StringLength(50, ErrorMessage = "{0} musí být dlouhé {2}-{1} znaků.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Nové heslo")]
             public string NewPassword { get; set; }
@@ -85,7 +86,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Nepodařilo se načíst uživatele s ID '{_userManager.GetUserId(User)}'.");
             }
 
             var hasPassword = await _userManager.HasPasswordAsync(user);
@@ -107,7 +108,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Nepodařilo se načíst uživatele s ID '{_userManager.GetUserId(User)}'.");
             }
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
@@ -116,21 +117,27 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
                 foreach (var error in changePasswordResult.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
+                    PassStatement = true;
                 }
                 return Page();
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            _logger.LogInformation("User changed their password successfully.");
+            _logger.LogInformation("Uživatel si úspěšně změnil heslo.");
             StatusMessage = "Vaše heslo bylo změněno.";
-            statement = true;
+            ChangeStatement = true;
             return RedirectToPage();
             
         }
 
-        public bool State()
+        public bool ChangeState()
         {
-            return statement;
+            return ChangeStatement;
+        }
+
+        public bool PassState()
+        {
+            return PassStatement;
         }
     }
 }

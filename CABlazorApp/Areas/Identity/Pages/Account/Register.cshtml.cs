@@ -75,7 +75,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "Tento email je neplatný.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -84,7 +84,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
-            [StringLength(100, ErrorMessage = "{0} musí být dlouhé {2}-{1} znaků.", MinimumLength = 6)]
+            [StringLength(50, ErrorMessage = "{0} musí být dlouhé {2}-{1} znaků.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Heslo")]
             public string Password { get; set; }
@@ -120,7 +120,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("Uživatel si vytvořil nový účet s heslem.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -131,8 +131,8 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Prosím potvrďte Váš účet <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>zde</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, "Potvrzení účtu",
+                        $"Pro potvrzení účtu pokračujte <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>zde</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

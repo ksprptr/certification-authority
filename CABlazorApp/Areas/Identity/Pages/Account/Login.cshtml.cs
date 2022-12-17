@@ -35,6 +35,8 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
+        public static bool LoginStatement;
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -65,7 +67,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "Tento email je neplatný.")]
             public string Email { get; set; }
 
             /// <summary>
@@ -114,7 +116,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
+                    _logger.LogInformation("Uživatel se přihlásil.");
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -129,12 +131,18 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Zadal jste špatné přihlašovací údaje.");
+                    LoginStatement = true;
                     return Page();
                 }
             }
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        public bool LoginState()
+        {
+            return LoginStatement;
         }
     }
 }

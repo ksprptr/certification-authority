@@ -45,7 +45,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "Tento email je neplatný.")]
             public string Email { get; set; }
         }
 
