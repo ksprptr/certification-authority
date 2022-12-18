@@ -34,30 +34,30 @@
 <body style="font-family: 'Poppins', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;">
 <div>
     <nav class="bg-[#FFFFFF]">
-      <div class="container lg:px-36 px-6 mx-auto">
-          <div class="flex sm:justify-between justify-center py-2 text-center items-center">
-              <div><h3 class="text-lg text-gray-800 font-semibold uppercase"><a href="~/">Certifikační Autorita</a></h3></div>
-              <button onclick="@Set" class="text-gray-800 font-semibold text-lg text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">@UserManager.GetUserName(User)</button>
-              @if (Case)
-              {
-                  <div>
-                      <ul class="flex items-center">
-                          <li><a href="~/Identity/Account/Manage" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 px-4 m-auto mx-1 rounded-lg hover:text-[#2E76B4] duration-150">Profil</a></li>
-                          <li><a href="~/Identity/Account/Manage/Email" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Email</a></li>
-                          <li><a href="~/Identity/Account/Manage/ChangePassword" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Heslo</a></li>
-                          <li><a href="~/Identity/Account/Manage/PersonalData" class="sm:block hidden text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Data</a></li>
-                          <form method="post" action="~/Identity/Account/LogOut">
-                              <button type="submit" class="sm:block hidden border-2 border-gray-800 text-gray-800 font-semibold text-md text-center hover:bg-gray-800 m-auto py-2 px-4 mx-1 text-center rounded-lg hover:text-white duration-150">Odhlásit se</button>
-                          </form>
-                      </ul>
-                  </div> 
-              }
-          </div>
-      </div> 
+        <div class="container lg:px-36 px-6 mx-auto">
+            <div class="flex sm:justify-between justify-center py-2 text-center items-center">
+                <div><h3 class="text-lg text-gray-800 font-semibold uppercase"><a href="~/">Certifikační Autorita</a></h3></div>
+                <button onclick="@Set" class="text-gray-800 font-semibold text-lg text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">@UserManager.GetUserName(User)</button>
+            </div>
+        </div> 
     </nav>
 </div>
 
-@RenderBody()
+<div class="flex justify-center bg-[#F3F3F5] items-start gap-x-6 pt-24 pb-72">
+    <div class="w-80">
+        <div class="bg-white p-8 rounded-xl box-shadow">
+            <ul class="nav nav-pills flex-column">
+                <li class="text-lg font-semibold text-gray-800"><a asp-page="./Index">Profil</a></li>
+                <li class="pt-4 text-lg font-semibold text-gray-800"><a asp-page="./Email">Email</a></li>
+                <li class="pt-4 text-lg font-semibold text-gray-800"><a asp-page="./ChangePassword">Změna hesla</a></li>
+                <li class="pt-4 text-lg font-semibold text-gray-800"><a asp-page="./PersonalData">Smazat účet</a></li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        @RenderBody()
+    </div>
+</div>
 
 <div class="bg-[#FFFFFF]">
     <div class="container lg:px-36 px-6 mx-auto">

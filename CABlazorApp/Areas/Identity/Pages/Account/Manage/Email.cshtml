@@ -1,0 +1,42 @@
+﻿@page
+@model EmailModel
+@{
+    ViewData["Title"] = "Úprava emailu";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+}
+
+<div class="bg-[#FFFFFF] rounded-xl p-8 box-shadow w-[40rem]">
+   <h1 class="text-gray-800 text-3xl font-semibold uppercase pb-2">@ViewData["Title"]</h1>
+   <hr />
+   <form id="email-form" method="post">
+       @if (Model.IsEmailConfirmed)
+       {
+           <div class="flex flex-col mt-4">
+               <label asp-for="Email" class="text-gray-800 font-semibold text-lg"></label>
+               <div class="flex">
+                   <input asp-for="Email" class="opacity-50 p-2 w-full autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" disabled />
+                   <div class="text-center ml-2 bg-[#BBF7D0] rounded-xl border-2 border-[#22C55E] items-center text-lg py-2 px-4 text-[#22C55E] font-semibold">Ověřeno</div>
+               </div>
+           </div>
+       }
+       else
+       {
+           <div class="flex flex-col mt-4">
+             <label asp-for="Email" class="text-gray-800 font-semibold text-lg"></label>
+               <div class="flex">
+                   <input asp-for="Email" class="opacity-50 p-2 w-full autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" disabled />
+                   <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="outline-none text-center ml-2 bg-[#FECACA] rounded-xl border-2 border-[#EF4444] items-center text-lg py-2 px-4 text-[#EF4444] font-semibold">Neověřeno</button>
+               </div>
+           </div>
+       }
+       <div class="flex flex-col mt-4">
+          <input asp-for="Input.NewEmail" placeholder="Nový email" class="p-2 autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="email" aria-required="true"/>
+          <span asp-validation-for="Input.NewEmail" class="text-danger text-red-700"></span>
+       </div>
+       <button id="change-email-button" type="submit" class="mt-4 text-gray-800 font-semibold text-md border-2 border-gray-800 text-center py-2 px-6 uppercase rounded-xl hover:bg-gray-800 hover:text-white duration-150 box-shadow">Změnit email</button>
+   </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
