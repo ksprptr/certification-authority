@@ -2,13 +2,13 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Profil";
-    IndexModel State = new IndexModel(null, null);
+    IndexModel state = new IndexModel(null, null);
 }
 
 <div class="bg-[#FFFFFF] rounded-xl p-8 box-shadow w-[40rem]">
    <h1 class="text-gray-800 text-3xl font-semibold uppercase pb-2">@ViewData["Title"]</h1>
    <hr />
-   @if (State.ProfileState())
+   @if (state.ProfileState())
    {
        <div class="bg-[#BBF7D0] mt-4 p-4 text-lg font-semibold text-[#22C55E] border-2 border-[#22C55E] rounded-xl">Váš profil byl upraven.</div>
    }

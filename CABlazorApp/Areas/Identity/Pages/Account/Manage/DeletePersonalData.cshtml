@@ -2,7 +2,7 @@
 @model DeletePersonalDataModel
 @{
     ViewData["Title"] = "Smazat účet";
-    DeletePersonalDataModel State = new DeletePersonalDataModel(null, null, null);
+    DeletePersonalDataModel state = new DeletePersonalDataModel(null, null, null);
 }
 
 <div class="bg-[#FFFFFF] rounded-xl p-8 box-shadow w-[40rem]">
@@ -12,7 +12,7 @@
        <p class="font-semibold text-gray-600 mt-2 text-xl">Smazáním účtu přijdete o všechna data spojené s tímto účtem! Tato akce je nevratná a data nelze obnovit!</p>
        @if (Model.RequirePassword)
        {
-           @if (State.PassState())
+           @if (state.PassState())
            {
                <div class="bg-[#FECACA] mt-4 p-4 text-lg font-semibold text-[#EF4444] border-2 border-[#EF4444] rounded-xl">Zadal jste špatné heslo.</div>
            }
