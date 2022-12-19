@@ -29,9 +29,6 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
-        public static bool ChangeStatement;
-        public static bool PassStatement;
-
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -57,7 +54,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
-            [DataType(DataType.Password)]
+            [DataType(DataType.Password, ErrorMessage = "test test test test")]
             [Display(Name = "Momentální heslo")]
             public string OldPassword { get; set; }
 
@@ -117,7 +114,6 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
                 foreach (var error in changePasswordResult.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
-                    PassStatement = true;
                 }
                 return Page();
             }
@@ -125,19 +121,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             await _signInManager.RefreshSignInAsync(user);
             _logger.LogInformation("Uživatel si úspěšně změnil heslo.");
             StatusMessage = "Vaše heslo bylo změněno.";
-            ChangeStatement = true;
             return RedirectToPage();
-            
-        }
-
-        public bool ChangeState()
-        {
-            return ChangeStatement;
-        }
-
-        public bool PassState()
-        {
-            return PassStatement;
         }
     }
 }

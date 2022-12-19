@@ -27,8 +27,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
             _logger = logger;
         }
-
-        public static bool Password;
+        
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -84,7 +83,6 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
                 if (!await _userManager.CheckPasswordAsync(user, Input.Password))
                 {
                     ModelState.AddModelError(string.Empty, "Zadal jste špatné heslo.");
-                    Password = true;
                     return Page();
                 }
             }
@@ -101,11 +99,6 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             _logger.LogInformation("Uživatel s ID '{UserId}' si smazal účet.", userId);
 
             return Redirect("~/");
-        }
-
-        public bool PassState()
-        {
-            return Password;
         }
     }
 }

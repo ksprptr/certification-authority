@@ -2,7 +2,6 @@
 @model DeletePersonalDataModel
 @{
     ViewData["Title"] = "Smazat účet";
-    DeletePersonalDataModel state = new DeletePersonalDataModel(null, null, null);
 }
 
 <div class="bg-[#FFFFFF] rounded-xl p-8 box-shadow w-[40rem]">
@@ -12,10 +11,7 @@
        <p class="font-semibold text-gray-600 mt-2 text-xl">Smazáním účtu přijdete o všechna data spojené s tímto účtem! Tato akce je nevratná a data nelze obnovit!</p>
        @if (Model.RequirePassword)
        {
-           @if (state.PassState())
-           {
-               <div class="bg-[#FECACA] mt-4 p-4 text-lg font-semibold text-[#EF4444] border-2 border-[#EF4444] rounded-xl">Zadal jste špatné heslo.</div>
-           }
+           <div asp-validation-summary="ModelOnly" class="bg-[#FECACA] mt-4 p-4 text-lg font-semibold text-[#EF4444] border-2 border-[#EF4444] rounded-xl"></div>
            <div class="flex flex-col mt-4">
                <input asp-for="Input.Password" placeholder="Momentální heslo" class="p-2 autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="current-password" aria-required="true"/>
                <span asp-validation-for="Input.Password" class="text-danger text-red-700"></span>

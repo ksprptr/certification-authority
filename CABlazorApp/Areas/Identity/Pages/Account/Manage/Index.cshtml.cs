@@ -25,8 +25,6 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        public static bool ProfileStatement;
-        
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -116,13 +114,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Váš profil byl upraven.";
-            ProfileStatement = true;
             return RedirectToPage();
-        }
-
-        public bool ProfileState()
-        {
-            return ProfileStatement;
         }
     }
 }

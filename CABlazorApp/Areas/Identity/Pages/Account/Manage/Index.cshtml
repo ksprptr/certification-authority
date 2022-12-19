@@ -8,18 +8,21 @@
 <div class="bg-[#FFFFFF] rounded-xl p-8 box-shadow w-[40rem]">
    <h1 class="text-gray-800 text-3xl font-semibold uppercase pb-2">@ViewData["Title"]</h1>
    <hr />
-   @if (state.ProfileState())
-   {
-       <div class="bg-[#BBF7D0] mt-4 p-4 text-lg font-semibold text-[#22C55E] border-2 border-[#22C55E] rounded-xl">Váš profil byl upraven.</div>
-   }
    <form id="profile-form" method="post">
+       @if (Model.StatusMessage != null)
+       {
+          <div class="bg-[#BBF7D0] mt-4 p-4 text-lg font-semibold text-[#22C55E] border-2 border-[#22C55E] rounded-xl">
+              <partial name="_StatusMessage" model="Model.StatusMessage"/>
+          </div>
+       }
+       <div asp-validation-summary="ModelOnly" class="bg-[#FECACA] mt-4 p-4 text-lg font-semibold text-[#EF4444] border-2 border-[#EF4444] rounded-xl"></div>
        <div class="flex flex-col mt-4">
            <label asp-for="Username" class="text-gray-800 font-semibold text-lg"></label>
-           <input asp-for="Username" class="opacity-50 p-2 w-full autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" disabled />
+           <input asp-for="Username" class="opacity-50 p-2 w-full autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" disabled/>
        </div>
        <div class="flex flex-col mt-4">
-          <input asp-for="Input.PhoneNumber" placeholder="Telefonní číslo" class="p-2 autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" aria-required="true"/>
-          <span asp-validation-for="Input.PhoneNumber" class="text-danger text-red-700"></span>
+           <input asp-for="Input.PhoneNumber" placeholder="Telefonní číslo" class="p-2 autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" aria-required="true"/>
+           <span asp-validation-for="Input.PhoneNumber" class="text-danger text-red-700"></span>
        </div>
        <button id="update-profile-button" type="submit" class="mt-4 text-gray-800 font-semibold text-md border-2 border-gray-800 text-center py-2 px-6 uppercase rounded-xl hover:bg-gray-800 hover:text-white duration-150 box-shadow">Uložit</button>
    </form>

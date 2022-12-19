@@ -132,7 +132,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
                 return RedirectToPage();
             }
 
-            StatusMessage = "Váš email nebyl změněn.";
+            StatusMessage = "Váš email byl změněn.";
             return RedirectToPage();
         }
 
