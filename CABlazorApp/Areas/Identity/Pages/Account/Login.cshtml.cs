@@ -35,8 +35,6 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public static bool LoginStatement;
-
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -131,18 +129,12 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Zadal jste špatné přihlašovací údaje.");
-                    LoginStatement = true;
                     return Page();
                 }
             }
 
             // If we got this far, something failed, redisplay form
             return Page();
-        }
-
-        public bool LoginState()
-        {
-            return LoginStatement;
         }
     }
 }

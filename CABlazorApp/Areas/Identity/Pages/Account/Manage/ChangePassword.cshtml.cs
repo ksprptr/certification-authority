@@ -54,7 +54,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
-            [DataType(DataType.Password, ErrorMessage = "test test test test")]
+            [DataType(DataType.Password)]
             [Display(Name = "Momentální heslo")]
             public string OldPassword { get; set; }
 

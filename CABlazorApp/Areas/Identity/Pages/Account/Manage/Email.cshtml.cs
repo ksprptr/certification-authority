@@ -125,14 +125,14 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
                     protocol: Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
-                    "Potvrzení účtu",
-                    $"Prosím potvrďte Váš účet <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>zde</a>.");
+                    "Potvrzení emailu",
+                    $"Prosím potvrďte Váš email <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>zde</a>.");
 
                 StatusMessage = "Potvrzení o změně emailu bylo zasláno na Váš email. Zkontrolujte Vaši emailovou schránku.";
                 return RedirectToPage();
             }
 
-            StatusMessage = "Váš email byl změněn.";
+            StatusMessage = "Váš stávající email nelze změnit na tento nový email.";
             return RedirectToPage();
         }
 
