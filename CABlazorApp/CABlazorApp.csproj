@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Identity\Pages\Shared" />
+    <Folder Include="wwwroot\unsafe_uploads" />
   </ItemGroup>
 
 </Project>
