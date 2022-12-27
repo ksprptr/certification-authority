@@ -23,4 +23,11 @@
     <Folder Include="wwwroot\uploads" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\uploads\dortwess@gmail.com\files\soubor.docx" />
+    <_ContentIncludedByDefault Remove="wwwroot\uploads\dortwess@gmail.com\testCertificate.pfx" />
+    <_ContentIncludedByDefault Remove="wwwroot\uploads\ahoj@example.com\certifikat.pfx" />
+    <_ContentIncludedByDefault Remove="wwwroot\uploads\ahoj@example.com\files\file.docx" />
+  </ItemGroup>
+
 </Project>

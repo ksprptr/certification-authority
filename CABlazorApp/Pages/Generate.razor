@@ -1,11 +1,6 @@
 ﻿@page "/generate"
-@using CABlazorApp.Data;
 @using Microsoft.AspNetCore.Identity
 @inject IWebHostEnvironment Environment
-@inject IJSRuntime Js
-@inject ApplicationDbContext Ctx
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 <PageTitle>CA | Generovat</PageTitle>
@@ -198,11 +193,11 @@
                 Directory.CreateDirectory(_dirOfCertificateFolder);
             }
             
-            await using FileStream fs = new(_dirOfFile, FileMode.Create);
-            await using FileStream fs2 = new(_dirOfCertificate, FileMode.Create);
-            await _file.OpenReadStream(1024 * 15).CopyToAsync(fs);
-            await _certificate.OpenReadStream(1024 * 15).CopyToAsync(fs2);
-            await Enc.Encrypt($"{_dirOfFile}", $"{_dirOfCertificate}", $"{_passwordEnc}");
+             await using FileStream fs = new(_dirOfFile, FileMode.Create);
+             await using FileStream fs2 = new(_dirOfCertificate, FileMode.Create);
+             await _file.OpenReadStream(1024 * 15).CopyToAsync(fs);
+             await _certificate.OpenReadStream(1024 * 15).CopyToAsync(fs2);
+             await Enc.Encrypt($"{_dirOfFile}", $"{_dirOfCertificate}", $"{_passwordEnc}");
         }
     }
 
