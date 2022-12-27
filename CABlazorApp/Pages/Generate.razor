@@ -1,4 +1,5 @@
 ﻿@page "/generate"
+<<<<<<< HEAD
 @using CABlazorApp.Data;
 @using Microsoft.AspNetCore.Identity
 @inject IWebHostEnvironment Environment
@@ -23,12 +24,18 @@
     </div>
 </NotAuthorized>
 <Authorized>
+=======
+
+<PageTitle>CA | Generovat</PageTitle>
+
+>>>>>>> parent of 9fe2d3c (working)
 <div class="bg-[#F3F3F5]">
     <div class="container xl:px-32 px-6 mx-auto">
         <div class="block py-24">
             <div class="bg-[#FFFFFF] rounded-xl p-8">
                 <h1 class="sm:text-3xl text-2xl text-gray-800 font-semibold uppercase">Podepsání dokumentu</h1>
                 <div class="lg:flex block justify-between items-center">
+<<<<<<< HEAD
                     <form method="post" action="/generate">
                         <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words mb-4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                         <hr/>
@@ -74,6 +81,11 @@
                     <form method="post">
                         <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words mb-4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                         <hr/>
+=======
+                    <form method="post">
+                        <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words mb-4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
+                        <hr />
+>>>>>>> parent of 9fe2d3c (working)
                         <div class="flex flex-col py-4">
                             <label for="certificate" class="text-gray-800 font-semibold text-xl">Vyberte certifikát</label>
                             <div class="flex-row mt-3 mb-1">
@@ -81,14 +93,21 @@
                                 <input type="file" id="certificate" class="file:hidden sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required/>
                             </div>
                         </div>
+<<<<<<< HEAD
                         <hr/>
                         <div class="flex flex-col py-4">
                             <label class="text-gray-800 font-semibold text-xl">Vyberte podepsaný dokument</label>
+=======
+                        <hr />
+                        <div class="flex flex-col py-4">
+                            <label class="text-gray-800 font-semibold text-xl">Vyberte dokument</label>
+>>>>>>> parent of 9fe2d3c (working)
                             <div class="flex-row mt-3 mb-1">
                                 <label for="file" class="text-gray-800 hover:cursor-pointer font-semibold py-1 border-2 border-gray-800 px-2 rounded-lg hover:bg-gray-800 hover:text-white duration-150 bg-transparent">Vybrat</label>
                                 <input type="file" id="file" class="file:hidden sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required/>
                             </div>
                         </div>
+<<<<<<< HEAD
                         <hr/>
                         <input type="submit" class="lg:mb-0 mb-4 mt-4 text-gray-800 hover:cursor-pointer font-semibold text-md py-2 border-2 border-gray-800 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 box-shadow" value="Odšifrovat"/>
                     </form>
@@ -116,10 +135,29 @@
                         <div class="sm:flex block justify-between mt-4">
                             <button class="sm:mb-0 mb-4 text-[#2E76B4] hover:cursor-pointer font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg hover:bg-[#2E76B4] hover:text-white duration-150 box-shadow">Stáhnout</button>
                             <button class="text-[#2E76B4] hover:cursor-pointer font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg hover:bg-[#2E76B4] hover:text-white duration-150 box-shadow">Archivovat</button>
+=======
+                        <hr />
+                        <input type="submit" class="lg:mb-0 mb-4 mt-4 text-gray-800 hover:cursor-pointer font-semibold text-md py-2 border-2 border-gray-800 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 box-shadow" value="Podepsat" />
+                    </form>
+                    <div class="flex flex-col justify-between border-2 rounded-lg border-[#2E76B4] p-4 h-[75%]">
+                        <h3 class="text-gray-800 font-semibold text-lg pb-2">Zde se objeví soubor pro stažení</h3>
+                        <hr />
+                        <div class="sm:flex block justify-between mt-4">
+                            <button class="sm:mb-0 mb-4 text-[#2E76B4] hover:cursor-pointer font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg hover:bg-[#2E76B4] hover:text-white duration-150 box-shadow">Stáhnout</button>
+                            <AuthorizeView>
+                                <Authorized>
+                                    <button class="text-[#2E76B4] hover:cursor-pointer font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg hover:bg-[#2E76B4] hover:text-white duration-150 box-shadow">Archivovat</button>
+                                </Authorized>
+                                <NotAuthorized>
+                                    <button class="opacity-50 disabled hover:cursor-default text-[#2E76B4] font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg box-shadow">Archivovat</button>
+                                </NotAuthorized>
+                            </AuthorizeView>
+>>>>>>> parent of 9fe2d3c (working)
                         </div>
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
         </div>
     </div>
 </div>
@@ -231,3 +269,75 @@
 
 </Authorized>
 </AuthorizeView>
+=======
+            <br />
+            <div class="bg-[#FFFFFF] rounded-xl p-8">
+                <h1 class="sm:text-3xl text-2xl text-gray-800 font-semibold uppercase">Odšifrování dokumentu</h1>
+                <div class="lg:flex block justify-between items-center">
+                    <form method="post">
+                        <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words mb-4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
+                        <hr />
+                        <div class="flex flex-col py-4">
+                            <label for="certificate" class="text-gray-800 font-semibold text-xl">Vyberte certifikát</label>
+                            <div class="flex-row mt-3 mb-1">
+                                <label for="certificate" class="text-gray-800 hover:cursor-pointer font-semibold py-1 border-2 border-gray-800 px-2 rounded-lg hover:bg-gray-800 hover:text-white duration-150 bg-transparent">Vybrat</label>
+                                <input type="file" id="certificate" class="file:hidden sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required/>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="flex flex-col py-4">
+                            <label class="text-gray-800 font-semibold text-xl">Vyberte podepsaný dokument</label>
+                            <div class="flex-row mt-3 mb-1">
+                                <label for="file" class="text-gray-800 hover:cursor-pointer font-semibold py-1 border-2 border-gray-800 px-2 rounded-lg hover:bg-gray-800 hover:text-white duration-150 bg-transparent">Vybrat</label>
+                                <input type="file" id="file" class="file:hidden sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required/>
+                            </div>
+                        </div>
+                        <hr />
+                        <input type="submit" class="lg:mb-0 mb-4 mt-4 text-gray-800 hover:cursor-pointer font-semibold text-md py-2 border-2 border-gray-800 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 box-shadow" value="Odšifrovat" />
+                    </form>
+                    <div class="flex flex-col justify-between border-2 rounded-lg border-[#2E76B4] p-4 h-[75%]">
+                        <h3 class="text-gray-800 font-semibold text-lg pb-2">Zde se objeví soubor pro stažení</h3>
+                        <hr />
+                        <div class="sm:flex block justify-between mt-4">
+                            <button class="sm:mb-0 mb-4 text-[#2E76B4] hover:cursor-pointer font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg hover:bg-[#2E76B4] hover:text-white duration-150 box-shadow">Stáhnout</button>
+                            <AuthorizeView>
+                                <Authorized>
+                                    <button class="text-[#2E76B4] hover:cursor-pointer font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg hover:bg-[#2E76B4] hover:text-white duration-150 box-shadow">Archivovat</button>
+                                </Authorized>
+                                <NotAuthorized>
+                                    <button class="opacity-50 disabled hover:cursor-default text-[#2E76B4] font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg box-shadow">Archivovat</button>
+                                </NotAuthorized>
+                            </AuthorizeView>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="bg-[#FFFFFF] rounded-xl p-8">
+                <h1 class="text-gray-800 sm:text-3xl text-2xl font-semibold uppercase">Generování certifikátů</h1>
+                <div class="lg:flex block justify-between">
+                    <div>
+                        <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
+                        <button class="lg:mb-0 mb-4 mt-2 text-gray-800 hover:cursor-pointer font-semibold text-md py-2 border-2 border-gray-800 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 box-shadow">Vygenerovat</button>
+                    </div>
+                    <div class="flex flex-col justify-between border-2 rounded-lg border-[#2E76B4] p-4 h-[75%]">
+                        <h3 class="text-gray-800 font-semibold text-lg pb-2">Zde se objeví soubor pro stažení</h3>
+                        <hr />
+                        <div class="sm:flex block justify-between mt-4">
+                            <button class="sm:mb-0 mb-4 text-[#2E76B4] hover:cursor-pointer font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg hover:bg-[#2E76B4] hover:text-white duration-150 box-shadow">Stáhnout</button>
+                            <AuthorizeView>
+                                <Authorized>
+                                    <button class="text-[#2E76B4] hover:cursor-pointer font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg hover:bg-[#2E76B4] hover:text-white duration-150 box-shadow">Archivovat</button>
+                                </Authorized>
+                                <NotAuthorized>
+                                    <button class="opacity-50 disabled hover:cursor-default text-[#2E76B4] font-semibold text-md py-2 border-2 border-[#2E76B4] px-4 rounded-lg box-shadow">Archivovat</button>
+                                </NotAuthorized>
+                            </AuthorizeView>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+</div>
+>>>>>>> parent of 9fe2d3c (working)
