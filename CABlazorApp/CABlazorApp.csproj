@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\uploads" />
+    <Folder Include="wwwroot\unsafe_uploads" />
   </ItemGroup>
 
 </Project>
