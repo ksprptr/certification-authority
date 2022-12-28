@@ -24,21 +24,21 @@
             <div class="bg-[#FFFFFF] rounded-xl p-8">
                 <h1 class="sm:text-3xl text-2xl text-gray-800 font-semibold uppercase">Podepsání dokumentu</h1>
                 <div class="lg:flex block justify-between items-center">
-                    <form method="post" action="/generate">
+                    <form method="post" action="/api">
                         <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words mb-4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                         <hr/>
                         <div class="flex flex-col py-4">
                             <label for="certificate" class="text-gray-800 font-semibold text-xl">Vyberte certifikát</label>
                             <div class="flex-row mt-3 mb-1">
                                 <label for="certificate" class="text-gray-800 hover:cursor-pointer font-semibold py-1 border-2 border-gray-800 px-2 rounded-lg hover:bg-gray-800 hover:text-white duration-150 bg-transparent">Vybrat</label>
-                                <InputFile OnChange="@LoadFileC" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required multiple/>
+                                <input name="FileEncryptInput" type="file" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required multiple/>
                             </div>
                         </div>
                         <hr/>
                         <div class="flex flex-col py-4">
                             <label for="textID" class="text-gray-800 font-semibold text-xl">Heslo</label>
                             <div class="flex-row mt-3 mb-1">
-                                <input type="text" id="textID" @bind="_passwordEnc" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required/>
+                                <input type="text" id="textID" name="password" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required/>
                             </div>
                         </div>
                         <hr/>
@@ -46,11 +46,11 @@
                             <label class="text-gray-800 font-semibold text-xl">Vyberte dokument</label>
                             <div class="flex-row mt-3 mb-1">
                                 <label for="file" class="text-gray-800 hover:cursor-pointer font-semibold py-1 border-2 border-gray-800 px-2 rounded-lg hover:bg-gray-800 hover:text-white duration-150 bg-transparent">Vybrat</label>
-                                <InputFile OnChange="@LoadFileE" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required multiple/>
+                                <input name="CertEncryptInput" type="file" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required multiple/>
                             </div>
                         </div>
                         <hr/>
-                        <input type="submit" @onclick="@Encrypt" class="lg:mb-0 mb-4 mt-4 text-gray-800 hover:cursor-pointer font-semibold text-md py-2 border-2 border-gray-800 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 box-shadow" value="Podepsat"/>
+                        <input type="submit" class="lg:mb-0 mb-4 mt-4 text-gray-800 hover:cursor-pointer font-semibold text-md py-2 border-2 border-gray-800 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 box-shadow" value="Podepsat"/>
                     </form>
                     <div class="flex flex-col justify-between border-2 rounded-lg border-[#2E76B4] p-4 h-[75%]">
                         <h3 class="text-gray-800 font-semibold text-lg pb-2">Zde se objeví soubor pro stažení</h3>
@@ -118,111 +118,5 @@
         </div>
     </div>
 </div>
-
-
-@code {
-
-    // Inputs for encrypt
-    private string _passwordEnc = "";
-    private IBrowserFile _file;
-    private IBrowserFile _certificate;
-    private string _dirOfFile = "";
-    private string _dirOfFileFolder = "";
-    private string _dirOfCertificate = "";
-    private string _dirOfCertificateFolder = "";
-
-    // Extensions for encrypt
-    private string _fileExtEnc = "";
-    private string _certificateExtEnc = "";
-
-    // File input for encrypt
-    private async Task LoadFileE(InputFileChangeEventArgs e)
-    {
-        foreach (var file in e.GetMultipleFiles(1))
-        {
-            var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-            var user = authstate.User;
-            var name = user.Identity?.Name;
-            if (name != null)
-            {
-                _dirOfFile = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", name, "files", file.Name);
-                _dirOfFileFolder = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", name, "files");
-                _fileExtEnc = Path.GetExtension(_dirOfFile);
-                _file = file;
-            }
-        }
-    }
-
-    // Certificate input for encrypt
-    private async Task LoadFileC(InputFileChangeEventArgs e)
-    {
-        foreach (var certificate in e.GetMultipleFiles(1))
-        {
-            var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-            var user = authstate.User;
-            var name = user.Identity?.Name;
-            if (name != null)
-            {
-                _dirOfCertificate = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", name, certificate.Name);
-                _dirOfCertificateFolder = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", name);
-                _certificateExtEnc = Path.GetExtension(_dirOfCertificate);
-                _certificate = certificate;
-            }
-        }
-    }
-
-    private async Task Encrypt()
-    {
-        if (_fileExtEnc == ".crt" || _fileExtEnc == ".cer" || _fileExtEnc == ".ca-bundle" || _fileExtEnc == ".p7b" || _fileExtEnc == ".p7c" || _fileExtEnc == ".p7s" || _fileExtEnc == ".pem" || _fileExtEnc == ".p12" || _fileExtEnc == ".pfx")
-        {
-            Console.WriteLine("WARN: Uploaded file is a certificate!");
-        }
-        else if(_certificateExtEnc != ".crt" && _certificateExtEnc != ".cer" && _certificateExtEnc != ".ca-bundle" && _certificateExtEnc != ".p7b" && _certificateExtEnc != ".p7c" && _certificateExtEnc != ".p7s" && _certificateExtEnc != ".pem" && _certificateExtEnc != ".p12" && _certificateExtEnc != ".pfx")
-        {
-            Console.WriteLine("WARN: Uploaded certificate is not a valid certificate!");
-        }
-        else
-        {
-            if (!Directory.Exists(_dirOfFileFolder))
-            {
-                Directory.CreateDirectory(_dirOfFileFolder);
-            }
-            
-            if (!Directory.Exists(_dirOfCertificateFolder))
-            {
-                Directory.CreateDirectory(_dirOfCertificateFolder);
-            }
-            
-             await using FileStream fs = new(_dirOfFile, FileMode.Create);
-             await using FileStream fs2 = new(_dirOfCertificate, FileMode.Create);
-             await _file.OpenReadStream(1024 * 15).CopyToAsync(fs);
-             await _certificate.OpenReadStream(1024 * 15).CopyToAsync(fs2);
-             await Enc.Encrypt($"{_dirOfFile}", $"{_dirOfCertificate}", $"{_passwordEnc}");
-        }
-    }
-
-    // private async Task Decrypt()
-    // {
-    //     await Enc.Decrypt("Document.docx", "certifikat.pfx", "1234.");
-    // }
-    //
-    // private Stream GetFileStream()
-    // {
-    //     var fileStream = new MemoryStream(File.ReadAllBytes(_fileNameEnc));
-    //
-    //     return fileStream;
-    // }
-    //
-    // private async Task DownloadFileFromStream()
-    // {
-    //     var fileStream = GetFileStream();
-    //
-    //     using var streamRef = new DotNetStreamReference(stream: fileStream);
-    //
-    //     await Js.InvokeVoidAsync("downloadFileFromStream", _fileNameEnc, streamRef);
-    // }
-
-}
-
 </Authorized>
 </AuthorizeView>
