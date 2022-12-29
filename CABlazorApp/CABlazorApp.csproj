@@ -25,6 +25,7 @@
     <_ContentIncludedByDefault Remove="wwwroot\uploads\ahoj@example.com\certifikat.pfx" />
     <_ContentIncludedByDefault Remove="wwwroot\uploads\ahoj@example.com\files\file.docx" />
     <_ContentIncludedByDefault Remove="wwwroot\uploads\files\document.docx" />
+    <_ContentIncludedByDefault Remove="wwwroot\uploads\files\Heslo.docx" />
   </ItemGroup>
 
   <ItemGroup>

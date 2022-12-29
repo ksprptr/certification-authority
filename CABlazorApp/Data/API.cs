@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CABlazorApp.Pages;
+using CABlazorApp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -29,9 +29,9 @@ namespace CABlazorApp.Data
             Console.WriteLine("test");
 
             string error = "";
-
             var file = requestBody.FileEncryptInput;
             var certificate = requestBody.CertEncryptInput;
+            string password = requestBody.PasswordEncryptInput;
             // var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
             // var user = authstate.User;
             // var name = user.Identity?.Name;
@@ -39,7 +39,6 @@ namespace CABlazorApp.Data
             string fileDir = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", "files");
             string certPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", certificate.FileName);
             string certDir = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads");
-            string password = requestBody.PasswordEncryptInput.ToString();
 
             if (!Directory.Exists(fileDir))
             {
@@ -55,7 +54,6 @@ namespace CABlazorApp.Data
             await file.OpenReadStream().CopyToAsync(fs);
             await certificate.OpenReadStream().CopyToAsync(fs2);
             await Enc.Encrypt($"{filePath}", $"{certPath}", $"{password}");
-            // Response.Redirect(error != "" ? $"/generate?error={error}" : $"/result");
         }
 
         public class RequestBody

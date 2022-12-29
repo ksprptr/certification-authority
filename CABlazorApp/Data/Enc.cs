@@ -30,7 +30,6 @@ public class Enc
         var publicKey = cert.GetRSAPublicKey();
         return publicKey!.Encrypt(key, RSAEncryptionPadding.OaepSHA256);
     }
-    [Obsolete("Obsolete")]
     public static async Task Decrypt(string filePath, string certName, string password)
     {
         var file = (await File.ReadAllBytesAsync(filePath)).ToList();
