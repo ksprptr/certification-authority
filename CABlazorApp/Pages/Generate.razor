@@ -24,14 +24,14 @@
             <div class="bg-[#FFFFFF] rounded-xl p-8">
                 <h1 class="sm:text-3xl text-2xl text-gray-800 font-semibold uppercase">Podepsání dokumentu</h1>
                 <div class="lg:flex block justify-between items-center">
-                    <form method="get" action="/api/method">
+                    <form method="post" asp-action="Method" enctype="multipart/form-data" asp-controller="APi" action="/api/method">
                         <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words mb-4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                         <hr/>
                         <div class="flex flex-col py-4">
                             <label for="certificate" class="text-gray-800 font-semibold text-xl">Vyberte certifikát</label>
                             <div class="flex-row mt-3 mb-1">
                                 <label for="certificate" class="text-gray-800 hover:cursor-pointer font-semibold py-1 border-2 border-gray-800 px-2 rounded-lg hover:bg-gray-800 hover:text-white duration-150 bg-transparent">Vybrat</label>
-                                <input name="FileEncryptInput" id="FileEncryptInput" type="file" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required multiple/>
+                                <input type="file" id="CertEncryptInput" name="CertEncryptInput" enctype="multipart/form-data" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required/>
                             </div>
                         </div>
                         <hr/>
@@ -46,7 +46,7 @@
                             <label class="text-gray-800 font-semibold text-xl">Vyberte dokument</label>
                             <div class="flex-row mt-3 mb-1">
                                 <label for="file" class="text-gray-800 hover:cursor-pointer font-semibold py-1 border-2 border-gray-800 px-2 rounded-lg hover:bg-gray-800 hover:text-white duration-150 bg-transparent">Vybrat</label>
-                                <input name="CertEncryptInput" id="CertEncryptInput" type="file" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required multiple/>
+                                <input type="file" id="FileEncryptInput" name="FileEncryptInput" class="sm:mt-0 mt-2 sm:w-auto w-full mx-auto" required/>
                             </div>
                         </div>
                         <hr/>

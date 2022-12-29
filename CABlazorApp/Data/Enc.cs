@@ -1,4 +1,4 @@
-﻿namespace CABlazorApp.Pages;
+﻿namespace CABlazorApp.Data;
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -28,8 +28,9 @@ public class Enc
     {
         var cert = new X509Certificate2(certName, password);
         var publicKey = cert.GetRSAPublicKey();
-        return publicKey.Encrypt(key, RSAEncryptionPadding.OaepSHA256);
+        return publicKey!.Encrypt(key, RSAEncryptionPadding.OaepSHA256);
     }
+    [Obsolete("Obsolete")]
     public static async Task Decrypt(string filePath, string certName, string password)
     {
         var file = (await File.ReadAllBytesAsync(filePath)).ToList();
@@ -57,6 +58,6 @@ public class Enc
     {
         var cert = new X509Certificate2(certName, password);
         var privateKey = cert.GetRSAPrivateKey();
-        return privateKey.Decrypt(keyBytes, RSAEncryptionPadding.OaepSHA256);
+        return privateKey!.Decrypt(keyBytes, RSAEncryptionPadding.OaepSHA256);
     }
 }
