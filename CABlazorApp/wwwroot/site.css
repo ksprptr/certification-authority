@@ -2,42 +2,9 @@
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-.text-shadow {
-    text-shadow: 1px 1px 5px #000;
-}
 
-.box-shadow {
+.shadow {
     box-shadow: 1px 1px 4px #D3D3D3;
-}
-
-h1:focus {
-    outline: none;
-}
-
-a, .btn-link {
-    color: #0071c1;
-}
-
-.text-shadow {
-    text-shadow: 1px 1px 5px #000;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.content {
-    padding-top: 1.1rem;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
-.invalid {
-    outline: 1px solid red;
 }
 
 .validation-message {

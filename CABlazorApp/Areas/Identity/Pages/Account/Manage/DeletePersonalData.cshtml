@@ -4,20 +4,21 @@
     ViewData["Title"] = "Smazat účet";
 }
 
-<div class="bg-[#FFFFFF] rounded-xl lg:p-8 p-6 box-shadow sm:w-[40rem] w-auto">
-   <h1 class="text-gray-800 text-3xl font-semibold uppercase pb-2">@ViewData["Title"]</h1>
+<div class="bg-gray-50 rounded-lg lg:p-8 p-6 shadow sm:w-[40rem] w-auto">
+   <h1 class="text-gray-800 text-2xl font-medium uppercase pb-2">@ViewData["Title"]</h1>
    <hr />
    <form id="delete-user" method="post">
-       <p class="font-semibold text-gray-600 mt-2 text-xl">Smazáním účtu přijdete o všechna data spojené s tímto účtem! Tato akce je nevratná a data nelze obnovit!</p>
+       <p class="text-gray-600 mt-2">Smazáním účtu přijdete o všechna data spojené s tímto účtem! Tato akce je nevratná a data nelze obnovit!</p>
        @if (Model.RequirePassword)
        {
-           <div asp-validation-summary="ModelOnly" class="bg-[#FECACA] mt-4 p-4 text-lg font-semibold text-[#EF4444] border-2 border-[#EF4444] rounded-xl"></div>
-           <div class="flex flex-col mt-4">
-               <input asp-for="Input.Password" placeholder="Momentální heslo" class="p-2 autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="current-password" aria-required="true"/>
-               <span asp-validation-for="Input.Password" class="text-red-700"></span>
+           <div asp-validation-summary="ModelOnly" class="bg-red-100 py-3 px-4 font-medium text-md text-red-700 border-2 border-red-200 rounded-lg"></div>
+           <div class="flex flex-col mt-2">
+               <label asp-for="Input.Password" class="text-gray-600 font-medium"></label>
+               <input asp-for="Input.Password" placeholder="Vaše heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" autocomplete="current-password" aria-required="true"/>
+               <span asp-validation-for="Input.Password" class="text-red-700 text-sm mt-1 ml-0.5"></span>
            </div>
        }
-       <button type="submit" class="mt-4 text-white font-semibold text-md text-center py-2 px-6 uppercase rounded-xl bg-red-700 hover:bg-red-800 hover:text-gray-300 duration-150 box-shadow">Smazat</button>
+       <button type="submit" class="mt-2 text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30">Smazat</button>
    </form>
 </div>
 

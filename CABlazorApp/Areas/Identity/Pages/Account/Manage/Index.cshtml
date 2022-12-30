@@ -4,26 +4,27 @@
     ViewData["Title"] = "Profil";
 }
 
-<div class="bg-[#FFFFFF] rounded-xl lg:p-8 p-6 box-shadow sm:w-[40rem] w-auto">
-   <h1 class="text-gray-800 text-3xl font-semibold uppercase pb-2">@ViewData["Title"]</h1>
+<div class="bg-gray-50 rounded-lg lg:p-8 p-6 shadow sm:w-[40rem] w-auto">
+   <h1 class="text-gray-800 text-2xl font-medium uppercase pb-2">@ViewData["Title"]</h1>
    <hr />
    <form id="profile-form" method="post">
        @if (Model.StatusMessage != null)
        {
-          <div class="bg-[#BBF7D0] mt-4 p-4 text-lg font-semibold text-[#22C55E] border-2 border-[#22C55E] rounded-xl">
+          <div class="bg-green-100 mt-4 py-3 px-4 font-medium text-md text-green-700 border-2 border-green-200 rounded-lg">
               <partial name="_StatusMessage" model="Model.StatusMessage"/>
           </div>
        }
-       <div asp-validation-summary="ModelOnly" class="bg-[#FECACA] mt-2 p-4 text-lg font-semibold text-[#EF4444] border-2 border-[#EF4444] rounded-xl"></div>
+       <div asp-validation-summary="ModelOnly" class="bg-red-100 py-3 px-4 font-medium text-md text-red-700 border-2 border-red-200 rounded-lg"></div>
        <div class="flex flex-col mt-2">
-           <label asp-for="Username" class="text-gray-800 font-semibold text-lg"></label>
-           <input asp-for="Username" class="opacity-50 p-2 w-full autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" disabled/>
+           <label asp-for="Username" class="text-gray-600 font-medium"></label>
+           <input asp-for="Username" class="py-2 px-3 w-full rounded-lg text-md text-gray-400 cursor-not-allowed" disabled/>
        </div>
-       <div class="flex flex-col mt-4">
-           <input asp-for="Input.PhoneNumber" placeholder="Telefonní číslo" class="p-2 autofill:text-lg autofill:bg-transparent text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" aria-required="true"/>
-           <span asp-validation-for="Input.PhoneNumber" class="text-red-700"></span>
+       <div class="flex flex-col mt-2">
+           <label asp-for="Input.PhoneNumber" class="text-gray-600 text-md font-medium"></label>
+           <input asp-for="Input.PhoneNumber" placeholder="Telefonní číslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" aria-required="true"/>
+           <span asp-validation-for="Input.PhoneNumber" class="text-red-700 text-sm mt-1 ml-0.5"></span>
        </div>
-       <button id="update-profile-button" type="submit" class="mt-4 text-gray-800 font-semibold text-md border-2 border-gray-800 text-center py-2 px-6 uppercase rounded-xl hover:bg-gray-800 hover:text-white duration-150 box-shadow">Uložit</button>
+       <button id="update-profile-button" type="submit" class="mt-2 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Uložit</button>
    </form>
 </div>
 

@@ -66,6 +66,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
             [EmailAddress(ErrorMessage = "Tento email je neplatný.")]
+            [Display(Name = "Email")]
             public string Email { get; set; }
 
             /// <summary>
@@ -74,6 +75,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
             [DataType(DataType.Password)]
+            [Display(Name = "Heslo")]
             public string Password { get; set; }
 
             /// <summary>

@@ -3,7 +3,16 @@
         <div class="container xl:px-32 px-6 mx-auto">
             <div class="flex justify-between py-2 text-center items-center">
                 <div class="lg:block hidden"><h3 class="text-lg text-gray-800 font-semibold uppercase"><a href="/">Certifikační Autorita</a></h3></div>
-                <div class="lg:hidden block text-2xl"><button><i class="fa-solid fa-bars"></i></button></div>
+                <div class="lg:hidden block text-2xl"><button @onclick="Toggle" @onblur="Hide">
+                    @if (_toggled)
+                    {
+                        <i class="fa-solid fa-xmark"></i>
+                    }
+                    else
+                    {
+                        <i class="fa-solid fa-bars"></i>
+                    }
+                </button></div>
                 <ul class="flex items-center">
                     <li class="lg:block hidden"><a href="/" class="text-gray-800 font-semibold text-md text-center py-2 px-4 m-auto mx-1 rounded-lg hover:text-[#2E76B4] duration-150">Domů</a></li>
                     <li class="lg:block hidden"><a href="/archiv" class="text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Archív</a></li>
@@ -16,17 +25,48 @@
                             </form>
                         </Authorized>
                         <NotAuthorized>
-                            <div class="sm:flex hidden">
-                                <a href="/Identity/Account/Register" class="border-2 border-gray-800 text-gray-800 font-semibold text-md text-center hover:bg-gray-800 m-auto py-2 px-4 mx-1 text-center rounded-lg hover:text-white duration-150">Registrovat se</a>
-                                <a href="/Identity/Account/Login" class="border-2 border-gray-800 text-gray-800 font-semibold text-md text-center hover:bg-gray-800 m-auto py-2 px-4 mx-1 text-center rounded-lg hover:text-white duration-150">Přihlásit se</a>
-                            </div>
-                            <div class="sm:hidden flex">
-                                <div class="lg:hidden block text-2xl"><button><i class="fa-solid fa-user"></i></button></div>
+                            <div class="flex min-[370px]:flex-row flex-col min-[370px]:gap-y-0 gap-y-2">
+                                <a href="/Identity/Account/Register" class="border-2 border-gray-800 text-gray-800 font-semibold sm:text-md text-sm text-center hover:bg-gray-800 m-auto sm:py-2 sm:px-4 py-2 px-3 mx-1 text-center rounded-lg hover:text-white duration-150">Registrovat se</a>
+                                <a href="/Identity/Account/Login" class="border-2 border-gray-800 text-gray-800 font-semibold sm:text-md text-sm text-center hover:bg-gray-800 m-auto sm:py-2 sm:px-4 py-2 px-3 mx-1 text-center rounded-lg hover:text-white duration-150">Přihlásit se</a>
                             </div>
                         </NotAuthorized>
                     </AuthorizeView>
                 </ul>
             </div>
+            @if (_toggled)
+            {
+                <ul class="block mb-3">
+                    <li><a href="/" class="text-gray-800 font-semibold text-md m-auto rounded-lg hover:text-[#2E76B4] duration-150">Domů</a></li>
+                    <li><a href="/archiv" class="text-gray-800 font-semibold text-md m-auto rounded-lg hover:text-[#2E76B4] duration-150">Archív</a></li>
+                    <li><a href="/generate" class="text-gray-800 font-semibold text-md m-auto rounded-lg hover:text-[#2E76B4] duration-150">Generovat</a></li>
+                    <li><a href="/Identity/Account/Manage" class="sm:hidden block text-gray-800 font-semibold text-md m-auto rounded-lg hover:text-[#2E76B4] duration-150">Uživatelský panel</a></li>
+                </ul>
+            }
         </div> 
     </nav>
 </div>
+
+@code
+{
+    private bool _toggled;
+
+    private void Toggle()
+    {
+        if (_toggled == true)
+        {
+            _toggled = false;
+            InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            _toggled = true;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void Hide()
+    {
+        _toggled = false;
+        InvokeAsync(StateHasChanged);
+    }
+}

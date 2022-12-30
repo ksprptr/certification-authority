@@ -3,6 +3,7 @@ using CABlazorApp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace CABlazorApp.Data
 {
@@ -21,13 +22,10 @@ namespace CABlazorApp.Data
         [Inject] public AuthenticationStateProvider GetAuthenticationStateAsync { get; set; }
 
         [HttpPost]
-        [Microsoft.AspNetCore.Mvc.Route("method")]
+        [Microsoft.AspNetCore.Mvc.Route("encrypt")]
         
-        public async Task Method([FromForm] RequestBody requestBody)
+        public async Task Encrypt([FromForm] RequestBody requestBody)
         {
-
-            Console.WriteLine("test");
-
             string error = "";
             var file = requestBody.FileEncryptInput;
             var certificate = requestBody.CertEncryptInput;
@@ -53,7 +51,7 @@ namespace CABlazorApp.Data
             await using FileStream fs2 = new(certPath, FileMode.Create);
             await file.OpenReadStream().CopyToAsync(fs);
             await certificate.OpenReadStream().CopyToAsync(fs2);
-            await Enc.Encrypt($"{filePath}", $"{certPath}", $"{password}");
+            Response.Redirect(error != "" ? $"/generate?error={error}" : "/result");
         }
 
         public class RequestBody

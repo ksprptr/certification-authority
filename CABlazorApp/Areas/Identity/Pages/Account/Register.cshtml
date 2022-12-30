@@ -8,28 +8,31 @@
 }
 
 <div class="container xl:px-32 px-6 mx-auto">
-    <div class="xl:w-[25%] lg:w-[50%] md:w-[75%] sm:w-auto mx-auto md:mt-52 mt-32 bg-white rounded-xl p-8 box-shadow">
-        <h2 class="text-center text-3xl font-semibold uppercase pb-2">@ViewData["Title"]</h2>
+    <div class="xl:w-[25%] lg:w-[50%] md:w-[75%] sm:w-auto mx-auto md:mt-52 mt-32 bg-gray-50 rounded-lg p-8 shadow">
+        <h2 class="text-gray-800 text-2xl font-medium uppercase pb-2 text-center">@ViewData["Title"]</h2>
         <hr />
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <div asp-validation-summary="ModelOnly" class="w-[90%] mx-auto bg-[#FECACA] mt-4 p-4 text-lg font-semibold text-[#EF4444] border-2 border-[#EF4444] rounded-xl"></div>
-            <div class="flex flex-col justify-center mx-auto mt-4">
-                <div class="flex flex-col justify-center">
-                    <input asp-for="Input.Email" placeholder="Email" class="w-[90%] text-center mx-auto p-2 text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="username" aria-required="true"/>
-                    <span asp-validation-for="Input.Email" class="text-center text-red-700"></span>
+            <div class="flex flex-col justify-center mx-auto">
+                <div asp-validation-summary="ModelOnly" class="mt-4 mx-auto bg-red-100 py-3 px-4 font-medium text-md text-red-700 border-2 border-red-200 rounded-lg"></div>
+                <div class="flex flex-col justify-center mt-2">
+                    <label asp-for="Input.Email" class="text-gray-600 font-medium ml-0.5"></label>
+                    <input asp-for="Input.Email" placeholder="Email" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" autocomplete="username" aria-required="true"/>
+                    <span asp-validation-for="Input.Email" class="text-red-700 text-sm mt-1 ml-0.5"></span>
                 </div>
-                <div class="flex flex-col justify-center mt-4">
-                    <input asp-for="Input.Password" placeholder="Heslo" class="w-[90%] text-center mx-auto p-2 text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="new-password" aria-required="true"/>
-                    <span asp-validation-for="Input.Password" class="text-center text-red-700"></span>
+                <div class="flex flex-col justify-center mt-2">
+                    <label asp-for="Input.Password" class="text-gray-600 font-medium ml-0.5"></label>
+                    <input asp-for="Input.Password" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" autocomplete="new-password" aria-required="true"/>
+                    <span asp-validation-for="Input.Password" class="text-red-700 text-sm mt-1 ml-0.5"></span>
                 </div>
-                <div class="flex flex-col justify-center mt-4">
-                    <input asp-for="Input.ConfirmPassword" placeholder="Potvrzení hesla" class="w-[90%] text-center mx-auto p-2 text-lg border-2 border-gray-800 rounded-xl bg-transparent box-shadow font-semibold" autocomplete="new-password" aria-required="true"/>
-                    <span asp-validation-for="Input.ConfirmPassword" class="text-center text-red-700"></span>
+                <div class="flex flex-col justify-center mt-2">
+                    <label asp-for="Input.ConfirmPassword" class="text-gray-600 font-medium ml-0.5"></label>
+                    <input asp-for="Input.ConfirmPassword" placeholder="Heslo znovu" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" autocomplete="new-password" aria-required="true"/>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-red-700 text-sm mt-1 ml-0.5"></span>
                 </div>
             </div>
-            <div class="flex mt-4">
+            <div class="flex mt-2">
                 <div class="mx-auto">
-                    <button id="registerSubmit" type="submit" class="text-gray-800 font-semibold text-md border-2 border-gray-800 text-center py-2 px-6 uppercase rounded-xl hover:bg-gray-800 hover:text-white duration-150 box-shadow">Registrovat se</button>
+                    <button id="registerSubmit" type="submit" class="mt-2 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Registrovat se</button>
                 </div>
             </div>
             <div class="underline text-sm flex justify-between text-sky-600 mt-4 items-center">

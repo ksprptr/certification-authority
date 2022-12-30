@@ -48,6 +48,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
             /// </summary>
             [Required(ErrorMessage = "Toto pole je povinné.")]
             [DataType(DataType.Password)]
+            [Display(Name = "Vaše heslo")]
             public string Password { get; set; }
         }
 
