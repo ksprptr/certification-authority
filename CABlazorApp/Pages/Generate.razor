@@ -1,5 +1,5 @@
 ﻿@page "/generate"
-@using Microsoft.AspNetCore.Identity
+@using CABlazorApp.Pages.Shared
 @inject IWebHostEnvironment Environment
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
@@ -7,15 +7,7 @@
 
 <AuthorizeView>
     <NotAuthorized>
-        <div class="bg-[#F3F3F5]">
-            <div class="container xl:px-32 px-6 mx-auto">
-                <div class="text-center md:py-72 py-24">
-                    <h1 class="text-gray-800 text-4xl font-semibold py-1">Nejste přihlášen!</h1>
-                    <p class="md:w-[32rem] mx-auto font-medium text-gray-600 mb-4 py-1 text-xl">Proto abyste si mohli zobrazit tuto stránku, tak se musíte přihlásit.</p>
-                    <a href="/Identity/Account/Login" class="text-white font-semibold text-md text-center py-3 px-6 rounded-lg bg-[#2E76B4] hover:bg-[#255e90] duration-150 box-shadow">Přihlásit se</a>
-                </div>
-            </div>
-        </div>
+        <NotSigned />
     </NotAuthorized>
     <Authorized>
         <div class="bg-[#F3F3F5]">
@@ -29,7 +21,7 @@
                             <div class="block">
                                 <div class="flex flex-col py-4">
                                     <label class="text-gray-800 font-semibold text-xl">Vyberte certifikát</label>
-                                    <input type="file" id="CertEncryptInput" name="CertEncryptInput" enctype="multipart/form-data" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="mt-2 file:bg-transparent file:text-gray-800 hover:cursor-pointer file:hover:cursor-pointer file:font-semibold file:text-md file:py-1 file:border-2 file:border-gray-800 file:px-2 file:rounded-lg file:hover:bg-gray-800 file:hover:text-white file:duration-150 file:box-shadow" required/>
+                                    <input type="file" id="CertEncryptInput" name="CertEncryptInput" @bind-value="FileEncryptInput" placeholder="Není vybrán certifikát" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="mt-2 file:bg-transparent file:text-gray-800 hover:cursor-pointer file:hover:cursor-pointer file:font-semibold file:text-md file:py-1 file:border-2 file:border-gray-800 file:px-2 file:rounded-lg file:hover:bg-gray-800 file:hover:text-white file:duration-150 file:box-shadow" required/>
                                 </div>
                                 <hr />
                                 <div class="flex flex-col py-4">
@@ -85,3 +77,14 @@
         </div>
     </Authorized>
 </AuthorizeView>
+
+@code {
+
+    private string FileEncryptInput { get; set; }
+
+    protected void OnInit()
+    {
+        FileEncryptInput = "Vyber soubor";
+    }
+
+}

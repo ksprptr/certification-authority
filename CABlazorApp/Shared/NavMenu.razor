@@ -1,8 +1,8 @@
 ﻿<div>
-    <nav class="bg-[#FFFFFF]">
+    <nav class="bg-gray-50">
         <div class="container xl:px-32 px-6 mx-auto">
             <div class="flex justify-between py-2 text-center items-center">
-                <div class="lg:block hidden"><h3 class="text-lg text-gray-800 font-semibold uppercase"><a href="/">Certifikační Autorita</a></h3></div>
+                <div class="lg:block hidden"><h3 class="text-lg text-gray-700 font-medium uppercase"><a href="/">Certifikační Autorita</a></h3></div>
                 <div class="lg:hidden block text-2xl"><button @onclick="Toggle" @onblur="Hide">
                     @if (_toggled)
                     {
@@ -12,22 +12,23 @@
                     {
                         <i class="fa-solid fa-bars"></i>
                     }
-                </button></div>
+                </button>
+            </div>
                 <ul class="flex items-center">
-                    <li class="lg:block hidden"><a href="/" class="text-gray-800 font-semibold text-md text-center py-2 px-4 m-auto mx-1 rounded-lg hover:text-[#2E76B4] duration-150">Domů</a></li>
-                    <li class="lg:block hidden"><a href="/archiv" class="text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Archív</a></li>
-                    <li class="lg:block hidden"><a href="/generate" class="text-gray-800 font-semibold text-md text-center py-2 m-auto mx-1 px-4 rounded-lg hover:text-[#2E76B4] duration-150">Generovat</a></li>
+                    <li class="lg:block hidden"><a href="/" class="text-gray-700 font-medium text-center py-2 px-4 mx-1 rounded-lg hover:text-sky-500 duration-150">Domů</a></li>
+                    <li class="lg:block hidden"><a href="/archiv" class="text-gray-700 font-medium text-center py-2 px-4 mx-1 rounded-lg hover:text-sky-500 duration-150">Archív</a></li>
+                    <li class="lg:block hidden"><a href="/generate" class="text-gray-700 font-medium text-center py-2 px-4 mx-1 rounded-lg hover:text-sky-500 duration-150">Generovat</a></li>
                     <AuthorizeView>
                         <Authorized>
-                            <a href="/Identity/Account/Manage" class="sm:flex hidden text-gray-800 font-semibold text-md text-center py-2 px-4 m-auto mx-1 rounded-lg hover:text-[#2E76B4] duration-150">@context.User.Identity?.Name</a>
+                            <a href="/Identity/Account/Manage" class="sm:flex hidden text-gray-700 font-medium text-center py-2 px-4 mx-1 rounded-lg hover:text-sky-500 duration-150">@context.User.Identity?.Name</a>
                             <form method="post" action="/Identity/Account/LogOut">
-                                <button type="submit" class="border-2 border-gray-800 text-gray-800 font-semibold text-md text-center hover:bg-gray-800 m-auto py-2 px-4 mx-1 text-center rounded-lg hover:text-white duration-150">Odhlásit se</button>
+                                <button type="submit" class="text-sky-500 font-medium text-center py-2 px-4 border-2 border-sky-500 rounded-lg hover:bg-sky-500 hover:text-white duration-150 hover:shadow-lg hover:shadow-sky-500/30">Odhlásit se</button>
                             </form>
                         </Authorized>
                         <NotAuthorized>
-                            <div class="flex min-[370px]:flex-row flex-col min-[370px]:gap-y-0 gap-y-2">
-                                <a href="/Identity/Account/Register" class="border-2 border-gray-800 text-gray-800 font-semibold sm:text-md text-sm text-center hover:bg-gray-800 m-auto sm:py-2 sm:px-4 py-2 px-3 mx-1 text-center rounded-lg hover:text-white duration-150">Registrovat se</a>
-                                <a href="/Identity/Account/Login" class="border-2 border-gray-800 text-gray-800 font-semibold sm:text-md text-sm text-center hover:bg-gray-800 m-auto sm:py-2 sm:px-4 py-2 px-3 mx-1 text-center rounded-lg hover:text-white duration-150">Přihlásit se</a>
+                            <div class="flex min-[370px]:flex-row min-[370px]:gap-x-2 gap-x-0 flex-col min-[370px]:gap-y-0 gap-y-2">
+                                <a href="/Identity/Account/Register" class="text-sky-500 font-medium text-center py-2 px-4 border-2 border-sky-500 rounded-lg hover:bg-sky-500 hover:text-white duration-150 hover:shadow-lg hover:shadow-sky-500/30">Registrovat se</a>
+                                <a href="/Identity/Account/Login" class="text-sky-500 font-medium text-center py-2 px-4 border-2 border-sky-500 rounded-lg hover:bg-sky-500 hover:text-white duration-150 hover:shadow-lg hover:shadow-sky-500/30">Přihlásit se</a>
                             </div>
                         </NotAuthorized>
                     </AuthorizeView>
@@ -36,10 +37,10 @@
             @if (_toggled)
             {
                 <ul class="block mb-3">
-                    <li><a href="/" class="text-gray-800 font-semibold text-md m-auto rounded-lg hover:text-[#2E76B4] duration-150">Domů</a></li>
-                    <li><a href="/archiv" class="text-gray-800 font-semibold text-md m-auto rounded-lg hover:text-[#2E76B4] duration-150">Archív</a></li>
-                    <li><a href="/generate" class="text-gray-800 font-semibold text-md m-auto rounded-lg hover:text-[#2E76B4] duration-150">Generovat</a></li>
-                    <li><a href="/Identity/Account/Manage" class="sm:hidden block text-gray-800 font-semibold text-md m-auto rounded-lg hover:text-[#2E76B4] duration-150">Uživatelský panel</a></li>
+                    <li><a href="/" class="text-gray-700 font-medium text-center py-2 rounded-lg hover:text-sky-500 duration-150">Domů</a></li>
+                    <li><a href="/archiv" class="text-gray-700 font-medium text-center py-2 rounded-lg hover:text-sky-500 duration-150">Archív</a></li>
+                    <li><a href="/generate" class="text-gray-700 font-medium text-center py-2 rounded-lg hover:text-sky-500 duration-150">Generovat</a></li>
+                    <li><a href="/Identity/Account/Manage" class="sm:hidden block text-gray-700 font-medium text-center py-2 rounded-lg hover:text-sky-500 duration-150">Uživatelský panel</a></li>
                 </ul>
             }
         </div> 
