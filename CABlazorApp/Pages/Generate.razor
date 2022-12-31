@@ -10,66 +10,58 @@
         <NotSigned />
     </NotAuthorized>
     <Authorized>
-        <div class="bg-[#F3F3F5]">
+        <div class="bg-gray-100">
             <div class="container xl:px-32 px-6 mx-auto">
                 <div class="lg:flex block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-center py-24">
-                    <div class="bg-[#FFFFFF] rounded-xl p-8">
-                        <h1 class="sm:text-3xl text-2xl text-gray-800 font-semibold uppercase">Šifrování dokumentu</h1>
+                    <div class="bg-gray-50 rounded-lg p-8">
+                        <h1 class="text-gray-700 text-3xl font-medium">Šifrování dokumentu</h1>
                         <form method="post" asp-action="Encrypt" enctype="multipart/form-data" asp-controller="Api" action="/api/encrypt">
-                            <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words mb-4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
-                            <hr />
+                            <p class="md:w-[32rem] text-gray-600 py-1 text-lg">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                             <div class="block">
-                                <div class="flex flex-col py-4">
-                                    <label class="text-gray-800 font-semibold text-xl">Vyberte certifikát</label>
-                                    <input type="file" id="CertEncryptInput" name="CertEncryptInput" @bind-value="FileEncryptInput" placeholder="Není vybrán certifikát" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="mt-2 file:bg-transparent file:text-gray-800 hover:cursor-pointer file:hover:cursor-pointer file:font-semibold file:text-md file:py-1 file:border-2 file:border-gray-800 file:px-2 file:rounded-lg file:hover:bg-gray-800 file:hover:text-white file:duration-150 file:box-shadow" required/>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
+                                    <input type="file" id="CertEncryptInput" name="CertEncryptInput" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" required/>
                                 </div>
-                                <hr />
-                                <div class="flex flex-col py-4">
-                                    <label class="text-gray-800 font-semibold text-xl">Zadejte heslo</label>
-                                    <input type="password" id="PasswordEncryptInput" name="PasswordEncryptInput" class="mt-2 md:w-64 w-full py-1 px-2 autofill:text-md autofill:bg-transparent text-md border-2 border-gray-800 rounded-lg bg-transparent box-shadow font-semibold" required/>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
+                                    <input type="password" id="PasswordEncryptInput" name="PasswordEncryptInput" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" required/>
                                 </div>
-                                <hr />
-                                <div class="flex flex-col py-4">
-                                    <label class="text-gray-800 font-semibold text-xl">Vyberte dokument</label>
-                                    <input type="file" id="FileEncryptInput" name="FileEncryptInput" class="mt-2 file:bg-transparent file:text-gray-800 hover:cursor-pointer file:hover:cursor-pointer file:font-semibold file:text-md file:py-1 file:border-2 file:border-gray-800 file:px-2 file:rounded-lg file:hover:bg-gray-800 file:hover:text-white file:duration-150 file:box-shadow" required/>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
+                                    <input type="file" id="FileEncryptInput" name="FileEncryptInput" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" required/>
                                 </div>
                             </div>
-                            <hr/>
-                            <input type="submit" class="mt-4 text-white font-semibold text-md text-center py-2 px-4 rounded-lg bg-[#2E76B4] hover:bg-[#255e90] duration-150 box-shadow hover:cursor-pointer" value="Šifrovat"/>
+                            <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Šifrovat</button>
                         </form>
                     </div>
-                    <div class="bg-[#FFFFFF] rounded-xl p-8 lg:mt-0 mt-6">
-                        <h1 class="sm:text-3xl text-2xl text-gray-800 font-semibold uppercase">Dešifrování dokumentu</h1>
-                        <form method="post" asp-action="Encrypt" enctype="multipart/form-data" asp-controller="Api" action="/api/encrypt">
-                            <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words mb-4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
-                            <hr />
+                    <div class="bg-gray-50 rounded-lg p-8 lg:mt-0 mt-6">
+                        <h1 class="text-gray-700 text-3xl font-medium">Dešifrování dokumentu</h1>
+                        <form method="post" asp-action="Decrypt" enctype="multipart/form-data" asp-controller="Api" action="/api/decrypt">
+                            <p class="md:w-[32rem] text-gray-600 py-1 text-lg">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                             <div class="block">
-                                <div class="flex flex-col py-4">
-                                    <label class="text-gray-800 font-semibold text-xl">Vyberte certifikát</label>
-                                    <input type="file" id="CertDecryptInput" name="CertEncryptInput" enctype="multipart/form-data" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="mt-2 file:bg-transparent file:text-gray-800 hover:cursor-pointer file:hover:cursor-pointer file:font-semibold file:text-md file:py-1 file:border-2 file:border-gray-800 file:px-2 file:rounded-lg file:hover:bg-gray-800 file:hover:text-white file:duration-150 file:box-shadow" required/>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
+                                    <input type="file" id="CertDecryptInput" name="CertEncryptInput" enctype="multipart/form-data" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" required/>
                                 </div>
-                                <hr />
-                                <div class="flex flex-col py-4">
-                                    <label class="text-gray-800 font-semibold text-xl">Zadejte heslo</label>
-                                    <input type="password" id="PasswordDecryptInput" name="PasswordEncryptInput" class="mt-2 md:w-64 w-full py-1 px-2 autofill:text-md autofill:bg-transparent text-md border-2 border-gray-800 rounded-lg bg-transparent box-shadow font-semibold" required/>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
+                                    <input type="password" id="PasswordDecryptInput" placeholder="Heslo" name="PasswordEncryptInput" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" required/>
                                 </div>
-                                <hr />
-                                <div class="flex flex-col py-4">
-                                    <label class="text-gray-800 font-semibold text-xl">Vyberte dokument</label>
-                                    <input type="file" id="FileDecryptInput" name="FileEncryptInput" class="mt-2 file:bg-transparent file:text-gray-800 hover:cursor-pointer file:hover:cursor-pointer file:font-semibold file:text-md file:py-1 file:border-2 file:border-gray-800 file:px-2 file:rounded-lg file:hover:bg-gray-800 file:hover:text-white file:duration-150 file:box-shadow" required/>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
+                                    <input type="file" id="FileDecryptInput" name="FileEncryptInput" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" required/>
                                 </div>
                             </div>
-                            <hr/>
-                            <input type="submit" class="mt-4 text-white font-semibold text-md text-center py-2 px-4 rounded-lg bg-[#2E76B4] hover:bg-[#255e90] duration-150 box-shadow hover:cursor-pointer" value="Dešifrovat"/>
+                            <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Dešifrovat</button>
                         </form>
                     </div>
-                    <div class="bg-[#FFFFFF] rounded-xl p-8 lg:mt-0 mt-6">
-                        <h1 class="text-gray-800 sm:text-3xl text-2xl font-semibold uppercase">Generování certifikátu</h1>
+                    <div class="bg-gray-50 rounded-lg p-8 lg:mt-0 mt-6">
+                        <h1 class="text-gray-700 text-3xl font-medium">Generování certifikátu</h1>
                         <div class="lg:flex block justify-between">
-                            <div>
-                                <p class="md:w-[32rem] font-medium text-gray-600 py-1 break-words">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
-                                <button class="lg:mb-0 mb-4 mt-2 text-gray-800 hover:cursor-pointer font-semibold text-md py-2 border-2 border-gray-800 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 box-shadow">Vygenerovat</button>
-                            </div>
+                            <form method="post" asp-action="Generate" enctype="multipart/form-data" asp-controller="Api" action="/api/generate">
+                                <p class="md:w-[32rem] text-gray-600 py-1 text-lg">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
+                                <button class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Vygenerovat</button>
+                            </form>
                         </div>
                     </div>
                 </div>

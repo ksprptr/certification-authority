@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Identity\Pages\Shared" />
     <Folder Include="wwwroot\uploads" />
   </ItemGroup>
 

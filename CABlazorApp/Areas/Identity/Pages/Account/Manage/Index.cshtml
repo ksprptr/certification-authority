@@ -10,17 +10,17 @@
    <form id="profile-form" method="post">
        @if (Model.StatusMessage != null)
        {
-          <div class="bg-green-100 mt-4 py-3 px-4 font-medium text-md text-green-700 border-2 border-green-200 rounded-lg">
+          <div class="bg-green-100 mt-4 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">
               <partial name="_StatusMessage" model="Model.StatusMessage"/>
           </div>
        }
-       <div asp-validation-summary="ModelOnly" class="bg-red-100 py-3 px-4 font-medium text-md text-red-700 border-2 border-red-200 rounded-lg"></div>
+       <div asp-validation-summary="ModelOnly" class="bg-red-100 py-3 px-4 font-medium text-red-700 border-2 border-red-200 rounded-lg"></div>
        <div class="flex flex-col mt-2">
            <label asp-for="Username" class="text-gray-600 font-medium"></label>
-           <input asp-for="Username" class="py-2 px-3 w-full rounded-lg text-md text-gray-400 cursor-not-allowed" disabled/>
+           <input asp-for="Username" class="py-2 px-3 w-full rounded-lg text-gray-400 cursor-not-allowed" disabled/>
        </div>
        <div class="flex flex-col mt-2">
-           <label asp-for="Input.PhoneNumber" class="text-gray-600 text-md font-medium"></label>
+           <label asp-for="Input.PhoneNumber" class="text-gray-600 font-medium"></label>
            <input asp-for="Input.PhoneNumber" placeholder="Telefonní číslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" aria-required="true"/>
            <span asp-validation-for="Input.PhoneNumber" class="text-red-700 text-sm mt-1 ml-0.5"></span>
        </div>

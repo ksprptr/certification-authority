@@ -1,0 +1,32 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Potvrzení o registraci";
+    Layout = "_NavFooLayout";
+}
+
+@{
+    if (@Model.DisplayConfirmAccountLink)
+    {
+        <div class="bg-gray-100">
+            <div class="container xl:px-32 px-6 mx-auto">
+                <div class="text-center md:py-72 py-24">
+                    <h1 class="text-gray-700 text-3xl font-medium py-1">@ViewData["Title"]</h1>
+                    <p class="mx-auto text-gray-600 mb-4 py-1 text-lg">Tato webová aplikace zatím nepodporuje potvrzení emailu přes email. Prozkoumejte <a href="https://aka.ms/aspaccountconf" target="_blank" class="underline text-sky-600">tuto dokumentaci</a> pro nastavení této funkce. Pro potvrzení emailu klikněte <a id="confirm-link" href="@Model.EmailConfirmationUrl" class="underline text-sky-600">zde</a>.</p>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="bg-gray-100">
+            <div class="container xl:px-32 px-6 mx-auto">
+                <div class="text-center md:py-72 py-24">
+                    <h1 class="text-gray-700 text-3xl font-medium py-1">@ViewData["Title"]</h1>
+                    <p class="mx-auto text-gray-600 mb-4 py-1 text-lg">Potvrzení o registraci bylo zasláno na Váš email. Zkontrolujte si Vaši emailovou schránku.</p>
+                </div>
+            </div>
+        </div>
+    }
+}
+

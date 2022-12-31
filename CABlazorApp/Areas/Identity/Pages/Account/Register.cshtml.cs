@@ -132,7 +132,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account
                         protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Potvrzení účtu",
-                        $"Prosím potvrďte si účet <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>zde</a>.");
+                        $"Pro potvrzení účtu pokračujte <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>zde</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

@@ -1,11 +1,9 @@
 ﻿@page
-@{
-    Layout = "/Pages/Shared/_IdentityEmptyLayout.cshtml";
-}
 @model LoginModel
 
 @{
     ViewData["Title"] = "Přihlásit se";
+    Layout = "_IdentityEmptyLayout";
 }
 
 <div class="container xl:px-32 px-6 mx-auto">
@@ -14,7 +12,7 @@
         <hr />
         <form id="account" method="post">
             <div class="flex flex-col justify-center mx-auto">
-                <div asp-validation-summary="ModelOnly" class="mt-4 mx-auto bg-red-100 py-3 px-4 font-medium text-md text-red-700 border-2 border-red-200 rounded-lg"></div>
+                <div asp-validation-summary="ModelOnly" class="mt-4 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg"></div>
                 <div class="flex flex-col justify-center mt-2">
                     <label asp-for="Input.Email" class="text-gray-600 font-medium ml-0.5"></label>
                     <input asp-for="Input.Email" placeholder="Email" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" autocomplete="username" aria-required="true"/>

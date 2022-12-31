@@ -128,7 +128,7 @@ namespace CABlazorApp.Areas.Identity.Pages.Account.Manage
                     "Potvrzení emailu",
                     $"Prosím potvrďte Váš email <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>zde</a>.");
 
-                StatusMessage = "Potvrzení o změně emailu bylo zasláno na Váš email. Zkontrolujte Vaši emailovou schránku.";
+                StatusMessage = "Potvrzení pro změnu emailu bylo zasláno na Váš email. Zkontrolujte si Vaši emailovou schránku.";
                 return RedirectToPage();
             }
 

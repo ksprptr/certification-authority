@@ -8,7 +8,7 @@
     <h1 class="text-gray-700 text-2xl font-medium uppercase pb-2">@ViewData["Title"]</h1>
     <hr />
     <form id="email-form" method="post">
-        @if (Model.StatusMessage is not null)
+        @if (Model.StatusMessage != null)
         {
             @if (Model.StatusMessage == "Váš stávající email nelze změnit na tento nový email.")
             {
@@ -41,7 +41,7 @@
                     <label asp-for="Email" class="text-gray-600 font-medium"></label>(<button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="text-red-700 uppercase font-medium">neověřeno <i class="fa-solid fa-xmark"></i></button>)
                 </div>
                 <div class="flex">
-                    <input asp-for="Email" class="py-2 px-3 w-full rounded-lg text-md text-gray-400 cursor-not-allowed" disabled/>
+                    <input asp-for="Email" class="py-2 px-3 w-full rounded-lg text-gray-400 cursor-not-allowed" disabled/>
                 </div>
             </div>
         }
