@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CABlazorApp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
+using System.IO;
+using System.Reflection;
 
 namespace CABlazorApp.Data
 {
@@ -18,13 +20,15 @@ namespace CABlazorApp.Data
         }
 
         [Inject] private IWebHostEnvironment Environment { get; set; }
+        
+        public string GenerateErrorMessage1 { get; set; }
 
         [Inject] public AuthenticationStateProvider GetAuthenticationStateAsync { get; set; }
 
         [HttpPost]
         [Microsoft.AspNetCore.Mvc.Route("encrypt")]
         
-        public async Task Encrypt([FromForm] RequestBody requestBody)
+        public async Task Encrypt([FromForm] RequestBodyEncrypt requestBody)
         {
             string error = "";
             var file = requestBody.FileEncryptInput;
@@ -51,10 +55,25 @@ namespace CABlazorApp.Data
             await using FileStream fs2 = new(certPath, FileMode.Create);
             await file.OpenReadStream().CopyToAsync(fs);
             await certificate.OpenReadStream().CopyToAsync(fs2);
+            // await Enc.Encrypt($"{filePath}", $"{certPath}", $"{password}");
             Response.Redirect(error != "" ? $"/generate?error={error}" : "/result");
         }
+        
+        [Microsoft.AspNetCore.Mvc.Route("decrypt")]
+        public async Task Decrypt([FromForm] RequestBodyGenerate requestBody)
+        {
+            string name = requestBody.CertNameInput;
+            string password = requestBody.CertPassInput;
+        }
+        
+        [Microsoft.AspNetCore.Mvc.Route("generate")]
+        public async Task Generate([FromForm] RequestBodyGenerate requestBody)
+        {
+            string name = requestBody.CertNameInput;
+            string password = requestBody.CertPassInput;
+        }
 
-        public class RequestBody
+        public class RequestBodyEncrypt
         {
 
             [Required(ErrorMessage = "Toto pole je povinné.")]
@@ -65,6 +84,15 @@ namespace CABlazorApp.Data
 
             [Required(ErrorMessage = "Toto pole je povinné.")]
             public IFormFile CertEncryptInput { get; set; }
+        }
+
+        public class RequestBodyGenerate
+        {
+            [Required(ErrorMessage = "Toto pole je povinné.")]
+            public string CertNameInput { get; set; }
+            
+            [Required(ErrorMessage = "Toto pole je povinné.")]
+            public string CertPassInput { get; set; }
         }
     }
 }
