@@ -1,7 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Hosting
 @using Microsoft.AspNetCore.Mvc.ViewEngines
-@using CABlazorApp.Areas.Identity.Pages.Shared
-
 @inject IWebHostEnvironment Environment
 @inject ICompositeViewEngine Engine
 @inject SignInManager<IdentityUser> SignInManager
@@ -28,13 +26,35 @@
 </head>
 <body class="bg-gray-50" style="font-family: 'Poppins', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;">
 <div>
-    <component type="typeof(Navbar)" render-mode="ServerPrerendered"/>
+    <div>
+        <nav class="bg-gray-50">
+            <div class="container xl:px-32 px-6 mx-auto">
+                <div class="flex justify-between py-2 text-center items-center">
+                    <div class="md:block hidden"><h3 class="text-lg text-gray-700 font-medium uppercase"><a href="/">Certifikační Autorita</a></h3></div>
+                    <div class="md:hidden block text-2xl">
+                        <button id="btnClosed"><i class="fa-solid fa-bars"></i></button>
+                        <button id="btnOpen" class="hidden"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form method="post" action="/Identity/Account/LogOut">
+                        <button type="submit" class="text-sky-500 font-medium text-center py-2 px-4 border-2 border-sky-500 rounded-lg hover:bg-sky-500 hover:text-white duration-150 hover:shadow-lg hover:shadow-sky-500/30">Odhlásit se</button>
+                    </form>
+                </div>
+                <ul class="block mb-3 lg:hidden hidden" id="nav">
+                    <li class="text-gray-700 font-medium rounded-lg hover:text-sky-500 duration-150"><a href="~/">Domů</a></li>
+                    <hr />
+                    <li class="text-gray-700 font-medium rounded-lg hover:text-sky-500 duration-150"><a asp-page="./Index">Profil</a></li>
+                    <li class="text-gray-700 font-medium rounded-lg hover:text-sky-500 duration-150"><a asp-page="./Email">Email</a></li>
+                    <li class="text-gray-700 font-medium rounded-lg hover:text-sky-500 duration-150"><a asp-page="./ChangePassword">Změna hesla</a></li>
+                    <li class="text-gray-700 font-medium rounded-lg hover:text-sky-500 duration-150"><a asp-page="./DeletePersonalData">Smazat účet</a></li>
+                </ul>
+            </div> 
+        </nav>
+    </div>
 </div>
-
-<div class="flex justify-center sm:justify-left justify-center bg-gray-100 items-start gap-x-6 pt-24 pb-72">
-    <div class="lg:block hidden lg:w-80 md:w-48">
+<div class="md:flex block justify-center sm:justify-left justify-center bg-gray-100 items-start gap-x-6 pt-24 pb-72">
+    <div class="md:block hidden lg:w-80 md:w-48">
         <div class="bg-gray-50 p-8 rounded-lg shadow">
-            <ul class="nav nav-pills flex-column">
+            <ul class="flex-column">
                 <li class="text-lg text-gray-700 hover:text-gray-800"><a asp-page="./Index">Profil</a></li>
                 <li class="pt-4 text-lg text-gray-700 hover:text-gray-800"><a asp-page="./Email">Email</a></li>
                 <li class="pt-4 text-lg text-gray-700 hover:text-gray-800"><a asp-page="./ChangePassword">Změna hesla</a></li>
@@ -72,3 +92,31 @@
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const nav = document.querySelector("#nav");
+        const btnClosed = document.querySelector("#btnClosed");
+        const btnOpen = document.querySelector("#btnOpen");
+        
+        const open = () => {
+            nav.classList.remove("hidden");
+            btnClosed.classList.add("hidden");
+            btnOpen.classList.remove("hidden");
+        }
+
+        const hide = () => {
+            nav.classList.add("hidden");
+            btnClosed.classList.remove("hidden");
+            btnOpen.classList.add("hidden");
+        }
+
+        btnClosed.addEventListener("click", open);
+        btnOpen.addEventListener("click", hide);
+        document.addEventListener("click", function(event) {
+            if (!btnClosed.contains(event.target) && !nav.contains(event.target)) {
+              hide();
+            }
+        });
+    })
+</script>

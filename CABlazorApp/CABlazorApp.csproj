@@ -30,4 +30,8 @@
     <_ContentIncludedByDefault Remove="wwwroot\uploads\files\Heslo.docx" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Identity\Pages\Shared" />
+  </ItemGroup>
+
 </Project>

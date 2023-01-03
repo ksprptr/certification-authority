@@ -4,7 +4,7 @@
     ViewData["Title"] = "Změna emailu";
 }
 
-<div class="bg-gray-50 rounded-lg lg:p-8 p-6 shadow sm:w-[40rem] w-auto">
+<div class="bg-gray-50 rounded-lg lg:p-8 p-6 shadow md:mx-0 mx-6 lg:w-[40rem] w-auto">
     <h1 class="text-gray-700 text-2xl font-medium uppercase pb-2">@ViewData["Title"]</h1>
     <hr />
     <form id="email-form" method="post">
@@ -30,7 +30,7 @@
                     <label asp-for="Email" class="text-gray-600 font-medium"></label> (<span class="text-green-700 uppercase font-medium">ověřeno <i class="fa-solid fa-check"></i></span>)
                 </div>
                 <div class="flex">
-                    <input asp-for="Email" class="py-2 px-3 w-full rounded-lg text-gray-400 cursor-not-allowed" disabled/>
+                    <input asp-for="Email" class="py-2 px-3 md:w-96 lg:w-full w-full rounded-lg text-gray-400 cursor-not-allowed" disabled/>
                 </div>
             </div>
         }
@@ -41,13 +41,13 @@
                     <label asp-for="Email" class="text-gray-600 font-medium"></label>(<button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="text-red-700 uppercase font-medium">neověřeno <i class="fa-solid fa-xmark"></i></button>)
                 </div>
                 <div class="flex">
-                    <input asp-for="Email" class="py-2 px-3 w-full rounded-lg text-gray-400 cursor-not-allowed" disabled/>
+                    <input asp-for="Email" class="py-2 px-3 md:w-96 lg:w-full w-full rounded-lg text-gray-400 cursor-not-allowed" disabled/>
                 </div>
             </div>
         }
         <div class="flex flex-col mt-2">
             <label asp-for="Input.NewEmail" class="text-gray-600 font-medium"></label>
-            <input asp-for="Input.NewEmail" placeholder="Nový email" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" aria-required="true"/>
+            <input asp-for="Input.NewEmail" placeholder="Nový email" class="placeholder:font-base focus:outline-none md:w-96 lg:w-full placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" aria-required="true"/>
             <span asp-validation-for="Input.NewEmail" class="text-red-700 text-sm mt-1 ml-0.5"></span>
         </div>
         <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="mt-2 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Změnit email</button>
