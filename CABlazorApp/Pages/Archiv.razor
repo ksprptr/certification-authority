@@ -1,13 +1,36 @@
 ﻿@page "/archiv"
 @using CABlazorApp.Pages.Shared
+@using CABlazorApp.Pages
+@using Microsoft.VisualStudio.Web.CodeGeneration
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@code {
+
+    static Archiv2 Class = new();
+    private static List<string> _files = Class.Test();
+
+}
+
 
 <PageTitle>CA | Archiv</PageTitle>
 
 <AuthorizeView>
     <Authorized>
-        
+        <div class="container xl:px-32 px-6 mx-auto py-24">
+            <div>
+                @foreach (var file in _files)
+                {
+                    <div>@file</div>
+                }
+            </div>
+        </div>
     </Authorized>
     <NotAuthorized>
         <NotSigned />
     </NotAuthorized>
 </AuthorizeView>
+
+
