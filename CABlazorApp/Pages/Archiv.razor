@@ -1,29 +1,33 @@
 ﻿@page "/archiv"
 @using CABlazorApp.Pages.Shared
-@using CABlazorApp.Pages
-@using Microsoft.VisualStudio.Web.CodeGeneration
-@using System.Collections.Generic
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
-
-@code {
-
-    static Archiv2 Class = new();
-    private static List<string> _files = Class.Test();
-
-}
-
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+@inject IWebHostEnvironment Environment
+@inject IJSRuntime JsRuntime
 
 <PageTitle>CA | Archiv</PageTitle>
 
 <AuthorizeView>
     <Authorized>
         <div class="container xl:px-32 px-6 mx-auto py-24">
+            <div class="hidden">
+                @Load()
+            </div>
             <div>
-                @foreach (var file in _files)
+                @_files.Count/@_files.Capacity
+            </div>
+            <div>
+                @if (_files.Count != 0)
                 {
-                    <div>@file</div>
+                    foreach (var file in _files)
+                    {
+                        Thread.Sleep(1);
+                        <div>@file</div>
+                        <button class="p-4 border-2 border-red-700" @onclick="@(() => DeleteFile(file))">Delete</button>
+                    }
+                }
+                else
+                {
+                    <div>Nemáte uložený žádný soubor v archívu.</div>
                 }
             </div>
         </div>
@@ -33,4 +37,35 @@
     </NotAuthorized>
 </AuthorizeView>
 
+@code {
+    
+    private List<string> _files = new List<string>();
+    private string _path;
 
+    private async Task Load()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var username = user.Identity?.Name;
+        _path = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", username, "files");
+        if (!Directory.Exists(_path))
+        {
+            Directory.CreateDirectory(_path);
+        }
+        List<string> fileArray = Directory.GetFiles(_path).ToList();
+        _files.Capacity = 5;
+        foreach (var file in fileArray)
+        {
+            string[] temp = file.Split('\\');
+            _files.Add(temp.Last());
+        }
+    }
+
+    private void DeleteFile(string fileName)
+    {
+        _files.Remove(fileName);
+        File.Delete(Path.Combine(_path, fileName));
+        JsRuntime.InvokeAsync<object>("location.reload");
+    }
+
+}
