@@ -8,29 +8,74 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="container xl:px-32 px-6 mx-auto py-24">
-            <div class="hidden">
-                @Load()
+        <div class="bg-gray-100">
+            <div class="container xl:px-32 px-6 mx-auto">
+                <div class="block flex-wrap justify-center items-center py-24">
+                    <div class="bg-gray-50 rounded-lg p-8">
+                        <div class="hidden">
+                            @LoadFiles()
+                        </div>
+                        <div class="sm:flex sm:text-left text-center block justify-between">
+                            <h1 class="text-gray-700 text-2xl font-medium">Soubory</h1>
+                            <span class="text-gray-700 text-2xl font-medium">@Files.Count/@Files.Capacity</span>
+                        </div>
+                        <div class="flex md:justify-start justify-center flex-wrap gap-x-4 gap-y-4 pt-2">
+                            @if (Files.Count != 0)
+                            {
+                                foreach (var file in Files)
+                                {
+                                    Thread.Sleep(1);
+                                    <div class="bg-gray-100 p-4 rounded-lg sm:w-[12rem]">
+                                        <div>
+                                            <img src="/images/File.png" class="mx-auto" alt="Soubor">
+                                        </div>
+                                        <div class="flex flex-col pt-2 text-center">
+                                            <h2 class="text-gray-600 font-medium">@file</h2>
+                                            <button class="sm:w-32 w-auto mx-auto mt-2 text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30" @onclick="@(() => DeleteFile(file))">Smazat</button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        @if(Files.Count == 0)
+                        {
+                            <span class="text-gray-600">Nemáte uložený žádný soubor v archívu.</span>
+                        }
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-8 mt-4">
+                        <div class="hidden">
+                            @LoadCertificates()
+                        </div>
+                        <div class="sm:flex sm:text-left text-center block justify-between">
+                            <h1 class="text-gray-700 text-2xl font-medium">Certifikáty</h1>
+                            <span class="text-gray-700 text-2xl font-medium">@Certificates.Count/@Certificates.Capacity</span>
+                        </div>
+                        <div class="flex md:justify-start justify-center flex-wrap gap-x-4 gap-y-4 pt-2">
+                            @if (Certificates.Count != 0)
+                            {
+                                foreach (var certificate in Certificates)
+                                {
+                                    Thread.Sleep(1);
+                                    <div class="bg-gray-100 p-4 rounded-lg">
+                                        <div>
+                                            <img src="/images/Certificate.png" class="mx-auto" alt="Certifikát">
+                                        </div>
+                                        <div class="pt-2 text-center">
+                                            <h2 class="text-gray-600 font-medium">@certificate</h2>
+                                            <button class="mt-2 text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30" @onclick="@(() => DeleteCert(certificate))">Smazat</button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        @if(Certificates.Count == 0)
+                        {
+                            <span class="text-gray-600">Nemáte uložený žádný certifikát v archívu.</span>
+                        }
+                    </div>
+                </div>
             </div>
-            <div>
-                @_files.Count/@_files.Capacity
-            </div>
-            <div>
-                @if (_files.Count != 0)
-                {
-                    foreach (var file in _files)
-                    {
-                        Thread.Sleep(1);
-                        <div>@file</div>
-                        <button class="p-4 border-2 border-red-700" @onclick="@(() => DeleteFile(file))">Delete</button>
-                    }
-                }
-                else
-                {
-                    <div>Nemáte uložený žádný soubor v archívu.</div>
-                }
-            </div>
-        </div>
+                </div>
     </Authorized>
     <NotAuthorized>
         <NotSigned />
@@ -39,32 +84,59 @@
 
 @code {
     
-    private List<string> _files = new List<string>();
-    private string _path;
+    public List<string> Files = new List<string>();
+    public List<string> Certificates = new List<string>();
+    private string _filesPath;
+    private string _certPath;
 
-    private async Task Load()
+    private async Task LoadFiles()
     {
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         var username = user.Identity?.Name;
-        _path = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", username, "files");
-        if (!Directory.Exists(_path))
+        _filesPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", username, "files");
+        if (!Directory.Exists(_filesPath))
         {
-            Directory.CreateDirectory(_path);
+            Directory.CreateDirectory(_filesPath);
         }
-        List<string> fileArray = Directory.GetFiles(_path).ToList();
-        _files.Capacity = 5;
+        List<string> fileArray = Directory.GetFiles(_filesPath).ToList();
+        Files.Capacity = 5;
         foreach (var file in fileArray)
         {
-            string[] temp = file.Split('\\');
-            _files.Add(temp.Last());
+            Files.Add(Path.GetFileName(file));
         }
+    }
+
+    private async Task LoadCertificates()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var username = user.Identity?.Name;
+        _certPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", username, "certificates");
+        if (!Directory.Exists(_certPath))
+        {
+            Directory.CreateDirectory(_certPath);
+        }
+        List<string> certArray = Directory.GetFiles(_certPath).ToList();
+        Certificates.Capacity = 5;
+        foreach (var certificate in certArray)
+        {
+            Certificates.Add(Path.GetFileName(certificate));
+        }
+
     }
 
     private void DeleteFile(string fileName)
     {
-        _files.Remove(fileName);
-        File.Delete(Path.Combine(_path, fileName));
+        Files.Remove(fileName);
+        File.Delete(Path.Combine(_filesPath, fileName));
+        JsRuntime.InvokeAsync<object>("location.reload");
+    }
+    
+    private void DeleteCert(string certName)
+    {
+        Certificates.Remove(certName);
+        File.Delete(Path.Combine(_certPath, certName));
         JsRuntime.InvokeAsync<object>("location.reload");
     }
 

@@ -55,7 +55,7 @@ namespace CABlazorApp.Data
             await using FileStream fs2 = new(certPath, FileMode.Create);
             await file.OpenReadStream().CopyToAsync(fs);
             await certificate.OpenReadStream().CopyToAsync(fs2);
-            // await Enc.Encrypt($"{filePath}", $"{certPath}", $"{password}");
+            await Enc.Encrypt($"{filePath}", $"{certPath}", $"{password}");
             Response.Redirect(error != "" ? $"/generate?error={error}" : "/result");
         }
         
