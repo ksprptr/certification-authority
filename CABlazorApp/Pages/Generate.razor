@@ -90,9 +90,9 @@
     private readonly string _required = "Toto pole je povinné.";
 
     // Encrypt variables
-    private IFormFile _certInputEnc;
+    private string _certInputEnc;
     private string? _passInputEnc;
-    private IFormFile _fileInputEnc;
+    private string _fileInputEnc;
     private string? _eMessageCertInputEnc { get; set; }
     private string? _eMessagePassInputEnc { get; set; }
     private string? _eMessageFileInputEnc { get; set; }
@@ -137,11 +137,12 @@
         else
         {
             HttpClient httpclient = new HttpClient();
-            var requestContent = new MultipartFormDataContent();
-
-            requestContent.Add(new StreamContent(_certInputEnc.OpenReadStream()), "CertInputEnc", _certInputEnc.FileName);
-            requestContent.Add(new StringContent(_passInputEnc), "PassInputEnc");
-            requestContent.Add(new StreamContent(_fileInputEnc.OpenReadStream()), "FileInputEnc", _fileInputEnc.FileName);
+            var requestContent = new FormUrlEncodedContent(new[] 
+            {
+                new KeyValuePair<string, string>("CertInputEnc", _certInputEnc),
+                new KeyValuePair<string, string>("PassInputEnc", _passInputEnc),
+                new KeyValuePair<string, string>("FileInputEnc", _fileInputEnc)
+            });
             
             var response = await httpclient.PostAsync("https://localhost:7080/api/encrypt", requestContent);
             if (response.IsSuccessStatusCode)
