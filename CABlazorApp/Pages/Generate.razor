@@ -90,9 +90,9 @@
     private readonly string _required = "Toto pole je povinné.";
 
     // Encrypt variables
-    private string _certInputEnc;
+    private string? _certInputEnc;
     private string? _passInputEnc;
-    private string _fileInputEnc;
+    private string? _fileInputEnc;
     private string? _eMessageCertInputEnc { get; set; }
     private string? _eMessagePassInputEnc { get; set; }
     private string? _eMessageFileInputEnc { get; set; }
@@ -113,6 +113,8 @@
     
     private async Task Encrypt()
     {
+        _certInputEnc = Path.GetFileName(_certInputEnc);
+        _fileInputEnc = Path.GetFileName(_fileInputEnc);
 
         if (_certInputEnc == null || _passInputEnc == null || _fileInputEnc == null)
         {
