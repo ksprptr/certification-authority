@@ -30,10 +30,9 @@ namespace CABlazorApp.Data
         
         public async Task Encrypt([FromForm] RequestBodyEncrypt requestBody)
         {
-            string error = "";
-            var file = requestBody.FileEncryptInput;
-            var certificate = requestBody.CertEncryptInput;
-            string password = requestBody.PasswordEncryptInput;
+            var file = requestBody.FileInputEnc;
+            var certificate = requestBody.CertInputEnc;
+            string password = requestBody.PassInputEnc;
             // var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
             // var user = authstate.User;
             // var name = user.Identity?.Name;
@@ -41,7 +40,7 @@ namespace CABlazorApp.Data
             string fileDir = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", "files");
             string certPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", certificate.FileName);
             string certDir = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads");
-
+            
             if (!Directory.Exists(fileDir))
             {
                 Directory.CreateDirectory(fileDir);
@@ -50,13 +49,12 @@ namespace CABlazorApp.Data
             {
                 Directory.CreateDirectory(certDir);
             }
-
+            
             await using FileStream fs = new(filePath, FileMode.Create);
             await using FileStream fs2 = new(certPath, FileMode.Create);
             await file.OpenReadStream().CopyToAsync(fs);
             await certificate.OpenReadStream().CopyToAsync(fs2);
             await Enc.Encrypt($"{filePath}", $"{certPath}", $"{password}");
-            Response.Redirect(error != "" ? $"/generate?error={error}" : "/result");
         }
         
         [Microsoft.AspNetCore.Mvc.Route("decrypt")]
@@ -71,19 +69,33 @@ namespace CABlazorApp.Data
         {
             string name = requestBody.CertNameInput;
             string password = requestBody.CertPassInput;
+            Console.WriteLine(name);
         }
 
         public class RequestBodyEncrypt
         {
 
             [Required(ErrorMessage = "Toto pole je povinné.")]
-            public IFormFile FileEncryptInput { get; set; }
+            public IFormFile CertInputEnc { get; set; }
 
             [Required(ErrorMessage = "Toto pole je povinné")]
-            public string PasswordEncryptInput { get; set; }
+            public string PassInputEnc { get; set; }
 
             [Required(ErrorMessage = "Toto pole je povinné.")]
-            public IFormFile CertEncryptInput { get; set; }
+            public IFormFile FileInputEnc { get; set; }
+        }
+        
+        public class RequestBodyDecrypt
+        {
+
+            [Required(ErrorMessage = "Toto pole je povinné.")]
+            public IFormFile CertInputDec { get; set; }
+
+            [Required(ErrorMessage = "Toto pole je povinné")]
+            public string PassInputDec { get; set; }
+
+            [Required(ErrorMessage = "Toto pole je povinné.")]
+            public IFormFile FileInputDec { get; set; }
         }
 
         public class RequestBodyGenerate

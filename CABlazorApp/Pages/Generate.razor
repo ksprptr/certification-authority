@@ -2,6 +2,8 @@
 @using CABlazorApp.Pages.Shared
 @inject IWebHostEnvironment Environment
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
+@inject NavigationManager Navigation
+@using Newtonsoft.Json
 
 <PageTitle>CA | Generovat</PageTitle>
 
@@ -15,20 +17,23 @@
                 <div class="lg:flex block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-center py-24">
                     <div class="bg-gray-50 rounded-lg p-8">
                         <h1 class="text-gray-700 text-2xl font-medium">Šifrování dokumentu</h1>
-                        <form method="post" asp-action="Encrypt" enctype="multipart/form-data" asp-controller="Api" action="/api/encrypt">
+                        <form method="post" asp-action="Encrypt" enctype="multipart/form-data" @onsubmit="Encrypt" asp-controller="Api">
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
-                                    <input type="file" id="CertEncryptInput" name="CertEncryptInput" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" required/>
+                                    <input type="file" id="CertInputEnc" @bind="_certInputEnc" name="CertInputEnc" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageCertInputEnc</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
-                                    <input type="password" id="PasswordEncryptInput" name="PasswordEncryptInput" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" required/>
+                                    <input type="password" id="PassInputEnc" @bind="_passInputEnc" name="PassInputEnc" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessagePassInputEnc</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
-                                    <input type="file" id="FileEncryptInput" name="FileEncryptInput" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" required/>
+                                    <input type="file" id="FileInputEnc" @bind="_fileInputEnc" name="FileInputEnc" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageFileInputEnc</span>
                                 </div>
                             </div>
                             <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Šifrovat</button>
@@ -36,20 +41,23 @@
                     </div>
                     <div class="bg-gray-50 rounded-lg p-8 lg:mt-0 mt-6">
                         <h1 class="text-gray-700 text-2xl font-medium">Dešifrování dokumentu</h1>
-                        <form method="post" asp-action="Decrypt" enctype="multipart/form-data" asp-controller="Api" action="/api/decrypt">
+                        <form method="post" asp-action="Decrypt" enctype="multipart/form-data" @onsubmit="Decrypt" asp-controller="Api">
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
-                                    <input type="file" id="CertDecryptInput" name="CertDecryptInput" enctype="multipart/form-data" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" required/>
+                                    <input type="file" id="CertInputDec" @bind="_certInputDec" name="CertInputDec" enctype="multipart/form-data" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageCertInputDec</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
-                                    <input type="password" id="PasswordDecryptInput" placeholder="Heslo" name="PasswordDecryptInput" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg" required/>
+                                    <input type="password" id="PassInputDec" @bind="_passInputDec" placeholder="Heslo" name="PassInputDec" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessagePassInputDec</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
-                                    <input type="file" id="FileDecryptInput" name="FileDecryptInput" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" required/>
+                                    <input type="file" id="FileInputDec" @bind="_fileInputDec" name="FileInputDec" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageFileInputDec</span>
                                 </div>
                             </div>
                             <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Dešifrovat</button>
@@ -58,17 +66,16 @@
                     <div class="bg-gray-50 rounded-lg p-8 lg:mt-0 mt-6">
                         <h1 class="text-gray-700 text-2xl font-medium">Generování certifikátu</h1>
                         <div class="lg:flex block justify-between">
-                            <form method="post" id="my-form" asp-action="Generate" enctype="multipart/form-data" asp-controller="Api" action="/api/generate">
+                            <form method="post" id="my-form" asp-action="Generate" enctype="multipart/form-data" asp-controller="Api">
                                 <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte jméno</label>
-                                    <input type="text" id="CertNameInput" placeholder="Jméno" name="CertNameInput" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                </div>
+                                    <input type="text" id="CertNameInput" placeholder="Jméno" @bind="certName" name="CertNameInput" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/></div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
-                                    <input type="password" id="CertPassInput" placeholder="Heslo" name="CertPassInput" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <input type="password" id="CertPassInput" placeholder="Heslo" @bind="certPass" name="CertPassInput" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
                                 </div>
-                                <button class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Vygenerovat</button>
+                                <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Vygenerovat</button>
                             </form>
                         </div>
                     </div>
@@ -77,3 +84,99 @@
         </div>
     </Authorized>
 </AuthorizeView>
+
+@functions {
+
+    private readonly string _required = "Toto pole je povinné.";
+
+    // Encrypt variables
+    private IFormFile _certInputEnc;
+    private string? _passInputEnc;
+    private IFormFile _fileInputEnc;
+    private string? _eMessageCertInputEnc { get; set; }
+    private string? _eMessagePassInputEnc { get; set; }
+    private string? _eMessageFileInputEnc { get; set; }
+
+    // Decrypt variables
+    private string? _certInputDec;
+    private string? _passInputDec;
+    private string? _fileInputDec;    
+    private string? _eMessageCertInputDec { get; set; }
+    private string? _eMessagePassInputDec { get; set; }
+    private string? _eMessageFileInputDec { get; set; }
+
+    // Generate variables
+    private string certName;
+    private string certPass;
+    private string? ErrorMessageCert { get; set; }
+    private string? ErrorMessagePass { get; set; }
+    
+    private async Task Encrypt()
+    {
+
+        if (_certInputEnc == null || _passInputEnc == null || _fileInputEnc == null)
+        {
+            if (_certInputEnc == null)
+            {
+                _eMessageCertInputEnc = _required;
+                InvokeAsync(StateHasChanged);
+            }
+
+            if (_passInputEnc == null)
+            {
+                _eMessagePassInputEnc = _required;
+                InvokeAsync(StateHasChanged);
+            }
+
+            if (_fileInputEnc == null)
+            {
+                _eMessageFileInputEnc = _required;
+                InvokeAsync(StateHasChanged);
+            }
+        }
+        else
+        {
+            HttpClient httpclient = new HttpClient();
+            var requestContent = new MultipartFormDataContent();
+
+            requestContent.Add(new StreamContent(_certInputEnc.OpenReadStream()), "CertInputEnc", _certInputEnc.FileName);
+            requestContent.Add(new StringContent(_passInputEnc), "PassInputEnc");
+            requestContent.Add(new StreamContent(_fileInputEnc.OpenReadStream()), "FileInputEnc", _fileInputEnc.FileName);
+            
+            var response = await httpclient.PostAsync("https://localhost:7080/api/encrypt", requestContent);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("successfull");
+            }
+            else
+            {
+                
+            }
+        }
+    }
+    
+    private void Decrypt()
+    {
+        if (_certInputDec == null || _passInputDec == null || _fileInputDec == null)
+        {
+            if (_certInputDec == null)
+            {
+                _eMessageCertInputDec = _required;
+            }
+
+            if (_passInputDec == null)
+            {
+                _eMessagePassInputDec = _required;
+            }
+
+            if (_fileInputDec == null)
+            {
+                _eMessageFileInputDec = _required;
+            }
+        }
+        else
+        {
+            Navigation.NavigateTo("/api/encrypt");
+        }
+    }
+}
