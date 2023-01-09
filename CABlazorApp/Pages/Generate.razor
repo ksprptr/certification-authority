@@ -3,7 +3,7 @@
 @inject IWebHostEnvironment Environment
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 @inject NavigationManager Navigation
-@using Newtonsoft.Json
+@inject ISession Session
 
 <PageTitle>CA | Generovat</PageTitle>
 
@@ -22,7 +22,7 @@
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
-                                    <input type="file" id="CertInputEnc" @bind="_certInputEnc" name="CertInputEnc" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <InputFile id="CertInputEnc" @bind-Value="@_certInputEnc" name="CertInputEnc" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageCertInputEnc</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
@@ -32,7 +32,7 @@
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
-                                    <input type="file" id="FileInputEnc" @bind="_fileInputEnc" name="FileInputEnc" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <InputFile id="FileInputEnc" @bind-Value="_fileInputEnc" name="FileInputEnc" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageFileInputEnc</span>
                                 </div>
                             </div>
@@ -41,7 +41,7 @@
                     </div>
                     <div class="bg-gray-50 rounded-lg p-8 lg:mt-0 mt-6">
                         <h1 class="text-gray-700 text-2xl font-medium">Dešifrování dokumentu</h1>
-                        <form method="post" asp-action="Decrypt" enctype="multipart/form-data" @onsubmit="Decrypt" asp-controller="Api">
+                        <form method="post" asp-action="Decrypt" enctype="multipart/form-data" asp-controller="Api">
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                             <div class="block">
                                 <div class="flex flex-col mt-4">
@@ -85,17 +85,18 @@
     </Authorized>
 </AuthorizeView>
 
-@functions {
-
+@code {
+    
     private readonly string _required = "Toto pole je povinné.";
 
     // Encrypt variables
-    private string? _certInputEnc;
+    private IFormFile _certInputEnc;
     private string? _passInputEnc;
-    private string? _fileInputEnc;
+    private IFormFile _fileInputEnc;
     private string? _eMessageCertInputEnc { get; set; }
     private string? _eMessagePassInputEnc { get; set; }
     private string? _eMessageFileInputEnc { get; set; }
+
 
     // Decrypt variables
     private string? _certInputDec;
@@ -108,14 +109,9 @@
     // Generate variables
     private string certName;
     private string certPass;
-    private string? ErrorMessageCert { get; set; }
-    private string? ErrorMessagePass { get; set; }
-    
+
     private async Task Encrypt()
     {
-        _certInputEnc = Path.GetFileName(_certInputEnc);
-        _fileInputEnc = Path.GetFileName(_fileInputEnc);
-
         if (_certInputEnc == null || _passInputEnc == null || _fileInputEnc == null)
         {
             if (_certInputEnc == null)
@@ -123,13 +119,13 @@
                 _eMessageCertInputEnc = _required;
                 InvokeAsync(StateHasChanged);
             }
-
+        
             if (_passInputEnc == null)
             {
                 _eMessagePassInputEnc = _required;
                 InvokeAsync(StateHasChanged);
             }
-
+        
             if (_fileInputEnc == null)
             {
                 _eMessageFileInputEnc = _required;
@@ -139,12 +135,11 @@
         else
         {
             HttpClient httpclient = new HttpClient();
-            var requestContent = new FormUrlEncodedContent(new[] 
-            {
-                new KeyValuePair<string, string>("CertInputEnc", _certInputEnc),
-                new KeyValuePair<string, string>("PassInputEnc", _passInputEnc),
-                new KeyValuePair<string, string>("FileInputEnc", _fileInputEnc)
-            });
+            var requestContent = new MultipartFormDataContent();
+            
+            requestContent.Add(new StreamContent(_certInputEnc.OpenReadStream()), "CertInputEnc", _certInputEnc.FileName);
+            requestContent.Add(new StringContent(_passInputEnc), "PassInputEnc");
+            requestContent.Add(new StreamContent(_fileInputEnc.OpenReadStream()), "FileInputEnc", _fileInputEnc.FileName);
             
             var response = await httpclient.PostAsync("https://localhost:7080/api/encrypt", requestContent);
             if (response.IsSuccessStatusCode)
@@ -181,5 +176,11 @@
         {
             Navigation.NavigateTo("/api/encrypt");
         }
+    }
+    
+    private IFormFile ConvertToIFormFile(IBrowserFile browserFile)
+    {
+        var formFile = new FormFile(browserFile.OpenReadStream(), 0, browserFile.Size, browserFile.Name, browserFile.ContentType);
+        return formFile;
     }
 }
