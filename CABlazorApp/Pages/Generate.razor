@@ -21,7 +21,7 @@
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
-                                    <InputFile OnChange="OnInputFileChange" id="CertInputEnc" @bind-Value="_certInputEnc" name="CertInputEnc" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <InputFile id="CertInputEnc" @bind="_certInputEnc" name="CertInputEnc" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageCertInputEnc</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
@@ -31,7 +31,7 @@
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
-                                    <InputFile OnChange="OnInputFileChange" id="FileInputEnc" @bind-Value="_fileInputEnc" name="FileInputEnc" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <InputFile id="FileInputEnc" @bind-Value="_fileInputEnc" name="FileInputEnc" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageFileInputEnc</span>
                                 </div>
                             </div>
@@ -62,22 +62,6 @@
                             <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Dešifrovat</button>
                         </form>
                     </div>
-                    <div class="bg-gray-50 rounded-lg p-8 lg:mt-0 mt-6">
-                        <h1 class="text-gray-700 text-2xl font-medium">Generování certifikátu</h1>
-                        <div class="lg:flex block justify-between">
-                            <form method="post" id="my-form" asp-action="Generate" enctype="multipart/form-data" asp-controller="Api">
-                                <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
-                                <div class="flex flex-col mt-4">
-                                    <label class="text-gray-600 font-medium ml-0.5">Zadejte jméno</label>
-                                    <input type="text" id="CertNameInput" placeholder="Jméno" @bind="certName" name="CertNameInput" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/></div>
-                                <div class="flex flex-col mt-4">
-                                    <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
-                                    <input type="password" id="CertPassInput" placeholder="Heslo" @bind="certPass" name="CertPassInput" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                </div>
-                                <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Vygenerovat</button>
-                            </form>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -89,14 +73,12 @@
     private readonly string _required = "Toto pole je povinné.";
 
     // Encrypt variables
-    private IBrowserFile _certInputEnc;
+    private IFormFile _certInputEnc;
     private string? _passInputEnc;
-    private IBrowserFile _fileInputEnc;
+    private IFormFile _fileInputEnc;
     private string? _eMessageCertInputEnc { get; set; }
     private string? _eMessagePassInputEnc { get; set; }
     private string? _eMessageFileInputEnc { get; set; }
-    IReadOnlyList<IBrowserFile> selectedFiles;
-
 
     // Decrypt variables
     private string? _certInputDec;
@@ -109,12 +91,6 @@
     // Generate variables
     private string certName;
     private string certPass;
-    
-    private void OnInputFileChange(InputFileChangeEventArgs e)
-    {
-        selectedFiles = e.GetMultipleFiles();
-        this.StateHasChanged();
-    }
 
     private async Task Encrypt()
     {
@@ -140,21 +116,21 @@
         }
         else
         {
-            // HttpClient httpclient = new HttpClient();
-            // var requestContent = new MultipartFormDataContent();
-            //
-            // requestContent.Add(new StreamContent(_certInputEnc.OpenReadStream()), "CertInputEnc", _certInputEnc.FileName);
-            // requestContent.Add(new StringContent(_passInputEnc), "PassInputEnc");
-            // requestContent.Add(new StreamContent(_fileInputEnc.OpenReadStream()), "FileInputEnc", _fileInputEnc.FileName);
-            //
-            // var response = await httpclient.PostAsync("https://localhost:7080/api/encrypt", requestContent);
-            // if (response.IsSuccessStatusCode)
-            // {
-            //     Console.WriteLine("successfull");
-            // }
-            // else
-            // {
-            //     
+            HttpClient httpclient = new HttpClient();
+            var requestContent = new MultipartFormDataContent();
+            
+            requestContent.Add(new StreamContent(_certInputEnc.OpenReadStream()), "CertInputEnc", _certInputEnc.FileName);
+            requestContent.Add(new StringContent(_passInputEnc), "PassInputEnc");
+            requestContent.Add(new StreamContent(_fileInputEnc.OpenReadStream()), "FileInputEnc", _fileInputEnc.FileName);
+            
+            var response = await httpclient.PostAsync("https://localhost:7080/api/encrypt", requestContent);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("successfull");
+            }
+            else
+            {
+                
             }
         }
     }
