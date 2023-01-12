@@ -1,14 +1,17 @@
 ﻿@page "/generate"
 @using CABlazorApp.Pages.Shared
+@using CABlazorApp.Services
+@using System.IO.MemoryMappedFiles
+@using System.Net
+@inject CryptoService CryptoService
 @inject IWebHostEnvironment Environment
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
-@inject NavigationManager Navigation
-
+@inject IJSRuntime JsRuntime
 <PageTitle>CA | Generovat</PageTitle>
 
 <AuthorizeView>
     <NotAuthorized>
-        <NotSigned />
+        <NotSigned/>
     </NotAuthorized>
     <Authorized>
         <div class="bg-gray-100">
@@ -16,50 +19,54 @@
                 <div class="lg:flex block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-center py-24">
                     <div class="bg-gray-50 rounded-lg p-8">
                         <h1 class="text-gray-700 text-2xl font-medium">Šifrování dokumentu</h1>
-                        <form method="post" asp-action="Encrypt" enctype="multipart/form-data" @onsubmit="Encrypt" asp-controller="Api">
+                        <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
-                                    <InputFile id="CertInputEnc" name="CertInputEnc" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageCertInputEnc</span>
+                                    <InputFile OnChange="OnEncryptCertFile" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_encCertError</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
-                                    <input type="password" id="PassInputEnc" @bind="_passInputEnc" name="PassInputEnc" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessagePassInputEnc</span>
+                                    <input type="password" @bind="_encPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_encPassError</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
-                                    <InputFile id="FileInputEnc" name="FileInputEnc" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageFileInputEnc</span>
+                                    <InputFile OnChange="OnEncryptDocumentFile" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_encDocError</span>
                                 </div>
                             </div>
-                            <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Šifrovat</button>
+                            <button Type="button" @onclick="Encrypt" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Šifrovat</button>
+                            @if (_encState)
+                            {
+                                <button @onclick="DownloadSigned">Stáhnout</button>
+                            }
                         </form>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-8 lg:mt-0 mt-6">
                         <h1 class="text-gray-700 text-2xl font-medium">Dešifrování dokumentu</h1>
-                        <form method="post" asp-action="Decrypt" enctype="multipart/form-data" asp-controller="Api">
+                        <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
-                                    <InputFile id="CertInputDec" OnChange="Callback" name="CertInputDec" enctype="multipart/form-data" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageCertInputDec</span>
+                                    <InputFile OnChange="OnDecryptCertFile" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_decCertError</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
-                                    <input type="password" id="PassInputDec" @bind="_passInputDec" placeholder="Heslo" name="PassInputDec" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessagePassInputDec</span>
+                                    <input type="password" id="PassInputDec" @bind="_decPass" placeholder="Heslo" name="PassInputDec" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_decPassError</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
-                                    <InputFile id="FileInputDec" OnChange="Callback" name="FileInputDec" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_eMessageFileInputDec</span>
+                                    <InputFile OnChange="OnDecryptDocumentFile" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_decDocError</span>
                                 </div>
                             </div>
-                            <button type="submit" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Dešifrovat</button>
+                            <button @onclick="Decrypt" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Dešifrovat</button>
                         </form>
                     </div>
                 </div>
@@ -69,75 +76,106 @@
 </AuthorizeView>
 
 @code {
+
+    private byte[] _decCertFile;
+    private byte[] _decDocFile;
+    private string _decPass;
+    
+    private string _encDocName;
+    private byte[] _encSignedFile;
+    private bool _encState;
+
+    private byte[] _encCertFile;
+    private byte[] _encDocFile;
+    private string _encPass;
+
+    private string _encCertError;
+    private string _encPassError;
+    private string _encDocError;
+    
+    private string _decCertError;
+    private string _decPassError;
+    private string _decDocError;
     
     private readonly string _required = "Toto pole je povinné.";
 
-    // Encrypt variables
-    private string? _passInputEnc;
-    private List<InputFileChangeEventArgs> _encFiles;
-    private string? _eMessageCertInputEnc { get; set; }
-    private string? _eMessagePassInputEnc { get; set; }
-    private string? _eMessageFileInputEnc { get; set; }
-
-    // Decrypt variables
-    private string? _certInputDec;
-    private string? _passInputDec;
-    private string? _fileInputDec;    
-    private string? _eMessageCertInputDec { get; set; }
-    private string? _eMessagePassInputDec { get; set; }
-    private string? _eMessageFileInputDec { get; set; }
-
-    // Generate variables
-    private string certName;
-    private string certPass;
-
     private async Task Encrypt()
     {
-        // if (_certInputEnc == null || _passInputEnc == null || _fileInputEnc == null)
-        // {
-        //     if (_certInputEnc == null)
-        //     {
-        //         _eMessageCertInputEnc = _required;
-        //         InvokeAsync(StateHasChanged);
-        //     }
-        //
-        //     if (_passInputEnc == null)
-        //     {
-        //         _eMessagePassInputEnc = _required;
-        //         InvokeAsync(StateHasChanged);
-        //     }
-        //
-        //     if (_fileInputEnc == null)
-        //     {
-        //         _eMessageFileInputEnc = _required;
-        //         InvokeAsync(StateHasChanged);
-        //     }
-        // }
-        // else
-        // {
-        //     HttpClient httpclient = new HttpClient();
-        //     var requestContent = new MultipartFormDataContent();
-        //     
-        //     requestContent.Add(new StreamContent(_certInputEnc.OpenReadStream()), "CertInputEnc", _certInputEnc.FileName);
-        //     requestContent.Add(new StringContent(_passInputEnc), "PassInputEnc");
-        //     requestContent.Add(new StreamContent(_fileInputEnc.OpenReadStream()), "FileInputEnc", _fileInputEnc.FileName);
-        //     
-        //     var response = await httpclient.PostAsync("https://localhost:7080/api/encrypt", requestContent);
-        //     if (response.IsSuccessStatusCode)
-        //     {
-        //         Console.WriteLine("successfull");
-        //     }
-        //     else
-        //     {
-        //         
-        //     }
-        // }
+        if (_encCertFile == null || _encDocFile == null || String.IsNullOrWhiteSpace(_encPass))
+        {
+            if (_encCertFile == null)
+                _encCertError = _required;
+                InvokeAsync(StateHasChanged);
+            
+            if (_encDocFile == null)
+                _encDocError = _required;
+                InvokeAsync(StateHasChanged);
+            
+            if (String.IsNullOrWhiteSpace(_encPass))
+                _encPassError = _required;
+                InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            byte[] signedFile = await CryptoService.Sign(_encCertFile, _encDocFile, _encPass);
+            _encSignedFile = signedFile;
+            _encState = true;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+    
+    private async Task Decrypt()
+    {
+        if (_decCertFile == null || _decDocFile == null || String.IsNullOrWhiteSpace(_decPass))
+        {
+            if (_decCertFile == null)
+                _decCertError = _required;
+            
+            if (_decDocFile == null)
+                _decDocError = _required;
+
+            if (String.IsNullOrWhiteSpace(_decPass))
+                _decPassError = _required;
+        }
+        else
+        {
+            byte[] unsigendFile = await CryptoService.UnSign(_decCertFile, _decDocFile, _decPass);
+        }
     }
 
-    private void Callback(InputFileChangeEventArgs obj)
+    async Task DownloadSigned()
     {
-        _encFiles.Add(obj);
-        throw new NotImplementedException();
+        var fileStream = GetFileStream();
+        await JsRuntime.InvokeVoidAsync("BlazorDownloadFile", _encDocName, "text/plain", _encSignedFile);
+    }
+
+    private async Task OnEncryptDocumentFile(InputFileChangeEventArgs obj)
+    {
+        await using MemoryStream stream = new MemoryStream();
+        await obj.File.OpenReadStream().CopyToAsync(stream);
+        _encDocFile = stream.ToArray();
+        _encDocName = obj.File.Name;
+    }
+
+    private async Task OnEncryptCertFile(InputFileChangeEventArgs obj)
+    {
+        await using MemoryStream stream = new MemoryStream();
+        await obj.File.OpenReadStream().CopyToAsync(stream);
+        _encCertFile = stream.ToArray();
+    }
+    
+    private async Task OnDecryptDocumentFile(InputFileChangeEventArgs obj)
+    {
+        await using MemoryStream stream = new MemoryStream();
+        await obj.File.OpenReadStream().CopyToAsync(stream);
+        _decDocFile = stream.ToArray();
+    }
+
+    private async Task OnDecryptCertFile(InputFileChangeEventArgs obj)
+    {
+        await using MemoryStream stream = new MemoryStream();
+        await obj.File.OpenReadStream().CopyToAsync(stream);
+        _decCertFile = stream.ToArray();
     }
 
 }
