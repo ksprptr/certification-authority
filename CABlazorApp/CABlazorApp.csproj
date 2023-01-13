@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.12" />
