@@ -32,6 +32,7 @@
                                         <div class="flex flex-col gap-y-4 h-full pt-2 text-center">
                                             <h2 class="text-gray-600 font-medium">@file</h2>
                                             <button class="sm:w-32 w-auto mx-auto mt-auto text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30" @onclick="@(() => DeleteFile(file))">Smazat</button>
+                                            <button class="sm:w-32 w-auto mx-auto mt-auto text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30" @onclick="@(() => DownloadFile(file))">Stáhnout</button>
                                         </div>
                                     </div>
                                 }
@@ -81,63 +82,3 @@
         <NotSigned />
     </NotAuthorized>
 </AuthorizeView>
-
-@code {
-    
-    public List<string> Files = new List<string>();
-    public List<string> Certificates = new List<string>();
-    private string _filesPath;
-    private string _certPath;
-
-    private async Task LoadFiles()
-    {
-        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        var user = authstate.User;
-        var username = user.Identity?.Name;
-        _filesPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", username, "files");
-        if (!Directory.Exists(_filesPath))
-        {
-            Directory.CreateDirectory(_filesPath);
-        }
-        List<string> fileArray = Directory.GetFiles(_filesPath).ToList();
-        Files.Capacity = 5;
-        foreach (var file in fileArray)
-        {
-            Files.Add(Path.GetFileName(file));
-        }
-    }
-
-    private async Task LoadCertificates()
-    {
-        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        var user = authstate.User;
-        var username = user.Identity?.Name;
-        _certPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", username, "certificates");
-        if (!Directory.Exists(_certPath))
-        {
-            Directory.CreateDirectory(_certPath);
-        }
-        List<string> certArray = Directory.GetFiles(_certPath).ToList();
-        Certificates.Capacity = 5;
-        foreach (var certificate in certArray)
-        {
-            Certificates.Add(Path.GetFileName(certificate));
-        }
-
-    }
-
-    private void DeleteFile(string fileName)
-    {
-        Files.Remove(fileName);
-        File.Delete(Path.Combine(_filesPath, fileName));
-        JsRuntime.InvokeAsync<object>("location.reload");
-    }
-    
-    private void DeleteCert(string certName)
-    {
-        Certificates.Remove(certName);
-        File.Delete(Path.Combine(_certPath, certName));
-        JsRuntime.InvokeAsync<object>("location.reload");
-    }
-
-}

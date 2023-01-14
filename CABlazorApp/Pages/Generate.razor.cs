@@ -19,7 +19,7 @@ public partial class Generate
 
     private readonly string _required = "Toto pole je povinné.";
 
-    private async Task Encrypt()
+    private async Task Sign()
     {
         if (_encCertFile == null || _encDocFile == null || String.IsNullOrWhiteSpace(_encPass))
         {
@@ -40,9 +40,33 @@ public partial class Generate
         }
     }
     
-    async Task DownloadSigned()
+    private async Task DownloadSigned()
     {
         await JsRuntime.InvokeVoidAsync("BlazorDownloadFile", _encDocName, "text/plain", _encSignedFile);
+    }
+
+    private async Task AddToArchive()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var name = user.Identity.Name;
+        string dirPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "archive", name, "files");
+        string filePath = Path.Combine(Environment.ContentRootPath, "wwwroot", "archive", name, "files", _encDocName);
+        if (!Directory.Exists(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+        if (!File.Exists(filePath))
+        {
+            File.Create(filePath);
+            TextWriter tw = new StreamWriter(filePath);
+            tw.WriteLine(_encSignedFile);
+            tw.Close();
+        }
+        else
+        {
+            Console.WriteLine("Tento soubor již existuje.");
+        }
     }
 
     private async Task OnEncryptDocumentFile(InputFileChangeEventArgs obj)
