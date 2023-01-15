@@ -50,8 +50,8 @@ public partial class Generate
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         var name = user.Identity.Name;
-        string dirPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "archive", name, "files");
-        string filePath = Path.Combine(Environment.ContentRootPath, "wwwroot", "archive", name, "files", _encDocName);
+        string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files");
+        string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", _encDocName);
         if (!Directory.Exists(dirPath))
         {
             Directory.CreateDirectory(dirPath);
@@ -59,9 +59,11 @@ public partial class Generate
         if (!File.Exists(filePath))
         {
             File.Create(filePath);
-            TextWriter tw = new StreamWriter(filePath);
-            tw.WriteLine(_encSignedFile);
-            tw.Close();
+            using (TextWriter tw = new StreamWriter(filePath))
+            {
+                tw.WriteLine(_encSignedFile);
+                tw.Close();
+            }
         }
         else
         {

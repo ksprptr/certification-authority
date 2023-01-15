@@ -15,7 +15,7 @@ public partial class Archiv
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         var name = user.Identity?.Name;
-        _filesPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "archive", name, "files");
+        _filesPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files");
         if (!Directory.Exists(_filesPath))
         {
             Directory.CreateDirectory(_filesPath);
@@ -33,7 +33,7 @@ public partial class Archiv
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         var name = user.Identity?.Name;
-        _certPath = Path.Combine(Environment.ContentRootPath, "wwwroot", "uploads", name, "certificates");
+        _certPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
         if (!Directory.Exists(_certPath))
         {
             Directory.CreateDirectory(_certPath);
@@ -50,16 +50,9 @@ public partial class Archiv
     private async Task DownloadFile(string fileName)
     {
         string path = Path.Combine(_filesPath, fileName);
-        var file = await System.IO.File.ReadAllBytesAsync(path);
-        var fileN = Path.GetFileName(path);
-        var fileExtension = Path.GetExtension(path);
-
-        var ms = new MemoryStream(file);
-        var fileStreamResult = new FileStreamResult(ms, $"application/{fileExtension}")
-        {
-            FileDownloadName = fileN
-        };
-        await fileStreamResult.ExecuteResultAsync(new ActionContext());
+        string content = Convert.ToBase64String(File.ReadAllBytes(path));
+        await JsRuntime.InvokeVoidAsync("BlazorDownloadFile", fileName, "text/plain", content);
+        await JsRuntime.InvokeAsync<object>("location.reload");
     }
 
     private void DeleteFile(string fileName)
