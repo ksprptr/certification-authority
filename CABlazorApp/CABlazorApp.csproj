@@ -30,11 +30,11 @@
     <_ContentIncludedByDefault Remove="wwwroot\uploads\ahoj@example.com\files\file.docx" />
     <_ContentIncludedByDefault Remove="wwwroot\uploads\files\document.docx" />
     <_ContentIncludedByDefault Remove="wwwroot\uploads\files\Heslo.docx" />
+    <_ContentIncludedByDefault Remove="wwwroot\files\file.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Pages\Shared" />
-    <Folder Include="wwwroot\uploads" />
   </ItemGroup>
 
 </Project>

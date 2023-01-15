@@ -42,7 +42,7 @@ public partial class Generate
     
     private async Task DownloadSigned()
     {
-        await JsRuntime.InvokeVoidAsync("BlazorDownloadFile", _encDocName, "text/plain", _encSignedFile);
+        await JsRuntime.InvokeVoidAsync("DownloadFile", _encDocName, "text/plain", _encSignedFile);
     }
 
     private async Task AddToArchive()

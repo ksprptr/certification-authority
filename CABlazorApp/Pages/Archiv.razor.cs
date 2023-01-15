@@ -5,6 +5,7 @@ namespace CABlazorApp.Pages;
 
 public partial class Archiv
 {
+    // List<string[]>
     public List<string> Files = new();
     public List<string> Certificates = new();
     private string _filesPath;
@@ -22,9 +23,10 @@ public partial class Archiv
         }
         List<string> fileArray = Directory.GetFiles(_filesPath).ToList();
         Files.Capacity = 5;
+        // Získat velikost a jméno
         foreach (var file in fileArray)
         {
-            Files.Add(Path.GetFileName(file));
+            Files.Add(file);
         }
     }
 
@@ -51,7 +53,7 @@ public partial class Archiv
     {
         string path = Path.Combine(_filesPath, fileName);
         string content = Convert.ToBase64String(File.ReadAllBytes(path));
-        await JsRuntime.InvokeVoidAsync("BlazorDownloadFile", fileName, "text/plain", content);
+        await JsRuntime.InvokeVoidAsync("DownloadFile", fileName, "text/plain", content);
         await JsRuntime.InvokeAsync<object>("location.reload");
     }
 

@@ -1,4 +1,4 @@
-﻿function BlazorDownloadFile(fileName, fileType, fileContent) {
+﻿function DownloadFile(fileName, fileType, fileContent) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:' + fileType + ';base64,' + fileContent);
     element.setAttribute('download', fileName);

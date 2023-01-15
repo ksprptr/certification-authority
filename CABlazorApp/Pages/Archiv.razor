@@ -30,9 +30,9 @@
                                             <img src="/images/File.png" class="mx-auto" alt="Soubor">
                                         </div>
                                         <div class="flex flex-col gap-y-4 h-full pt-2 text-center">
-                                            <h2 class="text-gray-600 font-medium">@file</h2>
+                                            <h2 class="text-gray-600 font-medium">@file</h2> 
+                                            <button class="sm:w-32 w-auto mx-auto mt-auto text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30" @onclick="@(() => DownloadFile(file))">Stáhnout</button>
                                             <button class="sm:w-32 w-auto mx-auto mt-auto text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30" @onclick="@(() => DeleteFile(file))">Smazat</button>
-                                            <button class="sm:w-32 w-auto mx-auto mt-auto text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30" @onclick="@(() => DownloadFile(file))">Stáhnout</button>
                                         </div>
                                     </div>
                                 }
