@@ -5,9 +5,8 @@ namespace CABlazorApp.Pages;
 
 public partial class Archiv
 {
-    // List<string[]>
-    public List<string> Files = new();
-    public List<string> Certificates = new();
+    public List<Tuple<string, int>> Files = new();
+    public List<Tuple<string, int>> Certificates = new();
     private string _filesPath;
     private string _certPath;
 
@@ -21,12 +20,12 @@ public partial class Archiv
         {
             Directory.CreateDirectory(_filesPath);
         }
-        List<string> fileArray = Directory.GetFiles(_filesPath).ToList();
+        List<string> fileArray = Directory.GetFiles(_filesPath).ToList(); 
         Files.Capacity = 5;
-        // Získat velikost a jméno
         foreach (var file in fileArray)
         {
-            Files.Add(file);
+            FileInfo fi = new FileInfo(file);
+            Files.Add(Tuple.Create(fi.Name, (int)fi.Length));
         }
     }
 
@@ -44,7 +43,8 @@ public partial class Archiv
         Certificates.Capacity = 5;
         foreach (var certificate in certArray)
         {
-            Certificates.Add(Path.GetFileName(certificate));
+            FileInfo fi = new FileInfo(certificate);
+            Certificates.Add(Tuple.Create(fi.Name, (int)fi.Length));
         }
 
     }
@@ -59,7 +59,7 @@ public partial class Archiv
 
     private void DeleteFile(string fileName)
     {
-        Files.Remove(fileName);
+        // Files.Remove(fileName);
         File.Delete(Path.Combine(_filesPath, fileName));
         JsRuntime.InvokeAsync<object>("location.reload");
     }

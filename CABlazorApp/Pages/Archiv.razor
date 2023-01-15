@@ -25,14 +25,19 @@
                                 foreach (var file in Files)
                                 {
                                     Thread.Sleep(1);
-                                    <div class="bg-gray-100 flex flex-col p-4 rounded-lg sm:w-[12rem]">
-                                        <div>
-                                            <img src="/images/File.png" class="mx-auto" alt="Soubor">
+                                    <div class="bg-gray-100 flex flex-col p-4 rounded-lg sm:w-[16rem]">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex justify-between items-center">
+                                                <img src="/images/File.png" class="w-20 h-auto" alt="Soubor">
+                                            </div>
+                                            <div class="text-right">
+                                                <h2 class="text-gray-600">Název: <span class="font-medium">@file.Item1</span></h2>
+                                                <h2 class="text-gray-600">Velikost: <span class="font-medium">@file.Item2 B</span></h2>
+                                            </div>
                                         </div>
-                                        <div class="flex flex-col gap-y-4 h-full pt-2 text-center">
-                                            <h2 class="text-gray-600 font-medium">@file</h2> 
-                                            <button class="sm:w-32 w-auto mx-auto mt-auto text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30" @onclick="@(() => DownloadFile(file))">Stáhnout</button>
-                                            <button class="sm:w-32 w-auto mx-auto mt-auto text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30" @onclick="@(() => DeleteFile(file))">Smazat</button>
+                                        <div class="flex gap-x-2 items-center pt-4">
+                                            <button class="w-full text-white font-medium border-2 border-sky-500 hover:border-sky-600 text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30" @onclick="@(() => DownloadFile(file.Item1))">Stáhnout</button>
+                                            <button class="text-xl text-red-500 border-2 border-red-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-red-500 duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30" @onclick="@(() => DeleteFile(file.Item1))"><i class="fa-solid fa-xmark"></i></button>
                                         </div>
                                     </div>
                                 }
