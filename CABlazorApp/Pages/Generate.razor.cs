@@ -34,9 +34,17 @@ public partial class Generate
         }
         else
         {
-            byte[] signedFile = await CryptoService.Sign(_encCertFile, _encDocFile, _encPass);
-            _encSignedFile = Convert.ToBase64String(signedFile);
-            _encState = true;
+            try
+            {
+                byte[] signedFile = await CryptoService.Sign(_encCertFile, _encDocFile, _encPass);
+                _encSignedFile = Convert.ToBase64String(signedFile);
+                _encState = true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
     

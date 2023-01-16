@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.JSInterop;
 
 namespace CABlazorApp.Pages;
@@ -49,24 +51,24 @@ public partial class Archiv
 
     }
     
-    private async Task DownloadFile(string fileName)
+    private void Download(string fileName)
     {
         string path = Path.Combine(_filesPath, fileName);
         string content = Convert.ToBase64String(File.ReadAllBytes(path));
-        await JsRuntime.InvokeVoidAsync("DownloadFile", fileName, "text/plain", content);
-        await JsRuntime.InvokeAsync<object>("location.reload");
+        JsRuntime.InvokeVoidAsync("DownloadFile", fileName, "text/plain", content);
+        JsRuntime.InvokeAsync<object>("location.reload");
     }
 
-    private void DeleteFile(string fileName)
+    private void DeleteFile(Tuple<string, int> tuple)
     {
-        // Files.Remove(fileName);
-        File.Delete(Path.Combine(_filesPath, fileName));
+        Files.Remove(tuple);
+        File.Delete(Path.Combine(_filesPath, tuple.Item1));
         JsRuntime.InvokeAsync<object>("location.reload");
     }
     
     private void DeleteCert(string certName)
     {
-        Certificates.Remove(certName);
+        // Certificates.Remove(certName);
         File.Delete(Path.Combine(_certPath, certName));
         JsRuntime.InvokeAsync<object>("location.reload");
     }
