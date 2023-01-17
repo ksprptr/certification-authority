@@ -20,6 +20,10 @@
                         <h1 class="text-gray-700 text-2xl font-medium">Šifrování dokumentu</h1>
                         <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
+                            @if (_passState)
+                            {
+                                <div>Zadal jste neplatné heslo.</div>
+                            }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>

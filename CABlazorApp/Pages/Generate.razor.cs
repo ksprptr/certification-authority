@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using System.Text;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
 namespace CABlazorApp.Pages;
@@ -8,6 +9,7 @@ public partial class Generate
     private string _encDocName;
     private string _encSignedFile;
     private bool _encState;
+    private bool _passState;
 
     private byte[] _encCertFile;
     private byte[] _encDocFile;
@@ -24,26 +26,43 @@ public partial class Generate
         if (_encCertFile == null || _encDocFile == null || String.IsNullOrWhiteSpace(_encPass))
         {
             if (_encCertFile == null)
+            {
+                _passState = false;
+                _encState = false;
                 _encCertError = _required;
-
+            }
             if (_encDocFile == null)
+            {
+                _passState = false;
+                _encState = false;
                 _encDocError = _required;
-
+            }
             if (String.IsNullOrWhiteSpace(_encPass))
+            {
+                _passState = false;
+                _encState = false;
                 _encPassError = _required;
+            }
         }
         else
         {
-            try
+            byte[] signedFile = await CryptoService.Sign(_encCertFile, _encDocFile, _encPass);
+            if (Encoding.ASCII.GetString(signedFile) == "wrongPass")
             {
-                byte[] signedFile = await CryptoService.Sign(_encCertFile, _encDocFile, _encPass);
+                _encState = false;
+                _encCertError = "";
+                _encPassError = "";
+                _encDocError = "";
+                _passState = true;
+            }
+            else
+            {
+                _passState = false;
+                _encCertError = "";
+                _encPassError = "";
+                _encDocError = "";
                 _encSignedFile = Convert.ToBase64String(signedFile);
                 _encState = true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
             }
         }
     }
