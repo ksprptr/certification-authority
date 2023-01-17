@@ -9,7 +9,6 @@ public partial class Generate
     private string _encDocName;
     private string _encSignedFile;
     private bool _encState;
-    private bool _passState;
 
     private byte[] _encCertFile;
     private byte[] _encDocFile;
@@ -17,6 +16,7 @@ public partial class Generate
 
     private string _encCertError;
     private string _encPassError;
+    private string _encPassError2;
     private string _encDocError;
 
     private readonly string _required = "Toto pole je povinné.";
@@ -27,21 +27,24 @@ public partial class Generate
         {
             if (_encCertFile == null)
             {
-                _passState = false;
+                _encPassError2 = "";
                 _encState = false;
                 _encCertError = _required;
+                InvokeAsync(StateHasChanged);
             }
             if (_encDocFile == null)
             {
-                _passState = false;
+                _encPassError2 = "";
                 _encState = false;
                 _encDocError = _required;
+                InvokeAsync(StateHasChanged);
             }
             if (String.IsNullOrWhiteSpace(_encPass))
             {
-                _passState = false;
+                _encPassError2 = "";
                 _encState = false;
                 _encPassError = _required;
+                InvokeAsync(StateHasChanged);
             }
         }
         else
@@ -53,11 +56,11 @@ public partial class Generate
                 _encCertError = "";
                 _encPassError = "";
                 _encDocError = "";
-                _passState = true;
+                _encPassError2 = "Zadal jste špatné heslo.";
             }
             else
             {
-                _passState = false;
+                _encPassError2 = "";
                 _encCertError = "";
                 _encPassError = "";
                 _encDocError = "";

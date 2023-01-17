@@ -17,13 +17,9 @@
             <div class="container xl:px-32 px-6 mx-auto">
                 <div class="lg:flex block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-center py-24">
                     <div class="bg-gray-50 rounded-lg p-8">
-                        <h1 class="text-gray-700 text-2xl font-medium">Šifrování dokumentu</h1>
+                        <h1 class="text-gray-700 text-2xl font-medium">Podepsat soubor</h1>
                         <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
-                            @if (_passState)
-                            {
-                                <div>Zadal jste neplatné heslo.</div>
-                            }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
@@ -34,6 +30,7 @@
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo</label>
                                     <input type="password" @bind="_encPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_encPassError</span>
+                                    <span class="text-red-700 text-sm ml-0.5">@_encPassError2</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
@@ -41,12 +38,16 @@
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_encDocError</span>
                                 </div>
                             </div>
-                            <button Type="button" @onclick="Sign" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Šifrovat</button>
-                            @if (_encState)
-                            {
-                                <button @onclick="DownloadSigned">Stáhnout</button>
-                                <button @onclick="AddToArchive">Archivovat</button>
-                            }
+                            <div class="flex justify-between">
+                                <button Type="button" @onclick="Sign" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Šifrovat</button>
+                                @if (_encState)
+                                {
+                                    <div>
+                                        <button class="text-white font-medium border-2 border-sky-500 hover:border-sky-600 text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30" @onclick="DownloadSigned">Stáhnout</button>
+                                        <button class="text-white font-medium border-2 border-sky-500 hover:border-sky-600 text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30" @onclick="AddToArchive">Archivovat</button>
+                                    </div>
+                                }
+                            </div>
                         </form>
                     </div>
                 </div>
