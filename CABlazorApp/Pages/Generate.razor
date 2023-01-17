@@ -17,9 +17,13 @@
             <div class="container xl:px-32 px-6 mx-auto">
                 <div class="lg:flex block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-center py-24">
                     <div class="bg-gray-50 rounded-lg p-8">
-                        <h1 class="text-gray-700 text-2xl font-medium">Podepsat soubor</h1>
+                        <h1 class="text-gray-700 text-2xl font-medium">Podepsání souboru</h1>
                         <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
+                            @if (_encState)
+                            {
+                                <div class="bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán.</div>
+                            }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát</label>
@@ -33,18 +37,18 @@
                                     <span class="text-red-700 text-sm ml-0.5">@_encPassError2</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
-                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte dokument</label>
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte soubor</label>
                                     <InputFile OnChange="OnEncryptDocumentFile" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_encDocError</span>
                                 </div>
                             </div>
-                            <div class="flex justify-between">
+                            <div class="lg:flex block lg:justify-between items-center gap-x-4">
                                 <button Type="button" @onclick="Sign" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Šifrovat</button>
                                 @if (_encState)
                                 {
-                                    <div>
-                                        <button class="text-white font-medium border-2 border-sky-500 hover:border-sky-600 text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30" @onclick="DownloadSigned">Stáhnout</button>
-                                        <button class="text-white font-medium border-2 border-sky-500 hover:border-sky-600 text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30" @onclick="AddToArchive">Archivovat</button>
+                                    <div class="mt-4">
+                                        <button class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="DownloadSigned">Stáhnout <i class="fa-solid fa-download"></i></button>
+                                        <button class="w-36 sm:mt-0 mt-2 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="AddToArchive">Archivovat <i class="fa-solid fa-box-archive"></i></button>
                                     </div>
                                 }
                             </div>
