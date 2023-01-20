@@ -23,6 +23,10 @@
                             @if (_encState)
                             {
                                 <div class="bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán.</div>
+                            } 
+                            @if (_archState)
+                            {
+                                <div class="mt-4 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor již existuje v archívu</div>
                             }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
@@ -59,3 +63,16 @@
         </div>
     </Authorized>
 </AuthorizeView>
+
+<div class="fixed top-1/2 left-1/2 custom w-[400px] h-[400px] px-8 py-16 bg-gray-50 rounded-lg invisible">
+    <div class="text-center">
+        <div class="block">
+            <span class="text-4xl border-4 py-3 px-8 rounded-full text-red-400 border-red-400"><i class="fa-solid fa-exclamation"></i></span>
+            <p class="mt-8 text-lg text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
+        </div>
+        <div class="flex gap-x-2 justify-around mt-4">
+            <button class="w-32 text-white font-medium text-center py-2 px-6 rounded-lg bg-green-500 hover:bg-green-600 hover:text-white duration-150 shadow-lg shadow-green-500/30 hover:shadow-green-600/30">Nahradit</button>
+            <button class="w-32 text-white font-medium text-center py-2 px-6 rounded-lg bg-red-500 hover:bg-red-600 hover:text-white duration-150 shadow-lg shadow-red-500/30 hover:shadow-red-600/30">Zrušit</button>
+        </div>
+    </div>
+</div>

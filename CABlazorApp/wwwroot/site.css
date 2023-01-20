@@ -43,3 +43,7 @@ body {
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
+
+.custom {
+    transform: translate(-50%, -50%);
+}

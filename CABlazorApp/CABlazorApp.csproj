@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <Folder Include="Archive\ahoj@ahoj.com\files" />
+    <Folder Include="Archive\example@example.com\files" />
     <Folder Include="Areas\Identity\Pages\Shared" />
   </ItemGroup>
 

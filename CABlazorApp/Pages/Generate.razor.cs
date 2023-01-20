@@ -6,18 +6,24 @@ namespace CABlazorApp.Pages;
 
 public partial class Generate
 {
-    private string _encDocName;
-    private string _encSignedFile;
-    private bool _encState;
-
+    //Inputs
     private byte[] _encCertFile;
     private byte[] _encDocFile;
     private string _encPass;
 
+    //Errors
     private string _encCertError;
     private string _encPassError;
     private string _encPassError2;
     private string _encDocError;
+    
+    //States
+    private bool _encState;
+    private bool _archState;
+    
+    //Other
+    private string _encDocName;
+    private string _encSignedFile;
 
     private readonly string _required = "Toto pole je povinné.";
 
@@ -30,21 +36,18 @@ public partial class Generate
                 _encPassError2 = "";
                 _encState = false;
                 _encCertError = _required;
-                InvokeAsync(StateHasChanged);
             }
             if (_encDocFile == null)
             {
                 _encPassError2 = "";
                 _encState = false;
                 _encDocError = _required;
-                InvokeAsync(StateHasChanged);
             }
             if (String.IsNullOrWhiteSpace(_encPass))
             {
                 _encPassError2 = "";
                 _encState = false;
                 _encPassError = _required;
-                InvokeAsync(StateHasChanged);
             }
         }
         else
@@ -88,16 +91,13 @@ public partial class Generate
         }
         if (!File.Exists(filePath))
         {
-            File.Create(filePath);
-            using (TextWriter tw = new StreamWriter(filePath))
-            {
-                tw.WriteLine(_encSignedFile);
-                tw.Close();
-            }
+            var fileStream = File.Create(filePath);
+            fileStream.Close();
+            File.WriteAllBytes(filePath, Convert.FromBase64String(_encSignedFile));
         }
         else
         {
-            Console.WriteLine("Tento soubor již existuje.");
+            _archState = true;
         }
     }
 
@@ -106,7 +106,7 @@ public partial class Generate
         await using MemoryStream stream = new MemoryStream();
         await obj.File.OpenReadStream().CopyToAsync(stream);
         _encDocFile = stream.ToArray();
-        _encDocName = obj.File.Name;
+        _encDocName = obj.File.Name; //doc.txt
     }
 
     private async Task OnEncryptCertFile(InputFileChangeEventArgs obj)
