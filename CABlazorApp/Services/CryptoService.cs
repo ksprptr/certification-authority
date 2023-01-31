@@ -28,4 +28,20 @@ public class CryptoService
             return stream.ToArray();
         }
     }
+
+    public byte[] Generate(string password)
+    {
+        var ecdsa = ECDsa.Create(); // generate asymmetric key pair
+        var req = new CertificateRequest("cn=foobar", ecdsa, HashAlgorithmName.SHA256);
+        var cert = req.CreateSelfSigned(DateTimeOffset.Now, DateTimeOffset.Now.AddYears(5));
+
+        // Create PFX (PKCS #12) with private key
+        return cert.Export(X509ContentType.Pfx, password);
+
+        // Create Base 64 encoded CER (public key only)
+        // File.WriteAllText("c:\\temp\\mycert.cer",
+        //     "-----BEGIN CERTIFICATE-----\r\n"
+        //     + Convert.ToBase64String(cert.Export(X509ContentType.Cert), Base64FormattingOptions.InsertLineBreaks)
+        //     + "\r\n-----END CERTIFICATE-----");
+    }
 }
