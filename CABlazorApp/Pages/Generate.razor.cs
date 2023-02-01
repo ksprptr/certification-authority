@@ -34,7 +34,7 @@ public partial class Generate
     //Other
     private string _encDocName;
     private string _encSignedFile;
-    private string _certFile;
+    private byte[] _certFile;
     private string _fileInfo;
     private string _certInfo;
 
@@ -91,7 +91,7 @@ public partial class Generate
     
     private async Task DownloadCert()
     {
-        await JsRuntime.InvokeVoidAsync("DownloadFile", _certName, "pfx", _certFile);
+        await JsRuntime.InvokeVoidAsync("DownloadPFXFile", _certName + ".pfx", _certFile);
     }
 
     private async Task AddToArchive()
@@ -135,8 +135,7 @@ public partial class Generate
         {
             _certNameError = "";
             _certPassError = "";
-            byte[] certificate = CryptoService.Generate(_encPass);
-            _certFile = Convert.ToBase64String(certificate);
+            _certFile = CryptoService.Generate(_encPass);
             _certState = true;
         }
         
