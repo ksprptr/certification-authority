@@ -19,22 +19,22 @@ public partial class Generate
     //Errors
     private string _encCertError;
     private string _encPassError;
-    private string _encPassError2;
     private string _encDocError;
 
     private string _certNameError;
     private string _certPassError;
+    //Different strings
+    private string _encPassError2;
     
     //States
     private bool _encState;
     private bool _archState;
-
     private bool _certState;
     
     //Other
     private string _encDocName;
     private string _encSignedFile;
-    private byte[] _certFile;
+    private X509Certificate2 _certFile;
     private string _fileInfo;
     private string _certInfo;
 
@@ -69,6 +69,7 @@ public partial class Generate
                 _encCertError = "";
                 _encPassError = "";
                 _encDocError = "";
+                Change(_encCertError, _encPassError, _encDocError);
                 _encPassError2 = "Zadal jste špatné heslo.";
             }
             else
@@ -79,19 +80,9 @@ public partial class Generate
                 _encDocError = "";
                 _encSignedFile = Convert.ToBase64String(signedFile);
                 _encState = true;
+                
             }
         }
-    }
-    
-    
-    private async Task DownloadSigned()
-    {
-        await JsRuntime.InvokeVoidAsync("DownloadFile", _encDocName, "text/plain", _encSignedFile);
-    }
-    
-    private async Task DownloadCert()
-    {
-        await JsRuntime.InvokeVoidAsync("DownloadPFXFile", _certName + ".pfx", _certFile);
     }
 
     private async Task AddToArchive()
@@ -135,7 +126,7 @@ public partial class Generate
         {
             _certNameError = "";
             _certPassError = "";
-            _certFile = CryptoService.Generate(_encPass);
+            //_certFile = CryptoService.Generate(_certPass);
             _certState = true;
         }
         
@@ -162,5 +153,24 @@ public partial class Generate
         await using MemoryStream stream = new MemoryStream();
         await obj.File.OpenReadStream().CopyToAsync(stream);
         _encCertFile = stream.ToArray();
+    }
+    
+
+    private void Change(params string[] strings)
+    {
+        foreach (var item in strings)
+        {
+             
+        }
+    }
+    
+    private async Task DownloadSigned()
+    {
+        await JsRuntime.InvokeVoidAsync("DownloadFile", _encDocName, "text/plain", _encSignedFile);
+    }
+    
+    private async Task DownloadCert()
+    {
+        await JsRuntime.InvokeVoidAsync("DownloadPFXFile", _certName + ".pfx", _certFile);
     }
 }
