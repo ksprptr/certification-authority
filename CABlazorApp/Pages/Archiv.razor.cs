@@ -48,25 +48,37 @@ public partial class Archiv
 
     }
     
-    private void Download(string fileName)
+    private void Download(string fileName, bool file)
     {
-        string path = Path.Combine(_filesPath, fileName);
-        string content = Convert.ToBase64String(File.ReadAllBytes(path));
-        JsRuntime.InvokeVoidAsync("DownloadFile", fileName, "text/plain", content);
-        JsRuntime.InvokeAsync<object>("location.reload");
+        if (file)
+        {
+            string path = Path.Combine(_filesPath, fileName);
+            string content = Convert.ToBase64String(File.ReadAllBytes(path));
+            JsRuntime.InvokeVoidAsync("DownloadFile", fileName, "text/plain", content);
+            JsRuntime.InvokeAsync<object>("location.reload");
+        }
+        else
+        {
+            string path = Path.Combine(_certPath, fileName);
+            string content = Convert.ToBase64String(File.ReadAllBytes(path));
+            JsRuntime.InvokeVoidAsync("DownloadPFXFile", fileName, content);
+            JsRuntime.InvokeAsync<object>("location.reload");
+        }
     }
 
-    private void DeleteFile(Tuple<string, int> tuple)
+    private void Delete(Tuple<string, int> tuple, bool file)
     {
-        Files.Remove(tuple);
-        File.Delete(Path.Combine(_filesPath, tuple.Item1));
-        JsRuntime.InvokeAsync<object>("location.reload");
-    }
-    
-    private void DeleteCert(string certName)
-    {
-        // Certificates.Remove(certName);
-        File.Delete(Path.Combine(_certPath, certName));
-        JsRuntime.InvokeAsync<object>("location.reload");
+        if (file)
+        {
+            Files.Remove(tuple);
+            File.Delete(Path.Combine(_filesPath, tuple.Item1));
+            JsRuntime.InvokeAsync<object>("location.reload");
+        }
+        else
+        {
+            Certificates.Remove(tuple);
+            File.Delete(Path.Combine(_certPath, tuple.Item1));
+            JsRuntime.InvokeAsync<object>("location.reload");
+        }
     }
 }

@@ -24,12 +24,12 @@
                             {
                                 <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán.</div>
                             } 
-                            @if (_archState)
+                            @if (!String.IsNullOrEmpty(_archEncState))
                             {
                                 <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">
                                     <div>Tento soubor v archívu již existuje. Chtěli byste ho nahradit?</div>
                                     <div class="flex gap-x-4">
-                                        <button class="font-medium underline" @onclick="ReplaceFile">Ano</button>
+                                        <button class="font-medium underline" onclick="@(() => ReplaceFile(_archEncState, true))">Ano</button>
                                         <button class="font-medium underline">Ne</button>
                                     </div>
                                 </div>
@@ -38,18 +38,17 @@
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát:</label>
                                     <InputFile OnChange="OnEncryptCertFile" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_encCertError</span>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[0]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo:</label>
                                     <input type="password" @bind="_encPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_encPassError</span>
-                                    <span class="text-red-700 text-sm ml-0.5">@_encPassError2</span>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[1]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte soubor:</label>
                                     <InputFile OnChange="OnEncryptDocumentFile" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_encDocError</span>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[2]</span>
                                 </div>
                             </div>
                             <div class="lg:flex block lg:justify-between items-center gap-x-4">
@@ -58,7 +57,7 @@
                                 {
                                     <div class="mt-4">
                                         <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="DownloadSigned">Stáhnout <i class="fa-solid fa-download"></i></button>
-                                        <button Type="button" class="w-36 sm:mt-0 mt-2 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="AddToArchive">Archivovat <i class="fa-solid fa-box-archive"></i></button>
+                                        <button Type="button" class="w-36 sm:mt-0 mt-2 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" onclick="@(() => AddToArchive(true))">Archivovat <i class="fa-solid fa-box-archive"></i></button>
                                     </div>
                                 }
                             </div>
@@ -68,16 +67,16 @@
                         <h1 class="text-gray-700 text-2xl font-medium">Generování certifikátu</h1>
                         <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Phasellus rhoncus.</p>
-                            @if (_encState)
+                            @if (_certState)
                             {
                                 <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován.</div>
                             } 
-                            @if (_archState)
+                            @if (!String.IsNullOrEmpty(_archCertState))
                             {
                                 <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">
                                     <div>Tento certifikát v archívu již existuje. Chtěli byste ho nahradit?</div>
                                     <div class="flex gap-x-4">
-                                        <button class="font-medium underline" @onclick="ReplaceFile">Ano</button>
+                                        <button class="font-medium underline" onclick="@(() => ReplaceFile(_archCertState, false))">Ano</button>
                                         <button class="font-medium underline">Ne</button>
                                     </div>
                                 </div>
@@ -86,12 +85,12 @@
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte název:</label>
                                     <input type="text" @bind="_certName" placeholder="Název certifikátu" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_certNameError</span>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[3]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo:</label>
                                     <input type="password" @bind="_certPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_certPassError</span>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[4]</span>
                                 </div>
                             </div>
                             <div class="lg:flex block lg:justify-between items-center gap-x-4">
@@ -100,7 +99,7 @@
                                 {
                                     <div class="mt-4">
                                         <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="DownloadCert">Stáhnout <i class="fa-solid fa-download"></i></button>
-                                        <button Type="button" class="w-36 sm:mt-0 mt-2 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="AddToArchive">Archivovat <i class="fa-solid fa-box-archive"></i></button>
+                                        <button Type="button" class="w-36 sm:mt-0 mt-2 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" onclick="@(() => AddToArchive(false))">Archivovat <i class="fa-solid fa-box-archive"></i></button>
                                     </div>
                                 }
                             </div>

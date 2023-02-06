@@ -1,7 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Microsoft.JSInterop;
 
 namespace CABlazorApp.Services;
 
@@ -30,9 +29,10 @@ public class CryptoService
         }
     }
 
-    // public async Task<X509Certificate2> Generate(string password)
-    // {
-    //     return;
-    // }
+    public async Task<byte[]> Generate(string password)
+    {
+        byte[] temp = Array.Empty<byte>();
+        return temp;
+    }
 
 }
