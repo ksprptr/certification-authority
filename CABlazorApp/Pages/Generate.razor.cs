@@ -69,7 +69,7 @@ public partial class Generate
             }
         }
     }
-
+    
     private async Task GenerateCertificate()
     {
         if (String.IsNullOrWhiteSpace(_certName))
@@ -91,7 +91,7 @@ public partial class Generate
         }
         
     }
-    
+
     private async Task AddToArchive(bool file)
     {
         //Getting user
@@ -143,7 +143,6 @@ public partial class Generate
                 _certState = false;
                 _archCertState = filePath;
             }
-            
         }
     }
 
@@ -180,7 +179,7 @@ public partial class Generate
     
     private async Task DownloadSigned()
     {
-        await JsRuntime.InvokeVoidAsync("DownloadFile", _encDocFile.Item1, "text/plain", _encSignedFile);
+        await JsRuntime.InvokeVoidAsync("DownloadFile", _encDocFile.Item1, "text/plain", Convert.ToBase64String(_encSignedFile));
     }
     
     private async Task DownloadCert()
