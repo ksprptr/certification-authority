@@ -19,14 +19,16 @@ public partial class Generate
     private string[] _errors = new string[6];
 
     //States of successfull
-    private bool _encState; //Successfull
-    private bool _certState; //Successfull
-    private string _archEncState; //with filePath
-    private string _archCertState; //with filePath
+    private bool _encState;
+    private bool _certState;
+    private string _archEncState;
+    private string _archCertState;
 
     //Outputs
     private byte[] _encSignedFile;
     private byte[] _certFile;
+    
+    //Text of the required field
     private readonly string _required = "Toto pole je povinné.";
 
     private async Task Sign()
@@ -68,6 +70,28 @@ public partial class Generate
         }
     }
 
+    private async Task GenerateCertificate()
+    {
+        if (String.IsNullOrWhiteSpace(_certName))
+        {
+            _certState = false;
+            _errors[3] = _required;
+        } 
+        else if (String.IsNullOrWhiteSpace(_certPass))
+        {
+            _certState = false;
+            _errors[4] = _required;
+        }
+        else
+        {
+            _errors[3] = "";
+            _errors[4] = "";
+            _certFile = await CryptoService.Generate(_certPass);
+            _certState = true;
+        }
+        
+    }
+    
     private async Task AddToArchive(bool file)
     {
         //Getting user
@@ -109,31 +133,18 @@ public partial class Generate
         }
         else
         {
-            _encState = false;
-            _archEncState = filePath;
+            if (file)
+            {
+                _encState = false;
+                _archEncState = filePath;
+            }
+            else
+            {
+                _certState = false;
+                _archCertState = filePath;
+            }
+            
         }
-    }
-    
-    private async Task GenerateCertificate()
-    {
-        if (String.IsNullOrWhiteSpace(_certName))
-        {
-            _certState = false;
-            _errors[3] = _required;
-        } 
-        else if (String.IsNullOrWhiteSpace(_certPass))
-        {
-            _certState = false;
-            _errors[4] = _required;
-        }
-        else
-        {
-            _errors[3] = "";
-            _errors[4] = "";
-            _certFile = await CryptoService.Generate(_certPass);
-            _certState = true;
-        }
-        
     }
 
     private void ReplaceFile(string path, bool file)

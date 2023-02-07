@@ -1,6 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace CABlazorApp.Services;
 
@@ -22,17 +26,15 @@ public class CryptoService
         }
         catch (Exception e)
         {
-            string wrongPassword = "wrongPass";
+            string wrongPasswordMessage = "wrongPass";
             MemoryStream stream = new MemoryStream();
-            stream.Write(Encoding.ASCII.GetBytes(wrongPassword));
+            stream.Write(Encoding.ASCII.GetBytes(wrongPasswordMessage));
             return stream.ToArray();
         }
     }
 
     public async Task<byte[]> Generate(string password)
     {
-        byte[] temp = Array.Empty<byte>();
-        return temp;
+        return null;
     }
-
 }
