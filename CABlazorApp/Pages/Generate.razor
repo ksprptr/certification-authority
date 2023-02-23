@@ -23,7 +23,11 @@
                             @if (_encState)
                             {
                                 <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán.</div>
-                            } 
+                            }
+                            @if (_maxFiles)
+                            {
+                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Váš archív je plný, na přidání nového souboru musíte smazat některou z položek.</div>
+                            }
                             @if (!String.IsNullOrEmpty(_archEncState))
                             {
                                 <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">
@@ -70,7 +74,11 @@
                             @if (_certState)
                             {
                                 <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován.</div>
-                            } 
+                            }
+                            @if (_maxCerts)
+                            {
+                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Váš archív je plný, na přidání nového certifikátu musíte smazat některou z položek.</div>
+                            }
                             @if (!String.IsNullOrEmpty(_archCertState))
                             {
                                 <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">

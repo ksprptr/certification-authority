@@ -24,6 +24,10 @@ public partial class Generate
     private string _archEncState;
     private string _archCertState;
 
+    private bool _maxFiles;
+    private bool _maxCerts;
+    
+
     //Outputs
     private byte[] _encSignedFile;
     private byte[] _certFile;
@@ -113,6 +117,7 @@ public partial class Generate
             filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".pfx");
         }
         
+        int fCount = Directory.GetFiles(dirPath, "*", SearchOption.TopDirectoryOnly).Length;
         
         if (!Directory.Exists(dirPath))
         {
@@ -120,15 +125,32 @@ public partial class Generate
         }
         if (!File.Exists(filePath))
         {
-            var fileStream = File.Create(filePath);
-            fileStream.Close();
-            if (file)
+            if (fCount >= 5)
             {
-                File.WriteAllBytes(filePath, _encSignedFile);
+                if (file)
+                {
+                    _maxFiles = true;
+                    _encState = false;
+                }
+                else
+                {
+                    _maxCerts = true;
+                    _certState = false;
+                }
+                
             }
             else
             {
-                File.WriteAllBytes(filePath, _certFile);
+                var fileStream = File.Create(filePath);
+                fileStream.Close();
+                if (file)
+                {
+                    File.WriteAllBytes(filePath, _encSignedFile);
+                }
+                else
+                {
+                    File.WriteAllBytes(filePath, _certFile);
+                }
             }
         }
         else
