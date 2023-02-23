@@ -15,18 +15,12 @@ public partial class Generate
     private string _certName;
     private string _certPass;
 
-    //0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError, 4 - certPassError
+    //0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError, 4 - certPassError, 5 - exceptionError
     private string[] _errors = new string[6];
 
     //States of successfull
     private bool _encState;
     private bool _certState;
-    private string _archEncState;
-    private string _archCertState;
-
-    private bool _maxFiles;
-    private bool _maxCerts;
-    
 
     //Outputs
     private byte[] _encSignedFile;
@@ -37,45 +31,92 @@ public partial class Generate
 
     private async Task Sign()
     {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var name = user.Identity.Name;
+        
         if (_encCertFile == null)
         {
             _encState = false;
             _errors[0] = _required;
         }
-        if (String.IsNullOrWhiteSpace(_encPass))
+        else if (String.IsNullOrWhiteSpace(_encPass))
         {
             _encState = false;
             _errors[1] = _required;
         }
-        if (_encDocFile == null)
+        else if (_encDocFile == null)
         {
             _encState = false;
             _errors[2] = _required;
         }
         else
         {
-            byte[] signedFile = await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
-            if (Encoding.ASCII.GetString(signedFile) == "wrongPass")
+            Tuple<byte[], Exception, byte[]> result = await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
+            byte[] signedFile = result.Item1;
+            Exception exception = result.Item2;
+            byte[] signature = result.Item3;
+
+            if (exception != null)
             {
-                _encState = false;
-                _errors[2] = "";
-                _errors[0] = "";
-                _errors[1] = "Zadal jste špatné heslo.";
+                if (exception.Message == "The specified network password is not correct.")
+                {
+                    _encState = false;
+                    _errors[0] = "";
+                    _errors[1] = "Zadal jste špatné heslo.";
+                    _errors[2] = "";
+                    _errors[5] = "";
+                }
+                else if (exception.Message == "Cannot find the requested object.")
+                {
+                    _errors[0] = "";
+                    _errors[1] = "";
+                    _errors[2] = "";
+                    _errors[5] = "Vybral jste neplatný certifikát. Vyberte prosím platný certifikát.";
+                }
+                else
+                {
+                    _errors[0] = "";
+                    _errors[1] = "";
+                    _errors[2] = "";
+                    _errors[5] = exception.Message;  
+                }
             }
             else
             {
+                string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files");
+                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", _encDocFile.Item1);
+                if (!Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    var fileSream = File.Create(filePath);
+                    fileSream.Close();
+                }
+                if (!File.Exists(filePath))
+                {
+                    var fileStream = File.Create(filePath);
+                    fileStream.Close();
+                }
+                File.WriteAllBytes(filePath, signedFile);
                 _errors[0] = "";
                 _errors[1] = "";
                 _errors[2] = "";
                 _encSignedFile = signedFile;
                 _encState = true;
-                
             }
         }
     }
     
     private async Task GenerateCertificate()
     {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var name = user.Identity.Name;
+        
         if (String.IsNullOrWhiteSpace(_certName))
         {
             _certState = false;
@@ -90,96 +131,29 @@ public partial class Generate
         {
             _errors[3] = "";
             _errors[4] = "";
-            _certFile = await CryptoService.Generate(_certPass);
-            _certState = true;
-        }
-        
-    }
-
-    private async Task AddToArchive(bool file)
-    {
-        //Getting user
-        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        var user = authstate.User;
-        var name = user.Identity.Name;
-        
-        //Paths
-        string dirPath = String.Empty;
-        string filePath = String.Empty;
-        if (file)
-        {
-            dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files");
-            filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", _encDocFile.Item1);
-        }
-        else
-        {
-            dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
-            filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".pfx");
-        }
-        
-        int fCount = Directory.GetFiles(dirPath, "*", SearchOption.TopDirectoryOnly).Length;
-        
-        if (!Directory.Exists(dirPath))
-        {
-            Directory.CreateDirectory(dirPath);
-        }
-        if (!File.Exists(filePath))
-        {
-            if (fCount >= 5)
+            byte[] certificate = await CryptoService.Generate(_certPass);
+            string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
+            string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".pfx");
+            if (!Directory.Exists(dirPath))
             {
-                if (file)
-                {
-                    _maxFiles = true;
-                    _encState = false;
-                }
-                else
-                {
-                    _maxCerts = true;
-                    _certState = false;
-                }
-                
+                Directory.CreateDirectory(dirPath);
             }
-            else
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                var fileSream = File.Create(filePath);
+                fileSream.Close();
+            }
+            if (!File.Exists(filePath))
             {
                 var fileStream = File.Create(filePath);
                 fileStream.Close();
-                if (file)
-                {
-                    File.WriteAllBytes(filePath, _encSignedFile);
-                }
-                else
-                {
-                    File.WriteAllBytes(filePath, _certFile);
-                }
             }
-        }
-        else
-        {
-            if (file)
-            {
-                _encState = false;
-                _archEncState = filePath;
-            }
-            else
-            {
-                _certState = false;
-                _archCertState = filePath;
-            }
-        }
-    }
-
-    private void ReplaceFile(string path, bool file)
-    {
-        File.Delete(path);
-        var fileStream = File.Create(path);
-        fileStream.Close();
-        if (file)
-        {
-            File.WriteAllBytes(path, _encSignedFile); 
-        }
-        else
-        {
-            File.WriteAllBytes(path, _certFile);
+            File.WriteAllBytes(filePath, certificate);
+            _errors[3] = "";
+            _errors[4] = "";
+            _certFile = certificate;
+            _certState = true;
         }
         
     }

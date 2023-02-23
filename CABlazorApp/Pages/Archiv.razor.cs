@@ -19,8 +19,7 @@ public partial class Archiv
         {
             Directory.CreateDirectory(_filesPath);
         }
-        List<string> fileArray = Directory.GetFiles(_filesPath).ToList(); 
-        Files.Capacity = 5;
+        List<string> fileArray = Directory.GetFiles(_filesPath).ToList();
         foreach (var file in fileArray)
         {
             FileInfo fi = new FileInfo(file);
@@ -39,7 +38,6 @@ public partial class Archiv
             Directory.CreateDirectory(_certPath);
         }
         List<string> certArray = Directory.GetFiles(_certPath).ToList();
-        Certificates.Capacity = 5;
         foreach (var certificate in certArray)
         {
             FileInfo fi = new FileInfo(certificate);

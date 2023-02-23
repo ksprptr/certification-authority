@@ -22,21 +22,11 @@
                             <p class="md:w-[32rem] text-gray-600 py-1">Vyberte certifikát z Vašeho zařízení, poté zadejte heslo a vyberte soubor k podepsání. Poté stačí kliknout na tlačítko "Šifrovat" a je hotovo!</p>
                             @if (_encState)
                             {
-                                <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán.</div>
+                                <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán a uložen do archívu.</div>
                             }
-                            @if (_maxFiles)
+                            @if (_errors[5] != null)
                             {
-                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Váš archív je plný, na přidání nového souboru musíte<br/>smazat některou z položek.</div>
-                            }
-                            @if (!String.IsNullOrEmpty(_archEncState))
-                            {
-                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">
-                                    <div>Tento soubor v archívu již existuje. Chtěli byste ho nahradit?</div>
-                                    <div class="flex gap-x-4">
-                                        <button class="font-medium underline" onclick="@(() => ReplaceFile(_archEncState, true))">Ano</button>
-                                        <button class="font-medium underline">Ne</button>
-                                    </div>
-                                </div>
+                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[5]</div>
                             }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
@@ -61,7 +51,6 @@
                                 {
                                     <div class="mt-4">
                                         <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="DownloadSigned">Stáhnout <i class="fa-solid fa-download"></i></button>
-                                        <button Type="button" class="w-36 sm:mt-0 mt-2 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" onclick="@(() => AddToArchive(true))">Archivovat <i class="fa-solid fa-box-archive"></i></button>
                                     </div>
                                 }
                             </div>
@@ -73,21 +62,7 @@
                             <p class="md:w-[32rem] text-gray-600 py-1">Zadejte název Vašeho budoucího certifikátu a zvolte pro něj heslo, po tomto kroku stačí kliknout na tlačítko "Vygenerovat" a máte hotovo!</p>
                             @if (_certState)
                             {
-                                <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován.</div>
-                            }
-                            @if (_maxCerts)
-                            {
-                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Váš archív je plný, na přidání nového certifikátu musíte<br/>smazat některou z položek.</div>
-                            }
-                            @if (!String.IsNullOrEmpty(_archCertState))
-                            {
-                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">
-                                    <div>Tento certifikát v archívu již existuje. Chtěli byste ho nahradit?</div>
-                                    <div class="flex gap-x-4">
-                                        <button class="font-medium underline" onclick="@(() => ReplaceFile(_archCertState, false))">Ano</button>
-                                        <button class="font-medium underline">Ne</button>
-                                    </div>
-                                </div>
+                                <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován a uložen do archívu.</div>
                             }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
@@ -107,7 +82,6 @@
                                 {
                                     <div class="mt-4">
                                         <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="DownloadCert">Stáhnout <i class="fa-solid fa-download"></i></button>
-                                        <button Type="button" class="w-36 sm:mt-0 mt-2 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" onclick="@(() => AddToArchive(false))">Archivovat <i class="fa-solid fa-box-archive"></i></button>
                                     </div>
                                 }
                             </div>
