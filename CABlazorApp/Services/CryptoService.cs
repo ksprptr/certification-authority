@@ -31,8 +31,11 @@ public class CryptoService
 
     public async Task<byte[]> Generate(string password)
     {
-        byte[] temp = Array.Empty<byte>();
-        return temp;
+        RSA rsa = RSA.Create();
+        CertificateRequest certRequest = new CertificateRequest("CN=MyCert", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        X509Certificate2 certificate = certRequest.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(3650));
+        byte[] certBytes = certificate.Export(X509ContentType.Pfx, password);
+        return certBytes;
     }
 
 }
