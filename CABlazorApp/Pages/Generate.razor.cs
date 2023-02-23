@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
 namespace CABlazorApp.Pages;
@@ -65,7 +64,7 @@ public partial class Generate
                     _errors[0] = "";
                     _errors[1] = "Zadal jste špatné heslo.";
                     _errors[2] = "";
-                    _errors[5] = "";
+                    _errors[5] = null;
                 }
                 else if (exception.Message == "Cannot find the requested object.")
                 {
