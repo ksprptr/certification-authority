@@ -20,10 +20,6 @@ public partial class Generate
     //States of successfull
     private bool _encState;
     private bool _certState;
-
-    //Outputs
-    private byte[] _encSignedFile;
-    private byte[] _certFile;
     
     //Text of the required field
     private readonly string _required = "Toto pole je povinné.";
@@ -85,6 +81,7 @@ public partial class Generate
             {
                 string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files");
                 string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", _encDocFile.Item1);
+                
                 if (!Directory.Exists(dirPath))
                 {
                     Directory.CreateDirectory(dirPath);
@@ -100,11 +97,12 @@ public partial class Generate
                     var fileStream = File.Create(filePath);
                     fileStream.Close();
                 }
+                
                 File.WriteAllBytes(filePath, signedFile);
+                
                 _errors[0] = "";
                 _errors[1] = "";
                 _errors[2] = "";
-                _encSignedFile = signedFile;
                 _encState = true;
             }
         }
@@ -128,11 +126,10 @@ public partial class Generate
         }
         else
         {
-            _errors[3] = "";
-            _errors[4] = "";
             byte[] certificate = await CryptoService.Generate(_certPass);
             string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
             string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".pfx");
+            
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
@@ -148,13 +145,13 @@ public partial class Generate
                 var fileStream = File.Create(filePath);
                 fileStream.Close();
             }
+            
             File.WriteAllBytes(filePath, certificate);
+            
             _errors[3] = "";
             _errors[4] = "";
-            _certFile = certificate;
             _certState = true;
         }
-        
     }
 
     private async Task OnEncryptDocumentFile(InputFileChangeEventArgs obj)
@@ -170,15 +167,27 @@ public partial class Generate
         await obj.File.OpenReadStream().CopyToAsync(stream);
         _encCertFile = stream.ToArray();
     }
-    
-    
-    private async Task DownloadSigned()
+
+    private async Task Download(string fileName, bool file)
     {
-        await JsRuntime.InvokeVoidAsync("DownloadFile", _encDocFile.Item1, "text/plain", Convert.ToBase64String(_encSignedFile));
-    }
-    
-    private async Task DownloadCert()
-    {
-        await JsRuntime.InvokeVoidAsync("DownloadPFXFile", _certName + ".pfx", _certFile);
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var userName = user.Identity.Name;
+        string path = String.Empty;
+        string fileType = String.Empty;
+
+        if (file)
+        {
+            path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName);
+            fileType = "text/plain";
+        }
+        else
+        {
+            path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "certificates", fileName);
+            fileType = "application/x-pkcs12";
+        }
+
+        byte[] fileData = File.ReadAllBytes(path);
+        await JsRuntime.InvokeVoidAsync("Download", fileName, fileType, Convert.ToBase64String(fileData));
     }
 }
