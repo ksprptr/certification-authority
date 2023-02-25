@@ -7,7 +7,3 @@
     element.click();
     document.body.removeChild(element);
 }
-
-function preventDefault(event) {
-    event.preventDefault();
-}

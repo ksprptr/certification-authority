@@ -1,15 +1,27 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace CABlazorApp.Pages;
 
 public partial class Generate
 {
+    
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern bool SetFileInformationByHandle(
+        string hFile,
+        int FileInformationClass,
+        byte[] lpFileInformation,
+        int dwBufferSize
+    );
+
+    const int FileExtendedAttributeInformation = 35;
     //Inputs of sign
     private byte[] _encCertFile;
     private Tuple<string, byte[]> _encDocFile;
     private string _encPass;
-    
+
     //Inputs of generate 
     private string _certName;
     private string _certPass;
@@ -20,7 +32,7 @@ public partial class Generate
     //States of successfull
     private bool _encState;
     private bool _certState;
-    
+
     //Text of the required field
     private readonly string _required = "Toto pole je povinné.";
 
@@ -29,7 +41,7 @@ public partial class Generate
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         var name = user.Identity.Name;
-        
+
         if (_encCertFile == null)
         {
             _encState = false;
@@ -47,7 +59,8 @@ public partial class Generate
         }
         else
         {
-            Tuple<byte[], Exception, byte[]> result = await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
+            Tuple<byte[], Exception, byte[]> result =
+                await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
             byte[] signedFile = result.Item1;
             Exception exception = result.Item2;
             byte[] signature = result.Item3;
@@ -74,32 +87,41 @@ public partial class Generate
                     _errors[0] = "";
                     _errors[1] = "";
                     _errors[2] = "";
-                    _errors[5] = exception.Message;  
+                    _errors[5] = exception.Message;
                 }
             }
             else
             {
                 string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files");
-                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", _encDocFile.Item1);
-                
+                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files",
+                    _encDocFile.Item1);
+
                 if (!Directory.Exists(dirPath))
                 {
                     Directory.CreateDirectory(dirPath);
                 }
+
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
                     var fileSream = File.Create(filePath);
                     fileSream.Close();
                 }
+
                 if (!File.Exists(filePath))
                 {
                     var fileStream = File.Create(filePath);
                     fileStream.Close();
                 }
+
                 
                 File.WriteAllBytes(filePath, signedFile);
-                
+
+                File.SetAttributes(filePath, File.GetAttributes(filePath) | FileAttributes.ReadOnly);
+                SetFileInformationByHandle(filePath, FileExtendedAttributeInformation, signature, signature.Length);
+                File.SetCreationTime(filePath, DateTime.Now);
+                File.SetAttributes(filePath, File.GetAttributes(filePath) | FileAttributes.Normal);
+
                 _errors[0] = "";
                 _errors[1] = "";
                 _errors[2] = "";
@@ -107,18 +129,18 @@ public partial class Generate
             }
         }
     }
-    
+
     private async Task GenerateCertificate()
     {
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         var name = user.Identity.Name;
-        
+
         if (String.IsNullOrWhiteSpace(_certName))
         {
             _certState = false;
             _errors[3] = _required;
-        } 
+        }
         else if (String.IsNullOrWhiteSpace(_certPass))
         {
             _certState = false;
@@ -128,26 +150,29 @@ public partial class Generate
         {
             byte[] certificate = await CryptoService.Generate(_certPass);
             string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
-            string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".pfx");
-            
+            string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates",
+                _certName + ".pfx");
+
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
             }
+
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
                 var fileSream = File.Create(filePath);
                 fileSream.Close();
             }
+
             if (!File.Exists(filePath))
             {
                 var fileStream = File.Create(filePath);
                 fileStream.Close();
             }
-            
+
             File.WriteAllBytes(filePath, certificate);
-            
+
             _errors[3] = "";
             _errors[4] = "";
             _certState = true;
