@@ -1,22 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 namespace CABlazorApp.Pages;
 
 public partial class Generate
 {
-    
-    [DllImport("kernel32.dll", SetLastError = true)]
-    static extern bool SetFileInformationByHandle(
-        string hFile,
-        int FileInformationClass,
-        byte[] lpFileInformation,
-        int dwBufferSize
-    );
-
-    const int FileExtendedAttributeInformation = 35;
     //Inputs of sign
     private byte[] _encCertFile;
     private Tuple<string, byte[]> _encDocFile;
@@ -104,23 +92,15 @@ public partial class Generate
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
-                    var fileSream = File.Create(filePath);
-                    fileSream.Close();
+                    File.Create(filePath).Close();
                 }
 
                 if (!File.Exists(filePath))
                 {
-                    var fileStream = File.Create(filePath);
-                    fileStream.Close();
+                    File.Create(filePath).Close();
                 }
-
                 
                 File.WriteAllBytes(filePath, signedFile);
-
-                File.SetAttributes(filePath, File.GetAttributes(filePath) | FileAttributes.ReadOnly);
-                SetFileInformationByHandle(filePath, FileExtendedAttributeInformation, signature, signature.Length);
-                File.SetCreationTime(filePath, DateTime.Now);
-                File.SetAttributes(filePath, File.GetAttributes(filePath) | FileAttributes.Normal);
 
                 _errors[0] = "";
                 _errors[1] = "";
@@ -150,8 +130,7 @@ public partial class Generate
         {
             byte[] certificate = await CryptoService.Generate(_certPass);
             string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
-            string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates",
-                _certName + ".pfx");
+            string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".pfx");
 
             if (!Directory.Exists(dirPath))
             {
