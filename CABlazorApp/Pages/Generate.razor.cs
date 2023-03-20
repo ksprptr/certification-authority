@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using CABlazorApp.Services;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
 namespace CABlazorApp.Pages;
@@ -99,8 +100,11 @@ public partial class Generate
                 {
                     File.Create(filePath).Close();
                 }
-                
+
                 File.WriteAllBytes(filePath, signedFile);
+                AlternateDataStream.WriteAds(filePath, "Signature", Convert.ToBase64String(signature));
+                string content = AlternateDataStream.ReadAds(filePath, "Signature");
+                Console.WriteLine(content);
 
                 _errors[0] = "";
                 _errors[1] = "";

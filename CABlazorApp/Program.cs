@@ -24,6 +24,7 @@ builder.Services.AddServerSideBlazor().AddHubOptions(options =>
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<CryptoService>();
+builder.Services.AddSingleton<AlternateDataStream>();
 
 var app = builder.Build();
 
