@@ -1,4 +1,11 @@
-﻿using CABlazorApp.Services;
+﻿using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using Aspose.Zip;
+using Aspose.Zip.Saving;
+using CABlazorApp.Data;
+using CABlazorApp.Models;
+using CABlazorApp.Services;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
@@ -7,23 +14,30 @@ namespace CABlazorApp.Pages;
 public partial class Generate
 {
     //Inputs of sign
-    private byte[] _encCertFile;
-    private Tuple<string, byte[]> _encDocFile;
-    private string _encPass;
+    private byte[]? _encCertFile;
+    private Tuple<string, byte[]>? _encDocFile;
+    private string? _encPass;
 
     //Inputs of generate 
-    private string _certName;
-    private string _certPass;
+    private string? _certName;
+    private string? _certPass;
+    
+    //Inputs of verify
+    private byte[]? _verifyFile;
+    private byte[]? _verifyPublicKey;
+    private string? _verifyFileName;
 
     //0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError, 4 - certPassError, 5 - exceptionError
-    private string[] _errors = new string[6];
+    private string[]? _errors = new string[8];
 
     //States of successfull
     private bool _encState;
     private bool _certState;
+    private int _verifyState;
 
     //Text of the required field
     private readonly string _required = "Toto pole je povinné.";
+
 
     private async Task Sign()
     {
@@ -49,7 +63,7 @@ public partial class Generate
         else
         {
             Tuple<byte[], Exception, byte[]> result =
-                await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
+            await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
             byte[] signedFile = result.Item1;
             Exception exception = result.Item2;
             byte[] signature = result.Item3;
@@ -103,8 +117,7 @@ public partial class Generate
 
                 File.WriteAllBytes(filePath, signedFile);
                 AlternateDataStream.WriteAds(filePath, "Signature", Convert.ToBase64String(signature));
-                string content = AlternateDataStream.ReadAds(filePath, "Signature");
-                Console.WriteLine(content);
+                Console.WriteLine(AlternateDataStream.ReadAds(filePath, "Signature"));
 
                 _errors[0] = "";
                 _errors[1] = "";
@@ -130,35 +143,132 @@ public partial class Generate
             _certState = false;
             _errors[4] = _required;
         }
-        else
+        else 
         {
-            byte[] certificate = await CryptoService.Generate(_certPass);
+            Tuple<byte[], RSA> certificate = await CryptoService.Generate(_certPass);
             string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
-            string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".pfx");
+            string dirPath2 = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp");
+            string zipPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".zip");
+            string certPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _certName + ".pfx");
+            string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", "public_key.txt");
+            
 
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
             }
 
+            if (!Directory.Exists(dirPath2))
+            {
+                Directory.CreateDirectory(dirPath2);
+            }
+
+            if (File.Exists(certPath))
+            {
+                File.Delete(certPath);
+                File.Create(certPath).Close();
+            }
+
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
-                var fileSream = File.Create(filePath);
-                fileSream.Close();
+                File.Create(filePath).Close();
+            }
+            
+            if (!File.Exists(certPath))
+            {
+                File.Create(certPath).Close();
             }
 
             if (!File.Exists(filePath))
             {
-                var fileStream = File.Create(filePath);
-                fileStream.Close();
+                File.Create(filePath).Close();
             }
 
-            File.WriteAllBytes(filePath, certificate);
+            File.WriteAllBytes(certPath, certificate.Item1);
+            File.WriteAllText(filePath,  Convert.ToBase64String(certificate.Item2.ExportRSAPublicKey()));
+
+            if (File.Exists(zipPath))
+            {
+                File.Delete(zipPath);
+            }
+
+            using (FileStream zipFile = File.Open(zipPath, FileMode.Create))
+            {
+                using (var archive = new Archive())
+                {
+                    archive.CreateEntry(_certName + ".pfx", certPath);
+                    archive.CreateEntry("public_key.txt", filePath);
+                    archive.Save(zipFile,  new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
+                }
+            }
 
             _errors[3] = "";
             _errors[4] = "";
             _certState = true;
+            
+            File.Delete(certPath);
+            File.Delete(filePath);
+        }
+    }
+
+    private async Task Verify()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var name = user.Identity.Name;
+        string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _verifyFileName);
+
+        if (_verifyFile == null)
+        {
+            _verifyState = 0;
+            _errors[6] = _required;
+        }
+        else if (_verifyPublicKey == null)
+        {
+            _verifyState = 0;
+            _errors[7] = _required;
+        } 
+        else
+        {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                File.Create(filePath).Close();
+                File.WriteAllBytes(filePath, _verifyFile);
+            }
+
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Close();
+                File.WriteAllBytes(filePath, _verifyFile);
+            }
+            
+
+            try
+            {
+                byte[] signature = Convert.FromBase64String(AlternateDataStream.ReadAds(filePath, "Signature"));
+                if (signature != null)
+                {
+                    _verifyState = await CryptoService.Verify(_verifyFile, signature, _verifyPublicKey);
+                }
+                else
+                {
+                    Console.WriteLine("ERROR: Signature of uploaded file is null!");
+                }
+
+                _errors[6] = "";
+                _errors[7] = "";
+                _errors[8] = "";
+            }
+            catch (Exception e)
+            {
+                _errors[6] = "Tento soubor není podepsán certifikátem.";
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            
+            File.Delete(filePath);
         }
     }
 
@@ -197,5 +307,20 @@ public partial class Generate
 
         byte[] fileData = File.ReadAllBytes(path);
         await JsRuntime.InvokeVoidAsync("Download", fileName, fileType, Convert.ToBase64String(fileData));
+    }
+    
+    private async Task OnVerifyDocumentFile(InputFileChangeEventArgs obj)
+    {
+        await using MemoryStream stream = new MemoryStream();
+        await obj.File.OpenReadStream().CopyToAsync(stream);
+        _verifyFile = stream.ToArray();
+        _verifyFileName = obj.File.Name;
+    }
+    
+    private async Task OnVerifyPublicKeyFile(InputFileChangeEventArgs obj)
+    {
+        await using MemoryStream stream = new MemoryStream();
+        await obj.File.OpenReadStream().CopyToAsync(stream);
+        _verifyPublicKey = stream.ToArray();
     }
 }

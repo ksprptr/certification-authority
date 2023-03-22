@@ -81,9 +81,37 @@
                                 @if (_certState)
                                 {
                                     <div class="mt-4">
-                                        <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="@(() => Download(_certName + ".pfx", false))">Stáhnout <i class="fa-solid fa-download"></i></button>
+                                        <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="@(() => Download(_certName + ".zip", false))">Stáhnout <i class="fa-solid fa-download"></i></button>
                                     </div>
                                 }
+                            </div>
+                        </form>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-8">
+                        <h1 class="text-gray-700 text-2xl font-medium">Ověření souboru certifikátem</h1>
+                        <form>
+                            <p class="md:w-[32rem] text-gray-600 py-1">Vyberte podepsaný soubor z Vašeho zařízení a poté vyberte soubor s veřejným klíčem Vašeho certifikátu, kterým chcete ověřit podepsání souboru.</p>
+                            @if (_verifyState == 1)
+                            {
+                                <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Tento soubor byl podepsán tímto certifikátem.</div>
+                            } else if (_verifyState == 2)
+                            {
+                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor nebyl podepsán tímto certifikátem.</div>
+                            }
+                            <div class="block">
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte soubor:</label>
+                                    <InputFile OnChange="OnVerifyDocumentFile" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[6]</span>
+                                </div>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte soubor s veřejným klíčem certifikátu:</label>
+                                    <InputFile OnChange="OnVerifyPublicKeyFile" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[7]</span>
+                                </div>
+                            </div>
+                            <div class="lg:flex block lg:justify-between items-center gap-x-4">
+                                <button Type="button" @onclick="Verify" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Vygenerovat</button>
                             </div>
                         </form>
                     </div>

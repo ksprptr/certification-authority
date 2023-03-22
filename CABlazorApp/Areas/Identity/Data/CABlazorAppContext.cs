@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CABlazorApp.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CABlazorApp.Data;
 
 public class CABlazorAppContext : IdentityDbContext<IdentityUser>
-{
+{ 
     public CABlazorAppContext(DbContextOptions<CABlazorAppContext> options)
         : base(options)
     {
