@@ -98,6 +98,10 @@
                             {
                                 <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor nebyl podepsán tímto certifikátem.</div>
                             }
+                            @if (_errors[8] != null)
+                            {
+                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[8]</div>
+                            }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte soubor:</label>

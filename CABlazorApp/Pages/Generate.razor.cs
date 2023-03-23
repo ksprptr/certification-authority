@@ -1,10 +1,7 @@
-﻿using System.Net;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Aspose.Zip;
 using Aspose.Zip.Saving;
-using CABlazorApp.Data;
-using CABlazorApp.Models;
 using CABlazorApp.Services;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
@@ -27,8 +24,8 @@ public partial class Generate
     private byte[]? _verifyPublicKey;
     private string? _verifyFileName;
 
-    //0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError, 4 - certPassError, 5 - exceptionError
-    private string[]? _errors = new string[8];
+    //0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError, 4 - certPassError, 5 - exceptionError, 6 - verifyFileError, 7 - verifyPublicKeyError, 8 - exceptionErrorOfVerify
+    private string[]? _errors = new string[9];
 
     //States of successfull
     private bool _encState;
@@ -37,7 +34,6 @@ public partial class Generate
 
     //Text of the required field
     private readonly string _required = "Toto pole je povinné.";
-
 
     private async Task Sign()
     {
@@ -146,69 +142,72 @@ public partial class Generate
         else 
         {
             Tuple<byte[], RSA> certificate = await CryptoService.Generate(_certPass);
-            string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
-            string dirPath2 = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp");
-            string zipPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".zip");
-            string certPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _certName + ".pfx");
-            string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", "public_key.txt");
+            if (name != null)
+            {
+                string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
+                string dirPath2 = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp");
+                string zipPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".zip");
+                string certPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _certName + ".pfx");
+                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", "public_key.txt");
             
 
-            if (!Directory.Exists(dirPath))
-            {
-                Directory.CreateDirectory(dirPath);
-            }
-
-            if (!Directory.Exists(dirPath2))
-            {
-                Directory.CreateDirectory(dirPath2);
-            }
-
-            if (File.Exists(certPath))
-            {
-                File.Delete(certPath);
-                File.Create(certPath).Close();
-            }
-
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-                File.Create(filePath).Close();
-            }
-            
-            if (!File.Exists(certPath))
-            {
-                File.Create(certPath).Close();
-            }
-
-            if (!File.Exists(filePath))
-            {
-                File.Create(filePath).Close();
-            }
-
-            File.WriteAllBytes(certPath, certificate.Item1);
-            File.WriteAllText(filePath,  Convert.ToBase64String(certificate.Item2.ExportRSAPublicKey()));
-
-            if (File.Exists(zipPath))
-            {
-                File.Delete(zipPath);
-            }
-
-            using (FileStream zipFile = File.Open(zipPath, FileMode.Create))
-            {
-                using (var archive = new Archive())
+                if (!Directory.Exists(dirPath))
                 {
-                    archive.CreateEntry(_certName + ".pfx", certPath);
-                    archive.CreateEntry("public_key.txt", filePath);
-                    archive.Save(zipFile,  new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
+                    Directory.CreateDirectory(dirPath);
                 }
-            }
 
-            _errors[3] = "";
-            _errors[4] = "";
-            _certState = true;
+                if (!Directory.Exists(dirPath2))
+                {
+                    Directory.CreateDirectory(dirPath2);
+                }
+
+                if (File.Exists(certPath))
+                {
+                    File.Delete(certPath);
+                    File.Create(certPath).Close();
+                }
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    File.Create(filePath).Close();
+                }
             
-            File.Delete(certPath);
-            File.Delete(filePath);
+                if (!File.Exists(certPath))
+                {
+                    File.Create(certPath).Close();
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    File.Create(filePath).Close();
+                }
+
+                File.WriteAllBytes(certPath, certificate.Item1);
+                File.WriteAllText(filePath,  Convert.ToBase64String(certificate.Item2.ExportRSAPublicKey()));
+
+                if (File.Exists(zipPath))
+                {
+                    File.Delete(zipPath);
+                }
+
+                using (FileStream zipFile = File.Open(zipPath, FileMode.Create))
+                {
+                    using (var archive = new Archive())
+                    {
+                        archive.CreateEntry(_certName + ".pfx", certPath);
+                        archive.CreateEntry("public_key.txt", filePath);
+                        archive.Save(zipFile,  new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
+                    }
+                }
+
+                _errors[3] = "";
+                _errors[4] = "";
+                _certState = true;
+            
+                File.Delete(certPath);
+                File.Delete(filePath);
+            }
         }
     }
 
@@ -235,27 +234,20 @@ public partial class Generate
             {
                 File.Delete(filePath);
                 File.Create(filePath).Close();
-                File.WriteAllBytes(filePath, _verifyFile);
+                await File.WriteAllBytesAsync(filePath, _verifyFile);
             }
 
             if (!File.Exists(filePath))
             {
                 File.Create(filePath).Close();
-                File.WriteAllBytes(filePath, _verifyFile);
+                await File.WriteAllBytesAsync(filePath, _verifyFile);
             }
             
 
             try
             {
                 byte[] signature = Convert.FromBase64String(AlternateDataStream.ReadAds(filePath, "Signature"));
-                if (signature != null)
-                {
-                    _verifyState = await CryptoService.Verify(_verifyFile, signature, _verifyPublicKey);
-                }
-                else
-                {
-                    Console.WriteLine("ERROR: Signature of uploaded file is null!");
-                }
+                _verifyState = await CryptoService.Verify(_verifyFile, signature, _verifyPublicKey);
 
                 _errors[6] = "";
                 _errors[7] = "";
@@ -263,12 +255,14 @@ public partial class Generate
             }
             catch (Exception e)
             {
-                _errors[6] = "Tento soubor není podepsán certifikátem.";
-                Console.WriteLine(e.Message);
-                throw;
+                if (e.Message == "Failed to open the ADS 'Signature' for '" + filePath + "'.")
+                {
+                    _errors[8] = "Nepodařilo se najít v metadatech souboru podpis s názvem 'Signature'.";
+                    File.Delete(filePath);
+                    return;
+                }
+                File.Delete(filePath);
             }
-            
-            File.Delete(filePath);
         }
     }
 
@@ -291,8 +285,8 @@ public partial class Generate
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         var userName = user.Identity.Name;
-        string path = String.Empty;
-        string fileType = String.Empty;
+        string path;
+        string fileType;
 
         if (file)
         {
