@@ -21,7 +21,7 @@ public partial class Generate
     
     //Inputs of verify
     private byte[]? _verifyFile;
-    private byte[]? _verifyPublicKey;
+    private byte[]? _verifyCert;
     private string? _verifyFileName;
 
     //0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError, 4 - certPassError, 5 - exceptionError, 6 - verifyFileError, 7 - verifyPublicKeyError, 8 - exceptionErrorOfVerify
@@ -58,8 +58,7 @@ public partial class Generate
         }
         else
         {
-            Tuple<byte[], Exception, byte[]> result =
-            await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
+            Tuple<byte[], Exception, byte[]> result = await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
             byte[] signedFile = result.Item1;
             Exception exception = result.Item2;
             byte[] signature = result.Item3;
@@ -141,14 +140,14 @@ public partial class Generate
         }
         else 
         {
-            Tuple<byte[], RSA> certificate = await CryptoService.Generate(_certPass);
+            Tuple<byte[], byte[]> certificate = await CryptoService.Generate(_certPass);
             if (name != null)
             {
                 string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
                 string dirPath2 = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp");
                 string zipPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".zip");
                 string certPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _certName + ".pfx");
-                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", "public_key.txt");
+                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _certName + "_public" + ".crt");
             
 
                 if (!Directory.Exists(dirPath))
@@ -184,7 +183,7 @@ public partial class Generate
                 }
 
                 File.WriteAllBytes(certPath, certificate.Item1);
-                File.WriteAllText(filePath,  Convert.ToBase64String(certificate.Item2.ExportRSAPublicKey()));
+                File.WriteAllBytes(filePath,  certificate.Item2);
 
                 if (File.Exists(zipPath))
                 {
@@ -196,7 +195,7 @@ public partial class Generate
                     using (var archive = new Archive())
                     {
                         archive.CreateEntry(_certName + ".pfx", certPath);
-                        archive.CreateEntry("public_key.txt", filePath);
+                        archive.CreateEntry(_certName + "_public" + ".crt", filePath);
                         archive.Save(zipFile,  new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
                     }
                 }
@@ -223,7 +222,7 @@ public partial class Generate
             _verifyState = 0;
             _errors[6] = _required;
         }
-        else if (_verifyPublicKey == null)
+        else if (_verifyCert == null)
         {
             _verifyState = 0;
             _errors[7] = _required;
@@ -247,7 +246,7 @@ public partial class Generate
             try
             {
                 byte[] signature = Convert.FromBase64String(AlternateDataStream.ReadAds(filePath, "Signature"));
-                _verifyState = await CryptoService.Verify(_verifyFile, signature, _verifyPublicKey);
+                _verifyState = await CryptoService.Verify(_verifyFile, signature, _verifyCert);
 
                 _errors[6] = "";
                 _errors[7] = "";
@@ -257,7 +256,7 @@ public partial class Generate
             {
                 if (e.Message == "Failed to open the ADS 'Signature' for '" + filePath + "'.")
                 {
-                    _errors[8] = "Nepodařilo se najít v metadatech souboru podpis s názvem 'Signature'.";
+                    _errors[8] = "Nepodařilo se najít vlastnost s názvem 'Signature'.";
                     File.Delete(filePath);
                     return;
                 }
@@ -311,10 +310,10 @@ public partial class Generate
         _verifyFileName = obj.File.Name;
     }
     
-    private async Task OnVerifyPublicKeyFile(InputFileChangeEventArgs obj)
+    private async Task OnVerifyCert(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new MemoryStream();
         await obj.File.OpenReadStream().CopyToAsync(stream);
-        _verifyPublicKey = stream.ToArray();
+        _verifyCert = stream.ToArray();
     }
 }

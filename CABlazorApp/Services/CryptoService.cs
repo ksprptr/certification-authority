@@ -24,20 +24,20 @@ public class CryptoService
         }
     }
 
-    public async Task<Tuple<byte[], RSA>> Generate(string password)
+    public async Task<Tuple<byte[], byte[]>> Generate(string password)
     {
         RSA rsa = RSA.Create();
         CertificateRequest certRequest = new CertificateRequest("CN=MyCert", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         X509Certificate2 certificate = certRequest.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(3650));
-        RSA rsaPublic = certificate.GetRSAPublicKey();
-        byte[] certBytes = certificate.Export(X509ContentType.Pfx, password);
-        return new Tuple<byte[], RSA>(certBytes, rsaPublic);
+        byte[] certPublicBytes = certificate.Export(X509ContentType.Cert);
+        byte[] certPrivateBytes = certificate.Export(X509ContentType.Pfx, password);
+        return new Tuple<byte[], byte[]>(certPrivateBytes, certPublicBytes);
     }
 
-    public async Task<int> Verify(byte[] data, byte[] signature, byte[] public_key)
+    public async Task<int> Verify(byte[] data, byte[] signature, byte[] certificate)
     {
         RSA rsa = RSA.Create();
-        rsa.ImportRSAPublicKey(public_key, out int bytesRead);
+        rsa.ImportRSAPublicKey(certificate, out int bytesRead);
         if (rsa.VerifyData(data, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1))
         {
             return 1;

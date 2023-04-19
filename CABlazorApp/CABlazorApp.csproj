@@ -41,6 +41,8 @@
 
   <ItemGroup>
     <Folder Include="Archive" />
+    <Folder Include="Archive\example@example.com\certificates" />
+    <Folder Include="Archive\example@example.com\files" />
     <Folder Include="Archive\example@example.com\temp" />
     <Folder Include="Areas\Identity\Pages\Shared" />
   </ItemGroup>
