@@ -90,9 +90,13 @@ public partial class Generate
             }
             else
             {
+                String[] fileInfo = _encDocFile.Item1.Split('.');
+                String fileName = fileInfo[0];
+                String fileExtension = fileInfo[fileInfo.Length-1];
+                
                 string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files");
-                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files",
-                    _encDocFile.Item1);
+                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", _encDocFile.Item1);
+                string zipPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", fileName + ".zip");
 
                 if (!Directory.Exists(dirPath))
                 {
@@ -112,12 +116,24 @@ public partial class Generate
 
                 File.WriteAllBytes(filePath, signedFile);
                 AlternateDataStream.WriteAds(filePath, "Signature", Convert.ToBase64String(signature));
+                
+                using (FileStream zipFile = File.Open(zipPath, FileMode.Create))
+                {
+                    using (var archive = new Archive())
+                    {
+                        archive.CreateEntry(fileName + fileExtension, filePath);
+                        archive.Save(zipFile, new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
+                    }
+                }
+                
                 Console.WriteLine(AlternateDataStream.ReadAds(filePath, "Signature"));
 
                 _errors[0] = "";
                 _errors[1] = "";
                 _errors[2] = "";
                 _encState = true;
+                
+                File.Delete(filePath);
             }
         }
     }
@@ -221,7 +237,6 @@ public partial class Generate
         string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _verifyFileName);
         string extractPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp");
         string[] splitted = _verifyFileName.Split('.');
-        string extension = splitted[splitted.Length-1];
 
         if (_verifyFile == null)
         {
@@ -275,6 +290,52 @@ public partial class Generate
         }
     }
 
+    private async Task Download(string fileNameWithExtension, bool file)
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var userName = user.Identity.Name;
+        string path;
+        string fileType;
+        string fileName = "";
+        
+        if (file)
+        {
+            List<string> splitedFileName = fileNameWithExtension.Split('.').ToList();
+            splitedFileName.RemoveAt(splitedFileName.Count - 1);
+            
+            foreach (var item in splitedFileName)
+            {
+                if (fileName == "")
+                {
+                    fileName += item;
+                }
+                else
+                {
+                    fileName += "." + item;
+                }
+            }
+            
+            path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName);
+            fileType = "text/plain";
+        }
+        else
+        {
+            path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "certificates", fileNameWithExtension);
+            fileType = "application/x-pkcs12";
+        }
+
+        if (fileName == "")
+        {
+            await JsRuntime.InvokeVoidAsync("Download", fileNameWithExtension, fileType);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("Download", fileName, fileName, fileType);
+        }
+        
+    }
+    
     private async Task OnEncryptDocumentFile(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new MemoryStream();
@@ -287,29 +348,6 @@ public partial class Generate
         await using MemoryStream stream = new MemoryStream();
         await obj.File.OpenReadStream().CopyToAsync(stream);
         _encCertFile = stream.ToArray();
-    }
-
-    private async Task Download(string fileName, bool file)
-    {
-        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        var user = authstate.User;
-        var userName = user.Identity.Name;
-        string path;
-        string fileType;
-
-        if (file)
-        {
-            path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName);
-            fileType = "text/plain";
-        }
-        else
-        {
-            path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "certificates", fileName);
-            fileType = "application/x-pkcs12";
-        }
-
-        byte[] fileData = File.ReadAllBytes(path);
-        await JsRuntime.InvokeVoidAsync("Download", "../Archive/" + userName + "/files/" + fileName, fileName, fileType);
     }
 
     private async Task OnVerifyDocumentFile(InputFileChangeEventArgs obj)
