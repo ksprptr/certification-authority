@@ -116,6 +116,11 @@ public partial class Generate
 
                 File.WriteAllBytes(filePath, signedFile);
                 AlternateDataStream.WriteAds(filePath, "Signature", Convert.ToBase64String(signature));
+
+                if (File.Exists(zipPath))
+                {
+                    File.Delete(zipPath);
+                }
                 
                 using (FileStream zipFile = File.Open(zipPath, FileMode.Create))
                 {
@@ -316,8 +321,8 @@ public partial class Generate
                 }
             }
             
-            path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName);
-            fileType = "text/plain";
+            path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName + ".zip");
+            fileType = "application/zip";
         }
         else
         {
@@ -327,11 +332,11 @@ public partial class Generate
 
         if (fileName == "")
         {
-            await JsRuntime.InvokeVoidAsync("Download", fileNameWithExtension, fileType);
+            await JsRuntime.InvokeVoidAsync("Download", fileNameWithExtension, Convert.ToBase64String(File.ReadAllBytes(path)));
         }
         else
         {
-            await JsRuntime.InvokeVoidAsync("Download", fileName, fileName, fileType);
+            await JsRuntime.InvokeVoidAsync("Download", fileName, fileType, Convert.ToBase64String(File.ReadAllBytes(path)));
         }
         
     }

@@ -60,7 +60,7 @@ public partial class Archiv
         if (file)
         {
             path = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName);
-            fileType = "text/plain";
+            fileType = "application/zip";
         }
         else
         {
