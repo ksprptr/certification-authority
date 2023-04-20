@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+﻿using System.IO.Compression;
 using System.Text;
 using Aspose.Zip;
 using Aspose.Zip.Saving;
@@ -18,7 +18,7 @@ public partial class Generate
     //Inputs of generate 
     private string? _certName;
     private string? _certPass;
-    
+
     //Inputs of verify
     private byte[]? _verifyFile;
     private byte[]? _verifyCert;
@@ -138,17 +138,20 @@ public partial class Generate
             _certState = false;
             _errors[4] = _required;
         }
-        else 
+        else
         {
             Tuple<byte[], byte[]> certificate = await CryptoService.Generate(_certPass);
             if (name != null)
             {
                 string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates");
                 string dirPath2 = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp");
-                string zipPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates", _certName + ".zip");
-                string certPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _certName + ".pfx");
-                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _certName + "_public" + ".crt");
-            
+                string zipPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "certificates",
+                    _certName + ".zip");
+                string certPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp",
+                    _certName + ".pfx");
+                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp",
+                    _certName + "_public" + ".crt");
+
 
                 if (!Directory.Exists(dirPath))
                 {
@@ -171,7 +174,7 @@ public partial class Generate
                     File.Delete(filePath);
                     File.Create(filePath).Close();
                 }
-            
+
                 if (!File.Exists(certPath))
                 {
                     File.Create(certPath).Close();
@@ -183,7 +186,7 @@ public partial class Generate
                 }
 
                 File.WriteAllBytes(certPath, certificate.Item1);
-                File.WriteAllBytes(filePath,  certificate.Item2);
+                File.WriteAllBytes(filePath, certificate.Item2);
 
                 if (File.Exists(zipPath))
                 {
@@ -196,14 +199,14 @@ public partial class Generate
                     {
                         archive.CreateEntry(_certName + ".pfx", certPath);
                         archive.CreateEntry(_certName + "_public" + ".crt", filePath);
-                        archive.Save(zipFile,  new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
+                        archive.Save(zipFile, new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
                     }
                 }
 
                 _errors[3] = "";
                 _errors[4] = "";
                 _certState = true;
-            
+
                 File.Delete(certPath);
                 File.Delete(filePath);
             }
@@ -216,6 +219,9 @@ public partial class Generate
         var user = authstate.User;
         var name = user.Identity.Name;
         string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", _verifyFileName);
+        string extractPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp");
+        string[] splitted = _verifyFileName.Split('.');
+        string extension = splitted[splitted.Length-1];
 
         if (_verifyFile == null)
         {
@@ -226,7 +232,7 @@ public partial class Generate
         {
             _verifyState = 0;
             _errors[7] = _required;
-        } 
+        }
         else
         {
             if (File.Exists(filePath))
@@ -241,11 +247,14 @@ public partial class Generate
                 File.Create(filePath).Close();
                 await File.WriteAllBytesAsync(filePath, _verifyFile);
             }
-            
+
+            ZipFile.ExtractToDirectory(filePath, extractPath);
+
+            string file = Path.Combine(Environment.ContentRootPath, "Archive", name, "temp", "file.txt");
 
             try
             {
-                byte[] signature = Convert.FromBase64String(AlternateDataStream.ReadAds(filePath, "Signature"));
+                byte[] signature = Convert.FromBase64String(AlternateDataStream.ReadAds(file, "Signature"));
                 _verifyState = await CryptoService.Verify(_verifyFile, signature, _verifyCert);
 
                 _errors[6] = "";
@@ -260,6 +269,7 @@ public partial class Generate
                     File.Delete(filePath);
                     return;
                 }
+
                 File.Delete(filePath);
             }
         }
@@ -299,9 +309,9 @@ public partial class Generate
         }
 
         byte[] fileData = File.ReadAllBytes(path);
-        await JsRuntime.InvokeVoidAsync("Download", fileName, fileType, Convert.ToBase64String(fileData));
+        await JsRuntime.InvokeVoidAsync("Download", "../Archive/" + userName + "/files/" + fileName, fileName, fileType);
     }
-    
+
     private async Task OnVerifyDocumentFile(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new MemoryStream();
@@ -309,7 +319,7 @@ public partial class Generate
         _verifyFile = stream.ToArray();
         _verifyFileName = obj.File.Name;
     }
-    
+
     private async Task OnVerifyCert(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new MemoryStream();
