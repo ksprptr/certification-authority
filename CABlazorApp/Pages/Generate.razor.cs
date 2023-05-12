@@ -37,109 +37,154 @@ public partial class Generate
 
     private async Task Sign()
     {
-        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        var user = authstate.User;
-        var name = user.Identity.Name;
+        // Get an username
+        var userName = await GetUsername();
 
-        if (_encCertFile == null)
+        // Check if the certificate input isn't empty
+        if (_encCertFile.IsNullOrEmpty())
         {
+            // Set a sign state to un-successful
             _encState = false;
+            
+            // Set an error to required message
             _errors[0] = _required;
+            return;
         }
-        else if (String.IsNullOrWhiteSpace(_encPass))
+
+        // Check if the certificate password isn't empty
+        if (String.IsNullOrWhiteSpace(_encPass))
         {
+            // Set the sign state to un-successful
             _encState = false;
+            
+            // Set the error to required message
             _errors[1] = _required;
+            return;
         }
-        else if (_encDocFile == null)
+        
+        // Check if the file input isn't empty
+        if (_encDocFile == null)
         {
+            // Set the sign state to un-successful
             _encState = false;
+            
+            // Set the error to required message
             _errors[2] = _required;
+            return;
         }
-        else
+
+        // Sign the file with the certificate
+        Tuple<byte[], Exception, byte[]> result = await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
+        
+        // Save the signed file and a signature
+        byte[] signedFile = result.Item1;
+        Exception exception = result.Item2;
+        byte[] signature = result.Item3;
+
+        // Check if there was some error while sign
+        if (exception != null)
         {
-            Tuple<byte[], Exception, byte[]> result = await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
-            byte[] signedFile = result.Item1;
-            Exception exception = result.Item2;
-            byte[] signature = result.Item3;
-
-            if (exception != null)
+            // Check if there was an exception while signing the file
+            if (exception.Message == "The specified network password is not correct.")
             {
-                if (exception.Message == "The specified network password is not correct.")
-                {
-                    _encState = false;
-                    _errors[0] = "";
-                    _errors[1] = "Zadal jste špatné heslo.";
-                    _errors[2] = "";
-                    _errors[5] = null;
-                }
-                else if (exception.Message == "Cannot find the requested object.")
-                {
-                    _errors[0] = "";
-                    _errors[1] = "";
-                    _errors[2] = "";
-                    _errors[5] = "Vybral jste neplatný certifikát. Vyberte prosím platný certifikát.";
-                }
-                else
-                {
-                    _errors[0] = "";
-                    _errors[1] = "";
-                    _errors[2] = "";
-                    _errors[5] = exception.Message;
-                }
+                // Set the sign state to un-successful 
+                _encState = false;
+            
+                // Clear the errors & set the wrong password error
+                _errors[0] = "";
+                _errors[1] = "Zadal jste špatné heslo.";
+                _errors[2] = "";
+                _errors[5] = null!;
+                return;
             }
-            else
+        
+            if (exception.Message == "Cannot find the requested object.")
             {
-                String[] fileInfo = _encDocFile.Item1.Split('.');
-                String fileName = fileInfo[0];
-
-                string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files");
-                string filePath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", _encDocFile.Item1);
-                string zipPath = Path.Combine(Environment.ContentRootPath, "Archive", name, "files", fileName + ".zip");
-
-                if (!Directory.Exists(dirPath))
-                {
-                    Directory.CreateDirectory(dirPath);
-                }
-
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                    File.Create(filePath).Close();
-                }
-
-                if (!File.Exists(filePath))
-                {
-                    File.Create(filePath).Close();
-                }
-
-                File.WriteAllBytes(filePath, signedFile);
-                AlternateDataStream.WriteAds(filePath, "Signature", Convert.ToBase64String(signature));
-
-                if (File.Exists(zipPath))
-                {
-                    File.Delete(zipPath);
-                }
-                
-                using (FileStream zipFile = File.Open(zipPath, FileMode.Create))
-                {
-                    using (var archive = new Archive())
-                    {
-                        archive.CreateEntry(_encDocFile.Item1, filePath);
-                        archive.Save(zipFile, new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
-                    }
-                }
-                
-                Console.WriteLine(AlternateDataStream.ReadAds(filePath, "Signature"));
-
+                // Clear the errors & set the not valid certificate
                 _errors[0] = "";
                 _errors[1] = "";
                 _errors[2] = "";
-                _encState = true;
-                
-                File.Delete(filePath);
+                _errors[5] = "Vybral jste neplatný certifikát. Vyberte prosím platný certifikát.";
+                return;
+            }
+        
+            // Clear the errors & set exception message as error
+            _errors[0] = "";
+            _errors[1] = "";
+            _errors[2] = "";
+            _errors[5] = exception.Message;
+            return;
+        }
+        
+        
+        // Get a name of the file
+        var fileName = _encDocFile.Item1.Split('.')[..^1][0];
+
+        // Set the paths
+        var dirPath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files");
+        var filePath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", _encDocFile.Item1);
+        var zipPath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName + ".zip");
+
+        // Check if the directory doesn't exist
+        if (!Directory.Exists(dirPath))
+        {
+            // Create the directory
+            Directory.CreateDirectory(dirPath);
+        }
+
+        // Check if the file is already exist
+        if (File.Exists(filePath))
+        {
+            // Delete the old file
+            File.Delete(filePath);
+            
+            // Create the new file
+            File.Create(filePath).Close();
+        }
+
+        // Check if the file doesn't exist 
+        if (!File.Exists(filePath))
+        {
+            // Create the new file
+            File.Create(filePath).Close();
+        }
+
+        // Write all bytes to the new file
+        await File.WriteAllBytesAsync(filePath, signedFile);
+        
+        // Write ADS named 'Signature' to the file
+        AlternateDataStream.WriteAds(filePath, "Signature", Convert.ToBase64String(signature));
+
+        // Check if the zip file is already exist
+        if (File.Exists(zipPath))
+        {
+            // Delete the old zip
+            File.Delete(zipPath);
+        }
+
+        // Create new zip file
+        await using (FileStream zipFile = File.Open(zipPath, FileMode.Create))
+        {
+            using (var archive = new Archive())
+            {
+                archive.CreateEntry(_encDocFile.Item1, filePath);
+                archive.Save(zipFile, new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
             }
         }
+
+        // Write line with signature (test)
+        Console.WriteLine("Signature: " + AlternateDataStream.ReadAds(filePath, "Signature"));
+
+        // Clear all the errors
+        _errors[0] = "";
+        _errors[1] = "";
+        _errors[2] = "";
+        
+        // Set sign state to successful
+        _encState = true;
+
+        // Delete temp file
+        File.Delete(filePath);
     }
 
     // Generate a certificate
@@ -349,19 +394,19 @@ public partial class Generate
         var userName = await GetUsername();
 
         // Get a file type
-        var fileType = MimeTypes.GetContentType(fileNameWithExtension);
+        // var fileType = MimeTypes.GetContentType(fileNameWithExtension);
         
         // Split the file name
         var splitFileName = fileNameWithExtension.Split(".");
         
         // Get the file name without an extension
-        var fileName = splitFileName.Take(splitFileName.Length - 1);
+        var fileName = splitFileName[..^1][0];
 
         // Get a path of file
-        var path = file ? Path.Combine(Environment.ContentRootPath, "Archive", userName ?? throw new InvalidOperationException(), "files", fileName + ".zip") : Path.Combine(Environment.ContentRootPath, "Archive", userName, "certificates", fileNameWithExtension);
+        var path = file ? Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName + ".zip") : Path.Combine(Environment.ContentRootPath, "Archive", userName, "certificates", fileNameWithExtension);
         
         // Execute JS download
-        await JsRuntime.InvokeVoidAsync("Download", fileName, fileType, Convert.ToBase64String(await File.ReadAllBytesAsync(path)));
+        await JsRuntime.InvokeVoidAsync("Download", fileName, "application/x-compressed", Convert.ToBase64String(await File.ReadAllBytesAsync(path)));
     }
     
     // Methods after input change event
@@ -414,7 +459,7 @@ public partial class Generate
         _verifyCert = stream.ToArray();
     }
 
-    // Get a username method
+    // Get an username method
     private async Task<string?> GetUsername()
     {
         // Get auth state
