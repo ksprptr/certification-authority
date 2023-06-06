@@ -24,13 +24,15 @@ public partial class Generate
     private byte[]? _verifyCert;
     private string? _verifyFileName;
 
-    // 0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError, 4 - certPassError, 5 - exceptionError, 6 - verifyFileError, 7 - verifyPublicKeyError, 8 - exceptionErrorOfVerify
+    // 0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError,
+    // 4 - certPassError, 5 - exceptionError, 6 - verifyFileError,
+    // 7 - verifyPublicKeyError, 8 - exceptionErrorOfVerify
     private string[]? _errors = new string[9];
 
     // States of successfull
     private bool _encState;
     private bool _certState;
-    private int _verifyState;
+    private bool? _verifyState;
 
     // Text of the required field
     private readonly string _required = "Toto pole je povinné.";
@@ -74,7 +76,7 @@ public partial class Generate
         }
 
         // Sign the file with the certificate
-        Tuple<byte[], Exception, byte[]> result = await CryptoService.Sign(_encCertFile, _encDocFile.Item2, _encPass);
+        Tuple<byte[], Exception, byte[]> result = await Services.Sign(_encCertFile, _encDocFile.Item2, _encPass);
         
         // Save the signed file and a signature
         byte[] signedFile = result.Item1;
@@ -123,7 +125,6 @@ public partial class Generate
         // Set the paths
         var dirPath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files");
         var filePath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", _encDocFile.Item1);
-        var zipPath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName + ".zip");
 
         // Check if the directory doesn't exist
         if (!Directory.Exists(dirPath))
@@ -155,23 +156,6 @@ public partial class Generate
         // Write ADS named 'Signature' to the file
         AlternateDataStream.WriteAds(filePath, "Signature", Convert.ToBase64String(signature));
 
-        // Check if the zip file is already exist
-        if (File.Exists(zipPath))
-        {
-            // Delete the old zip
-            File.Delete(zipPath);
-        }
-
-        // Create new zip file
-        await using (FileStream zipFile = File.Open(zipPath, FileMode.Create))
-        {
-            using (var archive = new Archive())
-            {
-                archive.CreateEntry(_encDocFile.Item1, filePath);
-                archive.Save(zipFile, new ArchiveSaveOptions() { Encoding = Encoding.ASCII });
-            }
-        }
-
         // Write line with signature (test)
         Console.WriteLine("Signature: " + AlternateDataStream.ReadAds(filePath, "Signature"));
 
@@ -182,9 +166,6 @@ public partial class Generate
         
         // Set sign state to successful
         _encState = true;
-
-        // Delete temp file
-        File.Delete(filePath);
     }
 
     // Generate a certificate
@@ -216,7 +197,7 @@ public partial class Generate
         }
         
         // Generate the certificates (private, public)
-        Tuple<byte[], byte[]> certificate = await CryptoService.Generate(_certPass);
+        Tuple<byte[], byte[]> certificate = await Services.Generate(_certPass);
         
         // Set the paths
         string dirPath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "certificates");
@@ -313,13 +294,13 @@ public partial class Generate
         var userName = await GetUsername();
         
         // Set the file path
-        var filePath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "temp", _verifyFileName);
+        var filePath = Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", _verifyFileName);
 
         // Check if the file input isn't empty
         if (_verifyFile.IsNullOrEmpty())
         {
             // Set verify state to un-successful
-            _verifyState = 0;
+            _verifyState = null;
             
             // Set an error to required message
             _errors[6] = _required;
@@ -330,7 +311,7 @@ public partial class Generate
         if (_verifyCert.IsNullOrEmpty())
         {
             // Set verify state to un-successful
-            _verifyState = 0;
+            _verifyState = null;
             
             // Set the error to required message
             _errors[7] = _required;
@@ -338,23 +319,23 @@ public partial class Generate
         }
         
         // Check if the file is already exist
-        if (File.Exists(filePath))
-        {
-            // Delete the old file
-            File.Delete(filePath);
-            
-            // Create the new file & write all bytes
-            File.Create(filePath).Close();
-            await File.WriteAllBytesAsync(filePath, _verifyFile);
-        }
+        // if (File.Exists(filePath))
+        // {
+        //     // Delete the old file
+        //     File.Delete(filePath);
+        //     
+        //     // Create the new file & write all bytes
+        //     File.Create(filePath).Close();
+        //     await File.WriteAllBytesAsync(filePath, _verifyFile);
+        // }
 
         // Check if the file doesn't exist
-        if (!File.Exists(filePath))
-        {
-            // Create the new file & write all bytes
-            File.Create(filePath).Close();
-            await File.WriteAllBytesAsync(filePath, _verifyFile);
-        }
+        // if (!File.Exists(filePath))
+        // {
+        //     // Create the new file & write all bytes
+        //     File.Create(filePath).Close();
+        //     await File.WriteAllBytesAsync(filePath, _verifyFile);
+        // }
 
         try
         {
@@ -362,7 +343,7 @@ public partial class Generate
             byte[] signature = Convert.FromBase64String(AlternateDataStream.ReadAds(filePath, "Signature"));
             
             // Verify if the signature is from certificate
-            _verifyState = await CryptoService.Verify(_verifyFile, signature, _verifyCert);
+            _verifyState = Services.Verify(_verifyFile, signature, _verifyCert);
 
             // Clear all errors
             _errors[6] = "";
@@ -378,12 +359,15 @@ public partial class Generate
                 _errors[8] = "Nepodařilo se najít vlastnost s názvem 'Signature'.";
                 
                 // Delete temp file
-                File.Delete(filePath);
+                // File.Delete(filePath);
                 return;
             }
+            
+            // Set an error message
+            _errors[8] = e.Message;
 
             // Delete temp file
-            File.Delete(filePath);
+            // File.Delete(filePath);
         }
     }
 
@@ -394,19 +378,13 @@ public partial class Generate
         var userName = await GetUsername();
 
         // Get a file type
-        // var fileType = MimeTypes.GetContentType(fileNameWithExtension);
-        
-        // Split the file name
-        var splitFileName = fileNameWithExtension.Split(".");
-        
-        // Get the file name without an extension
-        var fileName = splitFileName[..^1][0];
+        var fileType = MimeTypes.GetContentType(fileNameWithExtension);
 
         // Get a path of file
-        var path = file ? Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileName + ".zip") : Path.Combine(Environment.ContentRootPath, "Archive", userName, "certificates", fileNameWithExtension);
+        var path = file ? Path.Combine(Environment.ContentRootPath, "Archive", userName, "files", fileNameWithExtension) : Path.Combine(Environment.ContentRootPath, "Archive", userName, "certificates", fileNameWithExtension);
         
         // Execute JS download
-        await JsRuntime.InvokeVoidAsync("Download", fileName, "application/x-compressed", Convert.ToBase64String(await File.ReadAllBytesAsync(path)));
+        await JsRuntime.InvokeVoidAsync("Download", fileNameWithExtension, fileType, Convert.ToBase64String(await File.ReadAllBytesAsync(path)));
     }
     
     // Methods after input change event

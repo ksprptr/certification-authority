@@ -1,9 +1,10 @@
-﻿using System.Security.Cryptography;
+﻿using System.DirectoryServices.Protocols;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace CABlazorApp.Services;
 
-public class CryptoService
+public class Services
 {
     public async Task<Tuple<byte[], Exception, byte[]>> Sign(byte[] certFile, byte[] docFile, string password)
     {
@@ -34,18 +35,12 @@ public class CryptoService
         return new Tuple<byte[], byte[]>(certPrivateBytes, certPublicBytes);
     }
 
-    public async Task<int> Verify(byte[] data, byte[] signature, byte[] certificate)
+    public bool Verify(byte[] data, byte[] signature, byte[] certificate)
     {
         RSA rsa = RSA.Create();
-        rsa.ImportRSAPublicKey(certificate, out int bytesRead);
-        if (rsa.VerifyData(data, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1))
-        {
-            return 1;
-        }
-        else
-        {
-            return 2;
-        }
+        byte[] encoded = BerConverter.Encode("{o}", certificate);
+        rsa.ImportRSAPublicKey(encoded, out var bytesRead);
+        if (rsa.VerifyData(data, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1)) return true;
+        return false;
     }
-
 }

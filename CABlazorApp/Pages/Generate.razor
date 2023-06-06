@@ -1,7 +1,7 @@
 ﻿@page "/generate"
 @using CABlazorApp.Pages.Shared
 @using CABlazorApp.Services
-@inject CryptoService CryptoService
+@inject Services Services
 @inject IWebHostEnvironment Environment
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 @inject IJSRuntime JsRuntime
@@ -17,7 +17,7 @@
             <div class="container xl:px-32 px-6 mx-auto">
                 <div class="lg:flex block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-start py-24">
                     <div class="bg-gray-50 rounded-lg p-8">
-                        <h1 class="text-gray-700 text-2xl font-medium">Podepsání souboru</h1>
+                        <h1 class="text-gray-700 text-2xl font-medium outline-none">Podepsání souboru</h1>
                         <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Vyberte certifikát z Vašeho zařízení, poté zadejte heslo a vyberte soubor k podepsání. Poté stačí kliknout na tlačítko "Šifrovat" a je hotovo!</p>
                             @if (_encState)
@@ -57,7 +57,7 @@
                         </form>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-8">
-                        <h1 class="text-gray-700 text-2xl font-medium">Generování certifikátu</h1>
+                        <h1 class="text-gray-700 text-2xl font-medium outline-none">Generování certifikátu</h1>
                         <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Zadejte název Vašeho budoucího certifikátu a zvolte pro něj heslo, po tomto kroku stačí kliknout na tlačítko "Vygenerovat" a máte hotovo!</p>
                             @if (_certState)
@@ -88,13 +88,13 @@
                         </form>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-8">
-                        <h1 class="text-gray-700 text-2xl font-medium">Ověření souboru certifikátem</h1>
+                        <h1 class="text-gray-700 text-2xl font-medium outline-none">Ověření souboru certifikátem</h1>
                         <form>
                             <p class="md:w-[32rem] text-gray-600 py-1">Vyberte podepsaný soubor z Vašeho zařízení a poté vyberte certifikát s veřejným klíčem, kterým chcete ověřit podepsání souboru.</p>
-                            @if (_verifyState == 1)
+                            @if (_verifyState == true)
                             {
                                 <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Tento soubor byl podepsán tímto certifikátem.</div>
-                            } else if (_verifyState == 2)
+                            } else if (_verifyState == false)
                             {
                                 <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor nebyl podepsán tímto certifikátem.</div>
                             }
