@@ -6,41 +6,38 @@ namespace CABlazorApp.Services;
 
 public class Services
 {
-    public async Task<Tuple<byte[], Exception, byte[]>> Sign(byte[] certFile, byte[] docFile, string password)
+    public static Tuple<byte[]?, Exception?, byte[]?> Sign(byte[] certificate, byte[] file, string password)
     {
         try
         {
-            X509Certificate2 cert = new X509Certificate2(certFile, password);
-            MemoryStream stream = new MemoryStream();
-            stream.Write(docFile);
-            using (RSA rsa = cert.GetRSAPrivateKey())
-            {
-                var signature = rsa.SignData(docFile, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
-                return new Tuple<byte[], Exception, byte[]>(stream.ToArray(), null, signature);
-            }
+            X509Certificate2 cert = new(certificate, password);
+            MemoryStream stream = new();
+            stream.Write(file);
+            using var rsa = cert.GetRSAPrivateKey();
+            var signature = rsa.SignData(file, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
+            return new Tuple<byte[]?, Exception?, byte[]?>(stream.ToArray(), null, signature);
         }
         catch (Exception e)
         {
-            return new Tuple<byte[], Exception, byte[]>(null, e, null);
+            return new Tuple<byte[]?, Exception?, byte[]?>(null, e, null);
         }
     }
 
-    public async Task<Tuple<byte[], byte[]>> Generate(string password)
+    public static Tuple<byte[], byte[]> Generate(string password)
     {
-        RSA rsa = RSA.Create();
-        CertificateRequest certRequest = new CertificateRequest("CN=MyCert", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-        X509Certificate2 certificate = certRequest.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(3650));
-        byte[] certPublicBytes = certificate.Export(X509ContentType.Cert);
-        byte[] certPrivateBytes = certificate.Export(X509ContentType.Pfx, password);
+        var rsa = RSA.Create();
+        CertificateRequest certRequest = new("CN=MyCert", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        var certificate = certRequest.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(3650));
+        var certPublicBytes = certificate.Export(X509ContentType.Cert);
+        var certPrivateBytes = certificate.Export(X509ContentType.Pfx, password);
         return new Tuple<byte[], byte[]>(certPrivateBytes, certPublicBytes);
     }
 
-    public bool Verify(byte[] data, byte[] signature, byte[] certificate)
+    public static bool Verify(byte[] data, byte[] signature, byte[] certificate)
     {
-        RSA rsa = RSA.Create();
-        byte[] encoded = BerConverter.Encode("{o}", certificate);
+        var rsa = RSA.Create();
+        var encoded = BerConverter.Encode("{o}", certificate);
         rsa.ImportRSAPublicKey(encoded, out var bytesRead);
-        if (rsa.VerifyData(data, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1)) return true;
-        return false;
+        return rsa.VerifyData(data, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
     }
 }

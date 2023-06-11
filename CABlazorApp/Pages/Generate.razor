@@ -15,70 +15,63 @@
     <Authorized>
         <div class="bg-gray-100">
             <div class="container xl:px-32 px-6 mx-auto">
-                <div class="lg:flex block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-start py-24">
-                    <div class="bg-gray-50 rounded-lg p-8">
-                        <h1 class="text-gray-700 text-2xl font-medium outline-none">Podepsání souboru</h1>
-                        <form>
+                <div class="sm:flex items-stretch block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-start py-24">
+                    <div class="bg-gray-50 rounded-lg p-8 shadow">
+                        <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Podepsání souboru</h1>
+                        <hr />
+                        <form class="pt-2">
                             <p class="md:w-[32rem] text-gray-600 py-1">Vyberte certifikát z Vašeho zařízení, poté zadejte heslo a vyberte soubor k podepsání. Poté stačí kliknout na tlačítko "Šifrovat" a je hotovo!</p>
-                            @if (_encState)
-                            {
-                                <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán a uložen do archívu.</div>
-                            }
-                            @if (_errors[5] != null)
-                            {
-                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[5]</div>
-                            }
+                            @if (_signState) { <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán a uložen do archívu.</div> }
+                            @if (_errors[5] != "") { <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[5]</div> }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát:</label>
-                                    <InputFile OnChange="OnEncryptCertFile" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <InputFile OnChange="OnSignCertFile" accept=".crt,.cer,.ca-bundle,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[0]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo:</label>
-                                    <input type="password" @bind="_encPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <input autocomplete="new-password" type="password" @bind="_signPassword" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[1]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte soubor:</label>
-                                    <InputFile OnChange="OnEncryptDocumentFile" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <InputFile OnChange="OnSignFile" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[2]</span>
                                 </div>
                             </div>
                             <div class="lg:flex block lg:justify-between items-center gap-x-4">
                                 <button Type="button" @onclick="Sign" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Šifrovat</button>
-                                @if (_encState)
+                                @if (_signState)
                                 {
                                     <div class="mt-4">
-                                        <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="@(() => Download(_encDocFile.Item1, true))">Stáhnout <i class="fa-solid fa-download"></i></button>
+                                        <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="@(() => Download(_signFileName, true))">Stáhnout <i class="fa-solid fa-download"></i></button>
                                     </div>
                                 }
                             </div>
                         </form>
                     </div>
-                    <div class="bg-gray-50 rounded-lg p-8">
-                        <h1 class="text-gray-700 text-2xl font-medium outline-none">Generování certifikátu</h1>
-                        <form>
+                    <div class="bg-gray-50 rounded-lg p-8 shadow sm:mt-0 mt-4">
+                        <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Generování certifikátu</h1>
+                        <hr />
+                        <form class="pt-2">
                             <p class="md:w-[32rem] text-gray-600 py-1">Zadejte název Vašeho budoucího certifikátu a zvolte pro něj heslo, po tomto kroku stačí kliknout na tlačítko "Vygenerovat" a máte hotovo!</p>
-                            @if (_certState)
-                            {
-                                <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován a uložen do archívu.</div>
-                            }
+                            @if (_generateState) { <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován a uložen do archívu.</div> }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte název:</label>
-                                    <input type="text" maxlength="16" @bind="_certName" placeholder="Název certifikátu" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <input autocomplete="new-password" type="text" maxlength="16" @bind="_certName" placeholder="Název certifikátu" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[3]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo:</label>
-                                    <input type="password" maxlength="32" @bind="_certPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <input autocomplete="new-password" type="password" maxlength="32" @bind="_certPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[4]</span>
                                 </div>
                             </div>
                             <div class="lg:flex block lg:justify-between items-center gap-x-4">
                                 <button Type="button" @onclick="GenerateCertificate" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Vygenerovat</button>
-                                @if (_certState)
+                                @if (_generateState)
                                 {
                                     <div class="mt-4">
                                         <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="@((() => Download(_certName + ".zip", false)))">Stáhnout <i class="fa-solid fa-download"></i></button>
@@ -87,21 +80,21 @@
                             </div>
                         </form>
                     </div>
-                    <div class="bg-gray-50 rounded-lg p-8">
-                        <h1 class="text-gray-700 text-2xl font-medium outline-none">Ověření souboru certifikátem</h1>
-                        <form>
+                    <div class="bg-gray-50 rounded-lg p-8 shadow sm:mt-0 mt-4">
+                        <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Ověření</h1>
+                        <hr />
+                        <form class="pt-2" autocomplete="off">
                             <p class="md:w-[32rem] text-gray-600 py-1">Vyberte podepsaný soubor z Vašeho zařízení a poté vyberte certifikát s veřejným klíčem, kterým chcete ověřit podepsání souboru.</p>
-                            @if (_verifyState == true)
+                            @switch (_verifyState)
                             {
-                                <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Tento soubor byl podepsán tímto certifikátem.</div>
-                            } else if (_verifyState == false)
-                            {
-                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor nebyl podepsán tímto certifikátem.</div>
+                                case true:
+                                    <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Tento soubor byl podepsán tímto certifikátem.</div>
+                                    break;
+                                case false:
+                                    <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor nebyl podepsán tímto certifikátem.</div>
+                                    break;
                             }
-                            @if (_errors[8] != null)
-                            {
-                                <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[8]</div>
-                            }
+                            @if (_errors[8] != ""){ <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[8]</div> }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte soubor:</label>

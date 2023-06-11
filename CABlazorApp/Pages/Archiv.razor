@@ -11,13 +11,14 @@
         <div class="bg-gray-100">
             <div class="container xl:px-32 px-6 mx-auto">
                 <div class="flex-wrap justify-center items-center py-24">
-                    <div class="bg-gray-50 rounded-lg p-8">
+                    <div class="bg-gray-50 rounded-lg p-8 shadow">
                         <div class="hidden">
                             @LoadFiles()
                         </div>
-                        <div class="sm:flex sm:text-left text-center block justify-between">
-                            <h1 class="text-gray-700 text-2xl font-medium outline-none">Soubory</h1>
+                        <div class="sm:flex block justify-between">
+                            <h1 class="text-gray-700 text-2xl font-medium outline-none pb-2 uppercase">Soubory</h1>
                         </div>
+                        <hr />
                         <div class="flex md:justify-start justify-center flex-wrap gap-x-4 gap-y-4 pt-2">
                             @if (Files.Count != 0)
                             {
@@ -47,13 +48,14 @@
                             <span class="text-gray-600">Nemáte uložený žádný soubor v archívu.</span>
                         }
                     </div>
-                    <div class="bg-gray-50 rounded-lg p-8 mt-4">
+                    <div class="bg-gray-50 rounded-lg p-8 mt-4 shadow">
                         <div class="hidden">
                             @LoadCertificates()
                         </div>
-                        <div class="sm:flex sm:text-left text-center block justify-between">
-                            <h1 class="text-gray-700 text-2xl font-medium outline-none">Certifikáty</h1>
+                        <div class="sm:flex block justify-between">
+                            <h1 class="text-gray-700 text-2xl font-medium outline-none pb-2 uppercase">Certifikáty</h1>
                         </div>
+                        <hr />
                         <div class="flex md:justify-start justify-center flex-wrap gap-x-4 gap-y-4 pt-2">
                             @if (Certificates.Count != 0)
                             {
