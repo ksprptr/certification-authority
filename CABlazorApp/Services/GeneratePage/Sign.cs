@@ -35,7 +35,7 @@ public static class Sign
         // Set the paths
         var dirPath = Path.Combine("Archive", userName, "files");
         var filePath = Path.Combine("Archive", userName, "files", fileName);
-        
+
         // Check if the directories and files exist or not
         if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
         if (File.Exists(filePath)) { File.Delete(filePath); File.Create(filePath).Close(); }
@@ -44,8 +44,8 @@ public static class Sign
         // Write the signed file to the file
         File.WriteAllBytesAsync(filePath, signedFile);
         
-        // Write ADS named 'Signature' to the file
-        AlternateDataStream.WriteAds(filePath, "Signature", Convert.ToBase64String(signature));
+        // Set a metadata
+        Metadata.SetMetadata(fileName, filePath, signature);
 
         // Return the success
         return new Tuple<bool, string[]>(true, new[] { "", "", "", "", "", "", "", "", "" });
