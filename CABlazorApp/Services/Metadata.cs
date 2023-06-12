@@ -1,4 +1,8 @@
-﻿namespace CABlazorApp.Services;
+﻿using Aspose.Pdf;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+
+namespace CABlazorApp.Services;
 
 public class Metadata
 {
@@ -19,6 +23,8 @@ public class Metadata
                 return true;
             
             case "application/pdf":
+                SetPdfMetadata(filePath, "Signature", signature);
+                Console.WriteLine("Metadata set successfully.");
                 return true;
             
             case "application/excel":
@@ -37,11 +43,20 @@ public class Metadata
         {
             case "text/plain":
                 var file = File.ReadAllText(filePath);
-                var signature = file.Split("------ DON'T DELETE ------\nSignature: ")[1].Split("\n------ DON'T DELETE ------\n")[0];
+                var signature = file.Split("Signature: ")[1];
                 return Convert.FromBase64String(signature);
             
             default:
                 return null;
         }
+    }
+
+    private static void SetPdfMetadata(string filePath, string name, byte[] value)
+    {
+        Aspose.Pdf.Document pdfDoc = new(filePath);
+        var customMetadata = new KeyValuePair<string, XmpValue>("Signature", new XmpValue(Convert.ToBase64String(value)));
+        pdfDoc.Metadata.Add("CustomMetaData", customMetadata);
+        pdfDoc.Save();
+        Console.WriteLine(pdfDoc.Metadata["CustomMetaData"]);
     }
 }
