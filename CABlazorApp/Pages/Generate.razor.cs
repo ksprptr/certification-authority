@@ -11,6 +11,7 @@ public partial class Generate
 {
     // Inputs of sign
     private byte[]? _signCertificate;
+    private string? _signCertificateName;
     private string? _signPassword;
     private byte[]? _signFile;
     private string? _signFileName;
@@ -37,7 +38,7 @@ public partial class Generate
     private async Task Sign()
     {
         var userName = await GetUsername();
-        var returned = SignFile(userName!, _signCertificate!, _signPassword!, _signFile!, _signFileName!);
+        var returned = SignFile(userName!, _signCertificate!, _signCertificateName!, _signPassword!, _signFile!, _signFileName!);
         
         _signState = returned.Item1;
         _errors = returned.Item2;
@@ -46,7 +47,7 @@ public partial class Generate
     private async Task GenerateCertificate()
     {
         // Check if certificate name doesn't contain spaces
-        if (_certName!.Contains(' ')) { var replace = _certName.Replace(' ', '_'); _certName = replace; }
+        if (_certName != null && _certName!.Contains(' ')) { var replace = _certName.Replace(' ', '_'); _certName = replace; }
         
         var userName = await GetUsername();
         var returned = GenCertificate(userName!, _certName!, _certPass!);
@@ -95,6 +96,7 @@ public partial class Generate
         await using MemoryStream stream = new();
         await obj.File.OpenReadStream().CopyToAsync(stream);
         _signCertificate = stream.ToArray();
+        _signCertificateName = obj.File.Name;
     }
 
     private async Task OnVerifyDocumentFile(InputFileChangeEventArgs obj)

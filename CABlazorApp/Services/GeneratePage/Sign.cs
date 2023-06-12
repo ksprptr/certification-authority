@@ -5,13 +5,23 @@ namespace CABlazorApp.Services.GeneratePage;
 public static class Sign
 {
     private const string Required = "Toto pole je povinné.";
-
-    public static Tuple<bool, string[]> SignFile(string userName, byte[] certificate, string password, byte[] file, string fileName)
+    private static List<string> _allowedFileExtensions = new() { ".docx", ".docm", ".doc", ".pdf", ".pptx", ".pptm", ".ppt", ".xlsx", ".xlsm", ".xls", ".csv", ".txt" };
+    private static List<string> _allowedCertificateExtensions = new() { ".crt", ".cer", ".p7b", ".p7c", ".p7s", ".pem", ".p12", ".pfx" };
+    
+    public static Tuple<bool, string[]> SignFile(string userName, byte[] certificate, string certificateName, string password, byte[] file, string fileName)
     {
+        // Get extensions
+        var fileExtension = Path.GetExtension(fileName);
+        var certificateExtension = Path.GetExtension(certificateName);
+
         // Check if the inputs aren't null or empty
         if (certificate.IsNullOrEmpty()) return new Tuple<bool, string[]>(false, new[] { Required, "", "", "", "", "", "", "", "" });
         if (string.IsNullOrWhiteSpace(password)) return new Tuple<bool, string[]>(false, new []{ "", Required, "", "", "", "", "", "", "" });
-        if (file.IsNullOrEmpty()) return new Tuple<bool, string[]>(false, new []{ "", "", Required, "", "", "", "", "", "" });
+        if (file is null) return new Tuple<bool, string[]>(false, new []{ "", "", Required, "", "", "", "", "", "" });
+        
+        // Check if the extensions are allowed
+        if (!_allowedCertificateExtensions.Contains(certificateExtension)) return new Tuple<bool, string[]>(false, new [] { "Tento formát certifikátu není podporován.", "", "", "", "", "", "", "", "" });
+        if (!_allowedFileExtensions.Contains(fileExtension)) return new Tuple<bool, string[]>(false, new [] { "", "", "Tento typ souboru není podporován.", "", "", "", "", "", "" });
 
         // Save the file, exception and signature
         var (signedFile, exception, signature) = Services.Sign(certificate, file, password);
@@ -25,8 +35,11 @@ public static class Sign
                     return new Tuple<bool, string[]>(false, new []{ "", "Zadal jste špatné heslo.", "", "", "", "", "", "", "" });
 
                 case "Cannot find the requested object.":
-                    return new Tuple<bool, string[]>(false, new []{ "", "", "", "", "", "Vybral jste neplatný certifikát. Vyberte prosím platný certifikát.", "", "", "" });
+                    return new Tuple<bool, string[]>(false, new []{ "", "", "", "", "", "Tento certifikát neobsahuje heslo nebo je poškozený.", "", "", "" });
             
+                case "Object reference not set to an instance of an object.":
+                    return new Tuple<bool, string[]>(false, new []{ "", "", "", "", "", "Tento certifikát neobsahuje heslo nebo je poškozený.", "", "", "" });
+                
                 default:
                     return new Tuple<bool, string[]>(false, new[] { "", "", "", "", "", exception.Message, "", "", "" });
             }
