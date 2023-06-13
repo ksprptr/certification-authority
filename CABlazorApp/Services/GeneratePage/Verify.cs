@@ -26,19 +26,12 @@ public static class Verify
         
         try
         {
-            var signature = Convert.FromBase64String(AlternateDataStream.ReadAds(filePath, "Signature"));
-            return new Tuple<bool?, string[]>(Services.Verify(file, signature, certificate), new[] { "", "", "", "", "", "", "", "", "" });
+            return new Tuple<bool?, string[]>(Services.Verify(file, Metadata.GetMetadata(filePath), certificate), new[] { "", "", "", "", "", "", "", "", "" });
         }
         catch (Exception exception)
         {
-            if (exception.Message == "Failed to open the ADS 'Signature' for '" + filePath + "'." || exception.Message == "The ADS 'Signature' for '" + filePath + "' doesn't exist.")
-            {
-                File.Delete(filePath);
-                return new Tuple<bool?, string[]>(false, new[] { "", "", "", "", "", "", "", "", "Nepodařilo se najít vlastnost s názvem 'Signature'." });
-            }
-
             File.Delete(filePath);
-            return new Tuple<bool?, string[]>(false, new []{ "", "", "", "", "", "", "", "", exception.Message });
+            return new Tuple<bool?, string[]>(null, new []{ "", "", "", "", "", "", "", "", "ERROR: " + exception.Message });
         }
     }
 }

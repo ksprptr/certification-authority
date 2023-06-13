@@ -35,9 +35,15 @@ public class Services
 
     public static bool Verify(byte[] data, byte[] signature, byte[] certificate)
     {
-        var rsa = RSA.Create();
-        var encoded = BerConverter.Encode("{o}", certificate);
-        rsa.ImportRSAPublicKey(encoded, out var bytesRead);
-        return rsa.VerifyData(data, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        using (var rsa = RSA.Create())
+        {
+            rsa.ImportSubjectPublicKeyInfo(certificate, out _);
+
+            var rsaParams = rsa.ExportParameters(false);
+            rsaParams.Exponent = new byte[] { 1, 0, 1 }; // Předpokládaná hodnota exponentu, uprav podle potřeby
+            rsa.ImportParameters(rsaParams);
+
+            return rsa.VerifyData(data, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
+        }
     }
 }

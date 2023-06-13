@@ -51,6 +51,7 @@
     <Folder Include="Archive\example@example.com\temp" />
     <Folder Include="Archive\test@test.com\files" />
     <Folder Include="Archive\test@test.com\temp" />
+    <Folder Include="Archive\test@test.com\temp\verify\" />
     <Folder Include="Areas\Identity\Pages\Shared" />
   </ItemGroup>
 

@@ -1,14 +1,12 @@
 ﻿using Aspose.Pdf;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
 
 namespace CABlazorApp.Services;
 
-public class Metadata
+public static class Metadata
 {
-    public static bool SetMetadata(string fileName, string filePath, byte[] signature)
+    public static bool SetMetadata(string filePath, byte[] signature)
     {
-        var fileType = MimeTypes.GetContentType(fileName);
+        var fileType = MimeTypes.GetContentType(Path.GetFileName(filePath));
 
         switch (fileType)
         {
@@ -23,8 +21,7 @@ public class Metadata
                 return true;
             
             case "application/pdf":
-                SetPdfMetadata(filePath, "Signature", signature);
-                Console.WriteLine("Metadata set successfully.");
+                SetPdfMetadata(filePath, signature);
                 return true;
             
             case "application/excel":
@@ -35,9 +32,9 @@ public class Metadata
         }
     }
     
-    public static byte[]? GetMetadata(string filePath, string propertyName)
+    public static byte[]? GetMetadata(string filePath)
     {
-        var fileType = MimeTypes.GetContentType(filePath);
+        var fileType = MimeTypes.GetContentType(Path.GetFileName(filePath));
 
         switch (fileType)
         {
@@ -46,17 +43,27 @@ public class Metadata
                 var signature = file.Split("Signature: ")[1];
                 return Convert.FromBase64String(signature);
             
+            case "application/octet-stream":
+                return null;
+            
+            case "application/pdf":
+               return GetPdfMetadata(filePath);
+            
             default:
                 return null;
         }
     }
 
-    private static void SetPdfMetadata(string filePath, string name, byte[] value)
+    private static void SetPdfMetadata(string filePath, byte[] value)
     {
-        Aspose.Pdf.Document pdfDoc = new(filePath);
-        var customMetadata = new KeyValuePair<string, XmpValue>("Signature", new XmpValue(Convert.ToBase64String(value)));
-        pdfDoc.Metadata.Add("CustomMetaData", customMetadata);
-        pdfDoc.Save();
-        Console.WriteLine(pdfDoc.Metadata["CustomMetaData"]);
+        Document pdfDoc = new(filePath);
+        pdfDoc.Metadata["xmp:Signature"] = Convert.ToBase64String(value);
+        pdfDoc.Save(filePath);
+    }
+    
+    private static byte[] GetPdfMetadata(string filePath)
+    {
+        Document pdfDoc = new(filePath);
+        return Convert.FromBase64String(pdfDoc.Metadata["xmp:Signature"].ToString());
     }
 }
