@@ -33,10 +33,10 @@ public class Services
         return new Tuple<byte[], byte[]>(certPrivateBytes, certPublicBytes);
     }
 
-    public static bool Verify(byte[] withoutSignature, byte[] signature, byte[] certificateBytes)
+    public static bool Verify(byte[] fileWithoutSignature, byte[] signature, byte[] certificateBytes)
     {
         X509Certificate2 certificate = new(certificateBytes);
         using var rsa = certificate.GetRSAPublicKey();
-        return rsa.VerifyData(withoutSignature, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
+        return rsa.VerifyData(fileWithoutSignature, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
     }
 }

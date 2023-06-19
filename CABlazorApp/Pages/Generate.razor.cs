@@ -10,22 +10,18 @@ namespace CABlazorApp.Pages;
 public partial class Generate
 {
     // Inputs of sign
-    private byte[]? _signCertificate;
-    private string? _signCertificateName;
+    private FileData? _signCertificateData;
     private string? _signPassword;
-    private byte[]? _signFile;
-    private string? _signFileName;
+    private FileData? _signFileData;
 
     // Inputs of generate 
     private string? _certName;
     private string? _certPass;
 
     // Inputs of verify
-    private byte[]? _verifyFile;
-    private byte[]? _verifyFileWithoutSiganture;
-    private byte[]? _verifyCertificate;
-    private string? _verifyFileName;
-    private string? _verifyFileWithoutSigantureName;
+    private FileData? _verifyFileData;
+    private FileData? _verifyCertificateData;
+    private FileData? _verifyFileWithoutSignatureData;
 
     // 0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError,
     // 4 - certPassError, 5 - exceptionError, 6 - verifyFileWithoutSignatureError,
@@ -40,7 +36,7 @@ public partial class Generate
     private async Task Sign()
     {
         var userName = await GetUsername();
-        var returned = SignFile(userName!, _signCertificate!, _signCertificateName!, _signPassword!, _signFile!, _signFileName!);
+        var returned = SignFile(userName!, _signCertificateData!, _signPassword!, _signFileData!);
         
         _signState = returned.Item1;
         _errors = returned.Item2;
@@ -62,7 +58,7 @@ public partial class Generate
     {
         // Get an username
         var userName = await GetUsername();
-        var returned = VerifyFile(userName!, _verifyFile!, _verifyFileName!, _verifyCertificate!, _verifyFileWithoutSiganture!, _verifyFileWithoutSigantureName!);
+        var returned = VerifyFile(userName!, _verifyFileWithoutSignatureData!, _verifyFileData!, _verifyCertificateData!);
 
         if (returned.Item1 != null) _verifyState = (bool)returned.Item1;
         _errors = returned.Item2;
@@ -89,38 +85,34 @@ public partial class Generate
     {
         await using MemoryStream stream = new();
         await obj.File.OpenReadStream().CopyToAsync(stream);
-        _signFile = stream.ToArray();
-        _signFileName = obj.File.Name;
+        _signFileData = new FileData(obj.File.Name, stream.ToArray());
     }
 
     private async Task OnSignCertFile(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
         await obj.File.OpenReadStream().CopyToAsync(stream);
-        _signCertificate = stream.ToArray();
-        _signCertificateName = obj.File.Name;
+        _signCertificateData = new FileData(obj.File.Name, stream.ToArray());
     }
     
     private async Task OnVerifyDocumentFileWithoutSignature(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
         await obj.File.OpenReadStream().CopyToAsync(stream);
-        _verifyFileWithoutSiganture = stream.ToArray();
-        _verifyFileWithoutSigantureName = obj.File.Name;
+        _verifyFileWithoutSignatureData = new FileData(obj.File.Name, stream.ToArray());
     }
 
     private async Task OnVerifyDocumentFile(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
         await obj.File.OpenReadStream().CopyToAsync(stream);
-        _verifyFile = stream.ToArray();
-        _verifyFileName = obj.File.Name;
+        _verifyFileData = new FileData(obj.File.Name, stream.ToArray());
     }
     
     private async Task OnVerifyCert(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
         await obj.File.OpenReadStream().CopyToAsync(stream);
-        _verifyCertificate = stream.ToArray();
+        _verifyCertificateData = new FileData(obj.File.Name, stream.ToArray());
     }
 }

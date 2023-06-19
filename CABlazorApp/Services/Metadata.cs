@@ -49,6 +49,9 @@ public static class Metadata
             case "application/pdf":
                return GetPdfMetadata(filePath);
             
+            case "application/excel":
+                return null;
+            
             default:
                 return null;
         }

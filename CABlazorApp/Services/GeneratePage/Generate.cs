@@ -1,12 +1,12 @@
 ﻿using System.Text;
 using Aspose.Zip;
 using Aspose.Zip.Saving;
+using static CABlazorApp.Services.Properties;
 
 namespace CABlazorApp.Services.GeneratePage;
 
 public static class Generate
 {
-    private const string Required = "Toto pole je povinné.";
     public static Tuple<bool, string[]> GenCertificate(string userName, string name, string password)
     {
         // Check if the inputs aren't null or empty

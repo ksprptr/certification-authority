@@ -1,26 +1,23 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using static CABlazorApp.Services.Properties;
 
 namespace CABlazorApp.Services.GeneratePage;
 
 public static class Verify
 {
-    private const string Required = "Toto pole je povinné.";
-    private static readonly List<string> AllowedFileExtensions = new() { ".docx", ".docm", ".doc", ".pdf", ".pptx", ".pptm", ".ppt", ".xlsx", ".xlsm", ".xls", ".csv", ".txt" };
-    private static readonly List<string> AllowedCertificateExtensions = new() { ".crt", ".cer", ".p7b", ".p7c", ".p7s", ".pem", ".p12", ".pfx" };
-
-    public static Tuple<bool?, string[]> VerifyFile(string userName, byte[] file, string fileName, byte[] certificate, byte[] fileWithoutSignature, string fileWithoutSignatureName)
+    public static Tuple<bool?, string[]> VerifyFile(string userName, FileData fileWithoutSignature, FileData file, FileData certificate)
     {
         // Check if the inputs aren't null or empty
-        if (fileWithoutSignature.IsNullOrEmpty()) return new Tuple<bool?, string[]>(null, new[] { "", "", "", "", "", "", Required, "", "", "" });
-        if (file.IsNullOrEmpty()) return new Tuple<bool?, string[]>(null, new[] { "", "", "", "", "", "", "", Required, "", "" });
-        if (certificate.IsNullOrEmpty()) return new Tuple<bool?, string[]>(null, new[] { "", "", "", "", "", "", "", "", Required, "" });
+        if (fileWithoutSignature.Data.IsNullOrEmpty()) return new Tuple<bool?, string[]>(null, new[] { "", "", "", "", "", "", Required, "", "", "" });
+        if (file.Data.IsNullOrEmpty()) return new Tuple<bool?, string[]>(null, new[] { "", "", "", "", "", "", "", Required, "", "" });
+        if (certificate.Data.IsNullOrEmpty()) return new Tuple<bool?, string[]>(null, new[] { "", "", "", "", "", "", "", "", Required, "" });
 
         // Check if the input files are the same
-        if (Path.GetExtension(fileName) != Path.GetExtension(fileWithoutSignatureName)) return new Tuple<bool?, string[]>(null, new[] { "", "", "", "", "", "", "", "", "", "Vybrané soubory pro ověření musí mít stejnou příponu." });
+        if (Path.GetExtension(fileWithoutSignature.FileName) != Path.GetExtension(file.FileName)) return new Tuple<bool?, string[]>(null, new[] { "", "", "", "", "", "", "", "", "", "Vybrané soubory pro ověření musí mít stejnou příponu." });
 
         // Set the paths
         var dirPath = Path.Combine("Archive", userName, "temp", "verify");
-        var filePath = Path.Combine("Archive", userName, "temp", "verify", fileName);
+        var filePath = Path.Combine("Archive", userName, "temp", "verify", file.FileName);
         
         // Check if the directories and files exist or not
         if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
@@ -28,11 +25,11 @@ public static class Verify
         if (!File.Exists(filePath)) File.Create(filePath).Close();
         
         // Write all bytes to the file
-        File.WriteAllBytes(filePath, file);
+        File.WriteAllBytes(filePath, file.Data);
         
         try
         {
-            return new Tuple<bool?, string[]>(Services.Verify(fileWithoutSignature, Metadata.GetMetadata(filePath), certificate), new[] { "", "", "", "", "", "", "", "", "", "" });
+            return new Tuple<bool?, string[]>(Services.Verify(fileWithoutSignature.Data, Metadata.GetMetadata(filePath), certificate.Data), new[] { "", "", "", "", "", "", "", "", "", "" });
         }
         catch (Exception exception)
         {
