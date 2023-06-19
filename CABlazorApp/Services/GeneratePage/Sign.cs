@@ -15,13 +15,13 @@ public static class Sign
         var certificateExtension = Path.GetExtension(certificateName);
 
         // Check if the inputs aren't null or empty
-        if (certificate.IsNullOrEmpty()) return new Tuple<bool, string[]>(false, new[] { Required, "", "", "", "", "", "", "", "" });
-        if (string.IsNullOrWhiteSpace(password)) return new Tuple<bool, string[]>(false, new []{ "", Required, "", "", "", "", "", "", "" });
-        if (file is null) return new Tuple<bool, string[]>(false, new []{ "", "", Required, "", "", "", "", "", "" });
+        if (certificate.IsNullOrEmpty()) return new Tuple<bool, string[]>(false, new[] { Required, "", "", "", "", "", "", "", "", "" });
+        if (string.IsNullOrWhiteSpace(password)) return new Tuple<bool, string[]>(false, new []{ "", Required, "", "", "", "", "", "", "", "" });
+        if (file is null) return new Tuple<bool, string[]>(false, new []{ "", "", Required, "", "", "", "", "", "", "" });
         
         // Check if the extensions are allowed
-        if (!AllowedCertificateExtensions.Contains(certificateExtension)) return new Tuple<bool, string[]>(false, new [] { "Tento formát certifikátu není podporován.", "", "", "", "", "", "", "", "" });
-        if (!AllowedFileExtensions.Contains(fileExtension)) return new Tuple<bool, string[]>(false, new [] { "", "", "Tento typ souboru není podporován.", "", "", "", "", "", "" });
+        if (!AllowedCertificateExtensions.Contains(certificateExtension)) return new Tuple<bool, string[]>(false, new [] { "Tento formát certifikátu není podporován.", "", "", "", "", "", "", "", "", "" });
+        if (!AllowedFileExtensions.Contains(fileExtension)) return new Tuple<bool, string[]>(false, new [] { "", "", "Tento typ souboru není podporován.", "", "", "", "", "", "", "" });
 
         // Save the file, exception and signature
         var (signedFile, exception, signature) = Services.Sign(certificate, file, password);
@@ -32,16 +32,16 @@ public static class Sign
             switch (exception.Message)
             {
                 case "The specified network password is not correct.":
-                    return new Tuple<bool, string[]>(false, new []{ "", "Zadal jste špatné heslo.", "", "", "", "", "", "", "" });
+                    return new Tuple<bool, string[]>(false, new []{ "", "Zadal jste špatné heslo.", "", "", "", "", "", "", "", "" });
 
                 case "Cannot find the requested object.":
-                    return new Tuple<bool, string[]>(false, new []{ "", "", "", "", "", "Tento certifikát neobsahuje heslo nebo je poškozený.", "", "", "" });
+                    return new Tuple<bool, string[]>(false, new []{ "", "", "", "", "", "Tento certifikát neobsahuje heslo nebo je poškozený.", "", "", "", "" });
             
                 case "Object reference not set to an instance of an object.":
-                    return new Tuple<bool, string[]>(false, new []{ "", "", "", "", "", "Tento certifikát neobsahuje heslo nebo je poškozený.", "", "", "" });
+                    return new Tuple<bool, string[]>(false, new []{ "", "", "", "", "", "Tento certifikát neobsahuje heslo nebo je poškozený.", "", "", "", "" });
                 
                 default:
-                    return new Tuple<bool, string[]>(false, new[] { "", "", "", "", "", "ERROR: " + exception.Message, "", "", "" });
+                    return new Tuple<bool, string[]>(false, new[] { "", "", "", "", "", "ERROR: " + exception.Message, "", "", "", "" });
             }
         }
 
@@ -61,6 +61,6 @@ public static class Sign
         Metadata.SetMetadata(filePath, signature);
 
         // Return the success
-        return new Tuple<bool, string[]>(true, new[] { "", "", "", "", "", "", "", "", "" });
+        return new Tuple<bool, string[]>(true, new[] { "", "", "", "", "", "", "", "", "", "" });
     }
 }

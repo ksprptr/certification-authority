@@ -22,13 +22,15 @@ public partial class Generate
 
     // Inputs of verify
     private byte[]? _verifyFile;
+    private byte[]? _verifyFileWithoutSiganture;
     private byte[]? _verifyCertificate;
     private string? _verifyFileName;
+    private string? _verifyFileWithoutSigantureName;
 
     // 0 - encCertError, 1 - encPassError, 2 - encDocError, 3 - certNameError,
-    // 4 - certPassError, 5 - exceptionError, 6 - verifyFileError,
-    // 7 - verifyPublicKeyError, 8 - exceptionErrorOfVerify
-    private string[] _errors = { "", "", "", "", "", "", "", "", "" };
+    // 4 - certPassError, 5 - exceptionError, 6 - verifyFileWithoutSignatureError,
+    // 7 - verifyFileError, 8 - verifyPublicCertificateError, 9 - exceptionErrorOfVerify
+    private string[] _errors = { "", "", "", "", "", "", "", "", "", "" };
 
     // States of success
     private bool _signState;
@@ -60,7 +62,7 @@ public partial class Generate
     {
         // Get an username
         var userName = await GetUsername();
-        var returned = VerifyFile(userName!, _verifyFile!, _verifyFileName!, _verifyCertificate!);
+        var returned = VerifyFile(userName!, _verifyFile!, _verifyFileName!, _verifyCertificate!, _verifyFileWithoutSiganture!, _verifyFileWithoutSigantureName!);
 
         if (returned.Item1 != null) _verifyState = (bool)returned.Item1;
         _errors = returned.Item2;
@@ -97,6 +99,14 @@ public partial class Generate
         await obj.File.OpenReadStream().CopyToAsync(stream);
         _signCertificate = stream.ToArray();
         _signCertificateName = obj.File.Name;
+    }
+    
+    private async Task OnVerifyDocumentFileWithoutSignature(InputFileChangeEventArgs obj)
+    {
+        await using MemoryStream stream = new();
+        await obj.File.OpenReadStream().CopyToAsync(stream);
+        _verifyFileWithoutSiganture = stream.ToArray();
+        _verifyFileWithoutSigantureName = obj.File.Name;
     }
 
     private async Task OnVerifyDocumentFile(InputFileChangeEventArgs obj)

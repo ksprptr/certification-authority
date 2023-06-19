@@ -1,5 +1,4 @@
-﻿using System.DirectoryServices.Protocols;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace CABlazorApp.Services;
@@ -26,6 +25,7 @@ public class Services
     public static Tuple<byte[], byte[]> Generate(string password)
     {
         var rsa = RSA.Create();
+        rsa.KeySize = 4096;
         CertificateRequest certRequest = new("CN=MyCert", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         var certificate = certRequest.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(3650));
         var certPublicBytes = certificate.Export(X509ContentType.Cert);
@@ -33,17 +33,10 @@ public class Services
         return new Tuple<byte[], byte[]>(certPrivateBytes, certPublicBytes);
     }
 
-    public static bool Verify(byte[] data, byte[] signature, byte[] certificate)
+    public static bool Verify(byte[] withoutSignature, byte[] signature, byte[] certificateBytes)
     {
-        using (var rsa = RSA.Create())
-        {
-            rsa.ImportSubjectPublicKeyInfo(certificate, out _);
-
-            var rsaParams = rsa.ExportParameters(false);
-            rsaParams.Exponent = new byte[] { 1, 0, 1 }; // Předpokládaná hodnota exponentu, uprav podle potřeby
-            rsa.ImportParameters(rsaParams);
-
-            return rsa.VerifyData(data, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
-        }
+        X509Certificate2 certificate = new(certificateBytes);
+        using var rsa = certificate.GetRSAPublicKey();
+        return rsa.VerifyData(withoutSignature, signature, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
     }
 }

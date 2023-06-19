@@ -10,8 +10,8 @@ public static class Generate
     public static Tuple<bool, string[]> GenCertificate(string userName, string name, string password)
     {
         // Check if the inputs aren't null or empty
-        if (string.IsNullOrWhiteSpace(name)) return new Tuple<bool, string[]>(false, new[] { "", "", "", Required, "", "", "", "", "" });
-        if (string.IsNullOrWhiteSpace(password)) return new Tuple<bool, string[]>(false, new[] { "", "", "", "", Required, "", "", "", "" });
+        if (string.IsNullOrWhiteSpace(name)) return new Tuple<bool, string[]>(false, new[] { "", "", "", Required, "", "", "", "", "", "" });
+        if (string.IsNullOrWhiteSpace(password)) return new Tuple<bool, string[]>(false, new[] { "", "", "", "", Required, "", "", "", "", "" });
 
         // Generate the certificates (private, public)
         var(privateCertificate, publicCertificate) = Services.Generate(password);
@@ -56,6 +56,6 @@ public static class Generate
         File.Delete(publicCertPath);
         
         // Return the success
-        return new Tuple<bool, string[]>(true, new []{ "", "", "", "", "", "", "", "", "" });
+        return new Tuple<bool, string[]>(true, new []{ "", "", "", "", "", "", "", "", "", "" });
     }
 }

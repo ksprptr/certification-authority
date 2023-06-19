@@ -84,7 +84,7 @@
                         <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Ověření</h1>
                         <hr />
                         <form class="pt-2" autocomplete="off">
-                            <p class="md:w-[32rem] text-gray-600 py-1">Vyberte podepsaný soubor z Vašeho zařízení a poté vyberte certifikát s veřejným klíčem, kterým chcete ověřit podepsání souboru.</p>
+                            <p class="md:w-[32rem] text-gray-600 py-1">Vyberte původní nepodepsaný soubor z Vašeho zařízení, poté ten samý akorát podepsaný soubor a nakonec vyberte certifikát s veřejným klíčem, kterým chcete ověřit podepsání souboru.</p>
                             @switch (_verifyState)
                             {
                                 case true:
@@ -94,17 +94,22 @@
                                     <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor nebyl podepsán tímto certifikátem.</div>
                                     break;
                             }
-                            @if (_errors[8] != ""){ <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[8]</div> }
+                            @if (_errors[9] != ""){ <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[9]</div> }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
-                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte soubor:</label>
-                                    <InputFile OnChange="OnVerifyDocumentFile" accept=".docx,.docm,.doc,.pdf,.pptx,.pptm,.ppt,.xlsx,.xlsm,.xls,.csv,.txt" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte nepodepsaný soubor:</label>
+                                    <InputFile OnChange="OnVerifyDocumentFileWithoutSignature" accept=".docx,.docm,.doc,.pdf,.pptx,.pptm,.ppt,.xlsx,.xlsm,.xls,.csv,.txt" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[6]</span>
+                                </div>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Vyberte podepsaný soubor:</label>
+                                    <InputFile OnChange="OnVerifyDocumentFile" accept=".docx,.docm,.doc,.pdf,.pptx,.pptm,.ppt,.xlsx,.xlsm,.xls,.csv,.txt" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[7]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát:</label>
                                     <InputFile OnChange="OnVerifyCert" accept=".crt,.cer,.p7b,.p7c,p7s,.pem,.p12,.pfx" class="block w-full text-sm text-slate-500 file:hover:cursor-pointer file:duration-150 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:border-sky-500 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[7]</span>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[8]</span>
                                 </div>
                             </div>
                             <div class="lg:flex block lg:justify-between items-center gap-x-4">
