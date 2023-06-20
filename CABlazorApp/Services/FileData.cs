@@ -2,12 +2,12 @@
 
 public class FileData
 {
+    public string Name { get; set; }
+    public byte[] Data { get; set; }
+    
     public FileData(string fileName, byte[] data)
     {
-        FileName = fileName;
+        Name = fileName;
         Data = data;
     }
-
-    public string FileName { get; set; }
-    public byte[] Data { get; set; }
 }

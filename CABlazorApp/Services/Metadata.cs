@@ -7,115 +7,101 @@ namespace CABlazorApp.Services;
 
 public static class Metadata
 {
-    public static bool SetMetadata(string filePath, byte[] signature)
+    public static void SetMetadata(string filePath, byte[] signature)
     {
-        var fileType = MimeTypes.GetContentType(Path.GetFileName(filePath));
-        
-        var fileName = Path.GetFileName(filePath);
-        var fileExtension = Path.GetExtension(fileName);
+        var fileExtension = Path.GetExtension(Path.GetFileName(filePath));
 
-        fileType = fileExtension switch
+        switch (fileExtension)
         {
-            ".docx" => "application/msword",
-            ".pptx" => "application/mspowerpoint",
-            _ => fileType
-        };
+            case ".txt":
+                SetTxtMetadata(filePath, signature);
+                return;
 
-        switch (fileType)
-        {
-            // .txt
-            case "text/plain":
-                using (var sw = File.AppendText(filePath))
-                {
-                    sw.Write($"\n\n------ DON'T DELETE ------\nSignature: {Convert.ToBase64String(signature)}\n------ DON'T DELETE ------\n");
-                }
-                return true;
-            
-            // .csv
-            case "application/octet-stream":
-                using (var sw = File.AppendText(filePath))
-                {
-                    sw.WriteLine("\n\n------ DON'T DELETE ------");
-                    sw.WriteLine($"Signature: {Convert.ToBase64String(signature)}");
-                    sw.WriteLine("------ DON'T DELETE ------");
-                }
-                return true;
-            
-            // .pdf
-            case "application/pdf":
+            case ".csv":
+                SetCsvMetadata(filePath, signature);
+                return;
+                
+            case ".pdf":
                 SetPdfMetadata(filePath, signature);
-                return true;
+                return;
             
-            // .xls, .xlsx
-            case "application/excel":
+            case ".xls" or ".xlsx":
                 SetExcelMetadata(filePath, signature);
-                return true;
+                return;
             
-            // .doc, .docx
-            case "application/msword":
+            case ".doc" or ".docx":
                 SetWordMetadata(filePath, signature);
-                return true;
+                return;
             
-            // .ppt, .pptx
-            case "application/mspowerpoint":
+            case ".ppt" or ".pptx":
                 SetPowerPointMetadata(filePath, signature, fileExtension);
-                return true;
-
+                return;
+            
             default:
-                return false;
+                return;
         }
     }
     
     public static byte[]? GetMetadata(string filePath)
     {
-        var fileType = MimeTypes.GetContentType(Path.GetFileName(filePath));
-        
-        var fileName = Path.GetFileName(filePath);
-        var fileExtension = Path.GetExtension(fileName);
+        var fileExtension = Path.GetExtension(Path.GetFileName(filePath));
 
-        fileType = fileExtension switch
+        switch (fileExtension)
         {
-            ".docx" => "application/msword",
-            ".pptx" => "application/mspowerpoint",
-            _ => fileType
-        };
+            case ".txt":
+                return GetTxtMetadata(filePath);
 
-        switch (fileType)
-        {
-            // .txt
-            case "text/plain":
-                var file = File.ReadAllText(filePath);
-                var signature = file.Split("Signature: ")[1].Split('\n')[0];
-                return Convert.FromBase64String(signature);
+            case ".csv":
+                return GetCsvMetadata(filePath);
+                
+            case ".pdf":
+                return GetPdfMetadata(filePath);
             
-            // .csv
-            case "application/octet-stream":
-                var fileLines = File.ReadAllText(filePath);
-                var signatureCsv = fileLines.Split("Signature: ")[1].Split('\n')[0];
-                return Convert.FromBase64String(signatureCsv);
-
-            // .pdf
-            case "application/pdf":
-               return GetPdfMetadata(filePath);
-            
-            // .xls, .xlsx
-            case "application/excel":
+            case ".xls" or ".xlsx":
                 return GetExcelMetadata(filePath);
-
-            // .doc, .docx
-            case "application/msword":
+            
+            case ".doc" or ".docx":
                 return GetWordMetadata(filePath);
             
-            // .ppt, .pptx
-            case "application/mspowerpoint":
+            case ".ppt" or ".pptx":
                 return GetPowerPointMetadata(filePath);
-
+            
             default:
                 return null;
         }
     }
 
-    // PDF
+    // Txt
+    private static void SetTxtMetadata(string filePath, byte[] value)
+    {
+        using var sw = File.AppendText(filePath);
+        sw.Write($"\n\n------ DON'T DELETE ------\nSignature: {Convert.ToBase64String(value)}\n------ DON'T DELETE ------\n");
+    }
+    
+    private static byte[] GetTxtMetadata(string filePath)
+    {
+        var allText = File.ReadAllText(filePath);
+        var signature = allText.Split("Signature: ")[1].Split('\n')[0];
+        return Convert.FromBase64String(signature);
+    }
+    
+    // Csv
+    private static void SetCsvMetadata(string filePath, byte[] value)
+    {
+        using var sw = File.AppendText(filePath);
+        sw.WriteLine("\n\n------ DON'T DELETE ------");
+        sw.WriteLine($"Signature: {Convert.ToBase64String(value)}");
+        sw.WriteLine("------ DON'T DELETE ------");
+    }
+    
+    private static byte[] GetCsvMetadata(string filePath)
+    {
+        var allText = File.ReadAllText(filePath);
+        var signature = allText.Split("Signature: ")[1].Split('\n')[0];
+        return Convert.FromBase64String(signature);
+    }
+
+    // Pdf
     private static void SetPdfMetadata(string filePath, byte[] value)
     {
         Document pdfDoc = new(filePath);

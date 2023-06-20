@@ -33,35 +33,32 @@ public partial class Generate
     private bool _generateState;
     private bool? _verifyState;
 
+    // Sign
     private async Task Sign()
     {
         var userName = await GetUsername();
         var returned = SignFile(userName!, _signCertificateData!, _signPassword!, _signFileData!);
-        
-        _signState = returned.Item1;
-        _errors = returned.Item2;
+        _signState = (bool)returned.State!;
+        _errors = returned.Errors;
     }
     
+    // Generate
     private async Task GenerateCertificate()
     {
-        // Check if certificate name doesn't contain spaces
         if (_certName != null && _certName!.Contains(' ')) { var replace = _certName.Replace(' ', '_'); _certName = replace; }
-        
         var userName = await GetUsername();
         var returned = GenCertificate(userName!, _certName!, _certPass!);
-        
-        _generateState = returned.Item1;
-        _errors = returned.Item2;
+        _generateState = (bool)returned.State!;
+        _errors = returned.Errors;
     }
     
+    // Verify
     private async Task Verify()
     {
-        // Get an username
         var userName = await GetUsername();
         var returned = VerifyFile(userName!, _verifyFileWithoutSignatureData!, _verifyFileData!, _verifyCertificateData!);
-
-        _verifyState = (bool?)returned.Item1;
-        _errors = returned.Item2;
+        _verifyState = (bool?)returned.State;
+        _errors = returned.Errors;
     }
 
     // Download
