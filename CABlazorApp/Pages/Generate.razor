@@ -21,8 +21,8 @@
                         <hr />
                         <form class="pt-2">
                             <p class="md:w-[32rem] text-gray-600 py-1">Vyberte certifikát z Vašeho zařízení, poté zadejte heslo a vyberte soubor k podepsání. Poté stačí kliknout na tlačítko "Šifrovat" a je hotovo!</p>
-                            @if (_signState) { <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán a uložen do archívu.</div> }
-                            @if (_errors[5] != "") { <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[5]</div> }
+                            @if (_signState) { <div class="md:w-[32rem] mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán a uložen do archívu.</div> }
+                            @if (_errors[5] != "") { <div class="md:w-[32rem] mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[5]</div> }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte certifikát:</label>
@@ -56,7 +56,7 @@
                         <hr />
                         <form class="pt-2">
                             <p class="md:w-[32rem] text-gray-600 py-1">Zadejte název Vašeho budoucího certifikátu a zvolte pro něj heslo, po tomto kroku stačí kliknout na tlačítko "Vygenerovat" a máte hotovo!</p>
-                            @if (_generateState) { <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován a uložen do archívu.</div> }
+                            @if (_generateState) { <div class="md:w-[32rem] mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován a uložen do archívu.</div> }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte název:</label>
@@ -88,13 +88,13 @@
                             @switch (_verifyState)
                             {
                                 case true:
-                                    <div class="mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Tento soubor byl podepsán tímto certifikátem.</div>
+                                    <div class="md:w-[32rem] mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Tento soubor byl podepsán tímto certifikátem.</div>
                                     break;
                                 case false:
-                                    <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor nebyl podepsán tímto certifikátem.</div>
+                                    <div class="md:w-[32rem] mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">Tento soubor nebyl podepsán tímto certifikátem.</div>
                                     break;
                             }
-                            @if (_errors[9] != ""){ <div class="mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[9]</div> }
+                            @if (_errors[9] != ""){ <div class="md:w-[32rem] mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[9]</div> }
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Vyberte nepodepsaný soubor:</label>
