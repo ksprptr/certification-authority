@@ -60,7 +60,7 @@ public partial class Generate
         var userName = await GetUsername();
         var returned = VerifyFile(userName!, _verifyFileWithoutSignatureData!, _verifyFileData!, _verifyCertificateData!);
 
-        if (returned.Item1 != null) _verifyState = (bool)returned.Item1;
+        _verifyState = (bool?)returned.Item1;
         _errors = returned.Item2;
     }
 

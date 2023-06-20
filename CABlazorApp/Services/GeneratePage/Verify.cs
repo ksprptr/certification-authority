@@ -29,7 +29,9 @@ public static class Verify
         
         try
         {
-            return new Tuple<bool?, string[]>(Services.Verify(fileWithoutSignature.Data, Metadata.GetMetadata(filePath), certificate.Data), new[] { "", "", "", "", "", "", "", "", "", "" });
+            var result = new Tuple<bool?, string[]>(Services.Verify(fileWithoutSignature.Data, Metadata.GetMetadata(filePath), certificate.Data), new[] { "", "", "", "", "", "", "", "", "", "" });
+            File.Delete(filePath);
+            return result;
         }
         catch (Exception exception)
         {
