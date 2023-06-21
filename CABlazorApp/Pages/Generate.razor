@@ -17,10 +17,39 @@
             <div class="container xl:px-32 px-6 mx-auto">
                 <div class="sm:flex items-stretch block gap-y-4 xl:gap-x-4 gap-x-0 flex-wrap justify-center items-start py-24">
                     <div class="bg-gray-50 rounded-lg p-8 shadow">
+                        <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Generování certifikátu</h1>
+                        <hr />
+                        <form class="pt-2">
+                            <p class="md:w-[32rem] text-gray-600 py-1">Zadejte název Vašeho budoucího certifikátu a zvolte pro něj heslo, po tomto kroku stačí kliknout na tlačítko "Vygenerovat" a máte hotovo!</p>
+                            @if (_generateState) { <div class="md:w-[32rem] mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován a uložen do archívu.</div> }
+                            <div class="block">
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Zadejte název:</label>
+                                    <input autocomplete="new-password" type="text" maxlength="16" @bind="_certName" placeholder="Název certifikátu" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[3]</span>
+                                </div>
+                                <div class="flex flex-col mt-4">
+                                    <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo:</label>
+                                    <input autocomplete="new-password" type="password" maxlength="32" @bind="_certPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[4]</span>
+                                </div>
+                            </div>
+                            <div class="lg:flex block lg:justify-between items-center gap-x-4">
+                                <button Type="button" @onclick="GenerateCertificate" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Vygenerovat</button>
+                                @if (_generateState)
+                                {
+                                    <div class="mt-4">
+                                        <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="@((() => Download(_certName + ".zip", false)))">Stáhnout <i class="fa-solid fa-download"></i></button>
+                                    </div>
+                                }
+                            </div>
+                        </form>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-8 shadow sm:mt-0 mt-4">
                         <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Podepsání souboru</h1>
                         <hr />
                         <form class="pt-2">
-                            <p class="md:w-[32rem] text-gray-600 py-1">Vyberte certifikát z Vašeho zařízení, poté zadejte heslo a vyberte soubor k podepsání. Poté stačí kliknout na tlačítko "Šifrovat" a je hotovo!</p>
+                            <p class="md:w-[32rem] text-gray-600 py-1">Vyberte z Vašeho počítače certifikát, poté zadejte heslo a vyberte soubor k podepsání. Následně stačí kliknout na tlačítko "Šifrovat" a je hotovo!</p>
                             @if (_signState) { <div class="md:w-[32rem] mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš soubor byl úspěšně podepsán a uložen do archívu.</div> }
                             @if (_errors[5] != "") { <div class="md:w-[32rem] mt-2 font-medium mx-auto bg-red-100 py-3 px-4 text-red-700 border-2 border-red-200 rounded-lg">@_errors[5]</div> }
                             <div class="block">
@@ -52,39 +81,10 @@
                         </form>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-8 shadow sm:mt-0 mt-4">
-                        <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Generování certifikátu</h1>
-                        <hr />
-                        <form class="pt-2">
-                            <p class="md:w-[32rem] text-gray-600 py-1">Zadejte název Vašeho budoucího certifikátu a zvolte pro něj heslo, po tomto kroku stačí kliknout na tlačítko "Vygenerovat" a máte hotovo!</p>
-                            @if (_generateState) { <div class="md:w-[32rem] mt-2 bg-green-100 py-3 px-4 font-medium text-green-700 border-2 border-green-200 rounded-lg">Váš certifikát byl úspěšně vygenerován a uložen do archívu.</div> }
-                            <div class="block">
-                                <div class="flex flex-col mt-4">
-                                    <label class="text-gray-600 font-medium ml-0.5">Zadejte název:</label>
-                                    <input autocomplete="new-password" type="text" maxlength="16" @bind="_certName" placeholder="Název certifikátu" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[3]</span>
-                                </div>
-                                <div class="flex flex-col mt-4">
-                                    <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo:</label>
-                                    <input autocomplete="new-password" type="password" maxlength="32" @bind="_certPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
-                                    <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[4]</span>
-                                </div>
-                            </div>
-                            <div class="lg:flex block lg:justify-between items-center gap-x-4">
-                                <button Type="button" @onclick="GenerateCertificate" class="mt-4 text-white font-medium text-center py-2 px-6 rounded-lg bg-sky-500 hover:bg-sky-600 hover:text-white duration-150 shadow-lg shadow-sky-500/30 hover:shadow-sky-600/30">Vygenerovat</button>
-                                @if (_generateState)
-                                {
-                                    <div class="mt-4">
-                                        <button Type="button" class="w-36 text-sky-500 border-2 border-sky-500 hover:text-white font-medium text-center py-1.5 px-3.5 rounded-lg hover:bg-sky-500 duration-150 shadow-lg" @onclick="@((() => Download(_certName + ".zip", false)))">Stáhnout <i class="fa-solid fa-download"></i></button>
-                                    </div>
-                                }
-                            </div>
-                        </form>
-                    </div>
-                    <div class="bg-gray-50 rounded-lg p-8 shadow sm:mt-0 mt-4">
-                        <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Ověření</h1>
+                        <h1 class="text-gray-700 text-2xl font-medium outline-none uppercase pb-2">Ověření podepsaného souboru</h1>
                         <hr />
                         <form class="pt-2" autocomplete="off">
-                            <p class="md:w-[32rem] text-gray-600 py-1">Vyberte původní nepodepsaný soubor z Vašeho zařízení, poté ten samý, akorát podepsaný a nakonec vyberte certifikát s veřejným klíčem, kterým chcete ověřit podepsání souboru.</p>
+                            <p class="md:w-[32rem] text-gray-600 py-1">Vyberte nepodepsaný soubor z Vašeho počítače, následně stejný soubor, ale podepsaný a nakonec vyberte certifikát s veřejným klíčem, kterým chcete ověřit podepsání souboru.</p>
                             @switch (_verifyState)
                             {
                                 case true:
