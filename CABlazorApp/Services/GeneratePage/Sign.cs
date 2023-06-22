@@ -42,7 +42,7 @@ public static class Sign
 
         // Check if the directories and files exist or not
         if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
-        if (File.Exists(filePath)) { File.Delete(filePath); File.Create(filePath).Close(); }
+        if (File.Exists(filePath)) { File.Delete(filePath); Thread.Sleep(100); File.Create(filePath).Close(); }
         if (!File.Exists(filePath)) File.Create(filePath).Close();
         
         // Write data into the file
