@@ -25,12 +25,12 @@
                             <div class="block">
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte název:</label>
-                                    <input autocomplete="new-password" type="text" maxlength="16" @bind="_certName" placeholder="Název certifikátu" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <input autocomplete="old-password" type="text" maxlength="16" @bind="_certName" placeholder="Název certifikátu" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[3]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo:</label>
-                                    <input autocomplete="new-password" type="password" maxlength="32" @bind="_certPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <input autocomplete="old-password" type="password" maxlength="32" @bind="_certPass" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[4]</span>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                                 </div>
                                 <div class="flex flex-col mt-4">
                                     <label class="text-gray-600 font-medium ml-0.5">Zadejte heslo:</label>
-                                    <input autocomplete="new-password" type="password" @bind="_signPassword" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
+                                    <input autocomplete="old-password" type="password" @bind="_signPassword" placeholder="Heslo" class="placeholder:font-base focus:outline-none placeholder:text-gray-300 text-gray-600 bg-gray-50 py-2 px-3 border-2 border-gray-200 rounded-lg"/>
                                     <span class="text-red-700 text-sm mt-1 ml-0.5">@_errors[1]</span>
                                 </div>
                                 <div class="flex flex-col mt-4">
