@@ -12,8 +12,8 @@ Certification authority that allows you to generate certificates and sign files.
 
 Open the project folder in Visual Studio or JetBrains Rider
 
-Wait for the project load and the initialization of NuGet packages
+Wait for the project to load and the initialization of NuGet packages
 
-Start dev server using the start button marked as the green arrow
+Start the dev server using the start button marked as the green arrow
 
-Open [localhost:5000](http://localhost:5000) in your browser to see project home page.
+Open [localhost:5000](http://localhost:5000) in your browser to see the project home page.
