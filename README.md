@@ -14,6 +14,6 @@ Open the project folder in Visual Studio or JetBrains Rider
 
 Wait for the project to load and the initialization of NuGet packages
 
-Start the dev server using the start button marked as the green arrow
+Start dev server using the start button marked as the green arrow
 
 Open [localhost:5000](http://localhost:5000) in your browser to see the project home page.
