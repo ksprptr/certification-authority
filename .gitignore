@@ -1,0 +1,143 @@
+## ------------------------------------------------------------------
+## Build output
+## ------------------------------------------------------------------
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+build/
+bld/
+artifacts/
+publish/
+[Pp]ublish[Pp]rofiles/
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.tlog
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+## ------------------------------------------------------------------
+## Visual Studio / Rider / VS Code
+## ------------------------------------------------------------------
+.vs/
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+*.userprefs
+*.DotSettings.user
+*.csproj.user
+*.njsproj
+*.sln.iml
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.sln.DotSettings
+
+## ------------------------------------------------------------------
+## Test / coverage
+## ------------------------------------------------------------------
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+
+## ------------------------------------------------------------------
+## NuGet
+## ------------------------------------------------------------------
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+## ------------------------------------------------------------------
+## ASP.NET / IIS
+## ------------------------------------------------------------------
+*_ReSharper*/
+**/[Pp]roperties/serviceDependencies.local.json
+**/[Pp]roperties/serviceDependencies.local.json.user
+*.dbmdl
+*.jfm
+*.publishsettings
+*.azurePubxml
+*.pubxml
+*.pubxml.user
+csx/
+ecf/
+rcf/
+AppPackages/
+BundleArtifacts/
+
+## ------------------------------------------------------------------
+## Runtime data — user uploads, generated certificates, signed files
+## ------------------------------------------------------------------
+Archive/
+CABlazorApp/Archive/
+CABlazorApp/wwwroot/uploads/
+
+## ------------------------------------------------------------------
+## Secrets and local configuration
+## ------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+appsettings.*.Local.json
+*.pfx
+*.p12
+*.key
+
+## ------------------------------------------------------------------
+## OS noise
+## ------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini

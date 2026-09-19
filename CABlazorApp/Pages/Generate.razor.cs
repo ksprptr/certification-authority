@@ -81,35 +81,35 @@ public partial class Generate
     private async Task OnSignFile(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
-        await obj.File.OpenReadStream().CopyToAsync(stream);
+        await obj.File.OpenReadStream(32_000_000).CopyToAsync(stream);
         _signFileData = new FileData(obj.File.Name, stream.ToArray());
     }
 
     private async Task OnSignCertFile(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
-        await obj.File.OpenReadStream().CopyToAsync(stream);
+        await obj.File.OpenReadStream(32_000_000).CopyToAsync(stream);
         _signCertificateData = new FileData(obj.File.Name, stream.ToArray());
     }
     
     private async Task OnVerifyDocumentFileWithoutSignature(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
-        await obj.File.OpenReadStream().CopyToAsync(stream);
+        await obj.File.OpenReadStream(32_000_000).CopyToAsync(stream);
         _verifyFileWithoutSignatureData = new FileData(obj.File.Name, stream.ToArray());
     }
 
     private async Task OnVerifyDocumentFile(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
-        await obj.File.OpenReadStream().CopyToAsync(stream);
+        await obj.File.OpenReadStream(32_000_000).CopyToAsync(stream);
         _verifyFileData = new FileData(obj.File.Name, stream.ToArray());
     }
     
     private async Task OnVerifyCert(InputFileChangeEventArgs obj)
     {
         await using MemoryStream stream = new();
-        await obj.File.OpenReadStream().CopyToAsync(stream);
+        await obj.File.OpenReadStream(32_000_000).CopyToAsync(stream);
         _verifyCertificateData = new FileData(obj.File.Name, stream.ToArray());
     }
 }

@@ -1,0 +1,13 @@
+# Local development only. Compose merges this automatically; Coolify reads
+# docker-compose.yml alone and never sees it.
+
+services:
+  ca-app:
+    ports:
+      # Loopback — nothing on the LAN can reach it.
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-5080}:8080"
+
+  # Uncomment to reach the database from the host, e.g. to run the app natively.
+  # ca-db:
+  #   ports:
+  #     - "127.0.0.1:1433:1433"

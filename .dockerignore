@@ -1,0 +1,29 @@
+# Git / editors
+.git
+.gitignore
+.github
+.idea
+.vs
+*.user
+*.DotSettings.user
+
+# Build output
+**/bin
+**/obj
+**/.vs
+**/node_modules
+
+# Runtime data — never bake user uploads into an image
+**/Archive
+
+# Docker / docs
+Dockerfile
+.dockerignore
+docker-compose*.yml
+compose*.yml
+.env
+.env.*
+!.env.example
+README.md
+LICENSE
+**/*.md

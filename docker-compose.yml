@@ -1,0 +1,103 @@
+# Deployable as-is on Coolify: pick "Docker Compose" as the build pack and this file as the
+# compose file. The SERVICE_* names below are Coolify magic variables — it fills them in and
+# generates the proxy configuration from them. Outside Coolify they are ordinary variables,
+# and docker-compose.override.yml publishes the app on a local port.
+
+services:
+  # The database. ASP.NET Identity's store, reachable only over the compose network.
+  #
+  # Azure SQL Edge, not SQL Server: Microsoft publishes no arm64 image of SQL Server — not
+  # 2022, not 2025 — and SQL Server does not survive emulation. Edge is the same engine in
+  # a multi-arch image. On an x86_64 host you can switch to the real thing with MSSQL_IMAGE.
+  ca-db:
+    image: ${MSSQL_IMAGE:-mcr.microsoft.com/azure-sql-edge:1.0.7}
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: ${MSSQL_PID:-Developer}
+      MSSQL_SA_PASSWORD: ${SERVICE_PASSWORD_MSSQL}
+      # Without this SQL Server sizes its buffer pool against the whole host.
+      MSSQL_MEMORY_LIMIT_MB: ${MSSQL_MEMORY_LIMIT_MB:-1024}
+    volumes:
+      - ca-db-data:/var/opt/mssql
+    healthcheck:
+      # A plain TCP probe: Azure SQL Edge ships no sqlcmd, so there is nothing to query with.
+      # Real readiness is the migration container's problem — it retries.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/1433"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+
+  # One-shot: applies Data/Migrations, then exits. The app waits for it to succeed.
+  ca-migrate:
+    build:
+      context: .
+      target: migrate
+    restart: "no"
+    environment:
+      ConnectionStrings__DefaultConnection: ${CONNECTION_STRING:-Server=ca-db,1433;Database=${MSSQL_DATABASE:-CABlazorApp};User Id=sa;Password=${SERVICE_PASSWORD_MSSQL};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=true}
+    depends_on:
+      ca-db:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+
+  # The Blazor Server app.
+  ca-app:
+    build:
+      context: .
+      target: runtime
+    restart: unless-stopped
+    environment:
+      # Coolify assigns the domain and wires up its proxy from this one.
+      - SERVICE_FQDN_CAAPP_8080
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      # Honour X-Forwarded-Proto/For from the proxy, so the app knows it is being served
+      # over HTTPS and the email-confirmation links it generates are https:// too.
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING:-Server=ca-db,1433;Database=${MSSQL_DATABASE:-CABlazorApp};User Id=sa;Password=${SERVICE_PASSWORD_MSSQL};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=true}
+    depends_on:
+      ca-db:
+        condition: service_healthy
+      ca-migrate:
+        condition: service_completed_successfully
+    expose:
+      - "8080"
+    volumes:
+      # Data Protection key ring — keeps logins alive across restarts and redeploys.
+      # Tiny and bounded: a handful of XML files.
+      - ca-keys:/home/app/.aspnet/DataProtection-Keys
+    tmpfs:
+      # Signed files and generated certificates. Anyone who registers can upload, and
+      # nothing in the app ever deletes on its own, so on a public showcase this is the
+      # one thing that would grow without bound. A RAM-backed mount with a hard cap
+      # keeps it off the disk entirely and empties it on restart; writes past the cap
+      # fail instead of filling anything up. uid/gid match the app user in the image.
+      #
+      # Swap this whole block for `- ca-archive:/app/Archive` (and re-add the volume at
+      # the bottom) if you ever want the archive to survive a restart.
+      - /app/Archive:size=${ARCHIVE_SIZE:-128m},uid=999,gid=999,mode=0755
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  ca-db-data:
+  ca-keys:
